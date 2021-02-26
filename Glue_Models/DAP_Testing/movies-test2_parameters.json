@@ -1,0 +1,22 @@
+{
+    "DEV":    
+        {
+                "glue_db": "movies-test",
+                "glue_tbl": "moviesinput",
+                "s3_write_path" : "s3://hbo-dap-ops-dev/test/output"
+        },
+    "BETA":    
+        {
+                "glue_db": "movies-test",
+                "glue_tbl": "moviesinput",
+                "s3_write_path" : "s3://hbo-dap-ops-dev/test/output"
+        },
+     "PROD":    
+        {
+                "glue_db": "movies-test",
+                "glue_tbl": "moviesinput",
+                "s3_write_path" : "s3://hbo-dap-ops/test/output"
+        }
+        
+        
+}

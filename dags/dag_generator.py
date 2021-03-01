@@ -250,14 +250,6 @@ def create_task(dag, task_details, all_tasks, dag_config, owner, sql_schema_dag_
         return create_email_task(dag, task_details)
 
     else:
-        #print("In else block")
-        # if pipeline_dir[-1] != '/':
-        #    pipeline_dir += '/'
-
-        # if 'model_name' in dag_config.keys():
-        # pipeline_dir="/Models/"+model+"/pipeline/"
-        # elif 'glue_model_name' in dag_config.keys():
-        # pipeline_dir="/Glue_Models/"+model+"/pipeline/"
         if task_details.get('model_type') == 'glue':
             model = dag_config.get('glue_model_name')
             pipeline_dir = "/Glue_Models/"+model+"/pipeline/"
@@ -329,11 +321,8 @@ def create_task(dag, task_details, all_tasks, dag_config, owner, sql_schema_dag_
             for key, value in airflow_var_dict.items():
                 #print("airflow_var_dict key=", key, " value=",value)
                 airflow_var_dict[key] = Variable.get(value)
-            #print("airflow_var_dict after update=", airflow_var_dict)
-            #print("templates_dict before update=", templates_dict)
             templates_dict.update(airflow_var_dict)
-            #print("templates_dict after update=", templates_dict)
-        #print("before python operator")
+
         sf_executor = PythonOperator(
             task_id=task_details['name'],
             provide_context=True,
@@ -354,7 +343,7 @@ def create_bash_operator_task(dag, task_details, all_tasks, dag_config, owner):
         req_file_name = task_details.get(
             'requirements_file_name', 'requirements') + '.txt'
         command = """cd {0}
-        python3 container_creation.py --model "{1}" --env "{2}" --kernel "{3}" --requirements_file_name "{4}" airflow_repo "{5}" """.format(
+        python3 container_creation.py --model "{1}" --env "{2}" --kernel "{3}" --requirements_file_name "{4}" --airflow_repo "{5}" """.format(
             str(FRAMEWORK_PATH), str(dag_config['model_name']), str(ENV_LOWER),  task_details['kernel'], req_file_name, AIRFLOW_REPO_NAME)
 
     if 'glue_job_processing_script' in task_details['name']:

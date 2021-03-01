@@ -254,7 +254,7 @@ def create_task(dag, task_details, all_tasks, dag_config, owner, sql_schema_dag_
             model = dag_config.get('glue_model_name')
             pipeline_dir = "/Glue_Models/"+model+"/pipeline/"
         else:
-            pipeline_dir = "/Models/"+model+"/pipeline/"
+            pipeline_dir = "/Sagemaker_Models/"+model+"/pipeline/"
         # print(pipeline_dir)
 
         def _python_func(**kwargs):

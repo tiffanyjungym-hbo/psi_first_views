@@ -47,11 +47,11 @@ dags:
           instance_count: 1
         BucketIOConfig:
           DEV:
-            model_bucket: "datascience-ci-personalization-dev"
+            model_bucket: "hbo-dap-ops-dev"
           BETA:
-            model_bucket: "datascience-ci-personalization-beta"
+            model_bucket: "hbo-dap-ops-dev"
           PROD:
-            model_bucket: "datascience-ci-personalization"
+            model_bucket: "hbo-dap-ops"
         upstream_task_name: "ecr_container_creation"
 
       - name: "write_to_snowflake"

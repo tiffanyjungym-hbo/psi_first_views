@@ -11,7 +11,7 @@ CommonConf: !include common/snowflake_common_config.yml
 
 dags:
   sagemaker:
-    domain: "content"
+    domain: "dap_content"
     sub_domain: "job_process"
     action: "DailyForecast"
     default_args:

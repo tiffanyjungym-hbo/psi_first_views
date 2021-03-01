@@ -21,15 +21,23 @@ import subprocess
 import requests
 import json
 import os
+import pathlib
 
-file_path = "/deploy/max-datascience-content-airflow"
+dags_dir = os.path.dirname(os.path.abspath(__file__))
+print(dags_dir)
+file_path = "/".join(dags_dir.split("/")[:3])
+AIRFLOW_REPO_NAME = dags_dir.split("/")[2]
+print("Airflow repo: ==>", AIRFLOW_REPO_NAME)
+print("file_path is:==>", file_path)
 ENV = Variable.get("ENV")
 ENV_LOWER = ENV.lower()
+FRAMEWORK_PATH = "/deploy/airflow/max-datascience-content-framework"
 POSTFIX_DASH_ENV = '' if ENV == 'PROD' else '-dev'
 POSTFIX_UNDERSCORE_ENV = '' if ENV == 'PROD' else '_dev'
 
 SNOWFLAKE_ACCOUNT_NAME = Variable.get('SNOWFLAKE_ACCOUNT_NAME')
-DAG_GENERATOR_EMR_YAML_CONFIG_PATH = "/deploy/max-datascience-content-airflow/dags/resources/config/"
+DAG_GENERATOR_EMR_YAML_CONFIG_PATH = dags_dir + "/resources/config/"
+print("yml path====>", DAG_GENERATOR_EMR_YAML_CONFIG_PATH)
 DAG_NAME_SEPARATOR = "_"
 PIPELINE_LOGGER_SCRIPT = '/dags/resources/logging/max_event_processing_execution_log.sql'
 
@@ -345,8 +353,9 @@ def create_bash_operator_task(dag, task_details, all_tasks, dag_config, owner):
     if 'ecr_container_creation' in task_details['name']:
         req_file_name = task_details.get(
             'requirements_file_name', 'requirements') + '.txt'
-        command = """python3 /deploy/airflow/sagemaker_job_processor/container_creation.py --model "{0}" --env "{1}" --kernel "{2}" --requirements_file_name "{3}" """.format(
-            str(dag_config['model_name']), str(ENV_LOWER),  task_details['kernel'], req_file_name)
+        command = """cd {0}
+        python3 container_creation.py --model "{1}" --env "{2}" --kernel "{3}" --requirements_file_name "{4}" airflow_repo "{5}" """.format(
+            str(FRAMEWORK_PATH), str(dag_config['model_name']), str(ENV_LOWER),  task_details['kernel'], req_file_name, AIRFLOW_REPO_NAME)
 
     if 'glue_job_processing_script' in task_details['name']:
         bucket = ""
@@ -366,7 +375,8 @@ def create_bash_operator_task(dag, task_details, all_tasks, dag_config, owner):
         timeout = task_details['Details'].get('timeout', 180)
         #print("timeout", timeout)
         #print("dag_details are:",dag_details)
-        command = """python3 /deploy/airflow/sagemaker_job_processor/glue_job_processor.py --model "%s" --script_name "%s"  --param_file "%s" --requirements_file_name "%s" --glue_version "%s" --worker_type "%s" --number_of_workers "%s" --job_type "%s" --env "%s" --owner_name "%s" --bucket "%s" --script_loc "%s" --dag_details "%s" --timeout "%s" """ % (str(dag_config['glue_model_name']),
+        command = """cd %s
+        python3 glue_job_processor.py --model "%s" --script_name "%s"  --param_file "%s" --requirements_file_name "%s" --glue_version "%s" --worker_type "%s" --number_of_workers "%s" --job_type "%s" --env "%s" --owner_name "%s" --bucket "%s" --script_loc "%s" --dag_details "%s" --timeout "%s" --airflow_repo "%s" """ % ( str(FRAMEWORK_PATH), str(dag_config['glue_model_name']),
                                                                                                                                                                                                                                                                                                                                                                   str(
                                                                                                                                                                                                                                                                                                                                                                       task_details['Details']['script_name']),
                                                                                                                                                                                                                                                                                                                                                                   param_file_name,
@@ -387,8 +397,10 @@ def create_bash_operator_task(dag, task_details, all_tasks, dag_config, owner):
                                                                                                                                                                                                                                                                                                                                                                       'script_loc'],
                                                                                                                                                                                                                                                                                                                                                                   dag_details,
                                                                                                                                                                                                                                                                                                                                                                   str(
-                                                                                                                                                                                                                                                                                                                                                                      timeout)
+                                                                                                                                                                                                                                                                                                                                                                      timeout),
+                                                                                                                                                                                                                                                                                                                                                                  str(AIRFLOW_REPO_NAME)
                                                                                                                                                                                                                                                                                                                                                                   )
+
     if 'sagemaker_notebook_job_processing_script' in task_details['name']:
 
         upstream = task_details['upstream_task_name']
@@ -405,14 +417,10 @@ def create_bash_operator_task(dag, task_details, all_tasks, dag_config, owner):
             bucket = task_details['BucketIOConfig']['PROD']['model_bucket']
         param_file_name = task_details.get(
             'param_file_name', 'parameters') + ".json"
-        #print("Paramter_File_name check ====>",param_file_name)
-        # print("task_details====>",task_details)
         dag_details = task_details.get('templates_dict', {})
-        #print("dag_details are:",dag_details)
         volume_size = task_details['Details'].get('volume_size_InGB', 50)
-        #print("vloume size", volume_size)
-        #print("Paramter_File_name check ====>",param_file_name)
-        command = """python3 /deploy/airflow/sagemaker_job_processor/sg_job_processor.py --instance_type "%s" --instance_count "%s" --bucket "%s" --model "%s" --notebook_name "%s" --owner_name "%s" --env "%s" --param_file "%s" --kernel "%s" --volume_size_InGB "%s" --dag_details "%s" """ % (str(task_details['Details']['instance_type']),
+        command = """cd %s
+        python3 sg_job_processor.py --instance_type "%s" --instance_count "%s" --bucket "%s" --model "%s" --notebook_name "%s" --owner_name "%s" --env "%s" --param_file "%s" --kernel "%s" --volume_size_InGB "%s" --dag_details "%s" --airflow_repo "%s" """ % (str(FRAMEWORK_PATH), str(task_details['Details']['instance_type']),
                                                                                                                                                                                                                                                                                                    task_details['Details'][
                                                                                                                                                                                                                                                                                                        'instance_count'],
                                                                                                                                                                                                                                                                                                    str(
@@ -429,7 +437,9 @@ def create_bash_operator_task(dag, task_details, all_tasks, dag_config, owner):
                                                                                                                                                                                                                                                                                                    kernel,
                                                                                                                                                                                                                                                                                                    str(
                                                                                                                                                                                                                                                                                                        volume_size),
-                                                                                                                                                                                                                                                                                                   dag_details
+                                                                                                                                                                                                                                                                                                   dag_details,
+                                                                                                                                                                                                                                                                                                   str(
+                                                                                                                                                                                                                                                                                                       AIRFLOW_REPO_NAME)
                                                                                                                                                                                                                                                                                                    )
 
     if task_details['name'].startswith('python_script'):
@@ -447,8 +457,8 @@ def create_bash_operator_task(dag, task_details, all_tasks, dag_config, owner):
             base_folder = ""
 
         # params={}
-        def_path = "/deploy/sagemaker-airflow/{}/{}{}".format(
-            model_root, model, base_folder)
+        def_path = "{}/{}/{}{}".format(
+                file_path, model_root, model, base_folder)
         param_file_loc = "{}/{}.json".format(def_path,
                                              task_details['param_file_name'])
         params_str = ""

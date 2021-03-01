@@ -1,0 +1,66 @@
+#================================================================================================
+# Importing common configuration
+#================================================================================================
+
+CommonConf: !include common/snowflake_common_config.yml
+
+#================================================================================================
+# Configuration Job pipeline
+#================================================================================================
+
+
+dags:
+  sagemaker:
+    domain: "dap_content"
+    sub_domain: "job_process"
+    action: "DailyForecast"
+    default_args:
+      owner: "DAP OPS"
+      depends_on_past: True
+      start_date: "2020-08-4"
+      email_prod: "DAPOperationsSupport@hbo.com"
+      email_nonprod: "bobby.dirisala@hbo.com"
+      email_on_failure: True
+      email_on_retry: True
+      retries: 3
+      domain: "content"
+      retry_delay: 15
+    schedule_interval: "@once"
+    max_active_runs: 1
+    catchup: False
+    schema: "VIEWRSHIP"
+    slack_channel:
+      NON-PROD: "dap-admin-test"
+      PROD: "dap-admin-test"
+    model_name: "ForecastDaily"
+    
+    tasks:    
+      - name: "ecr_container_creation"
+        type: "BashOperator"
+        kernel: "python3"
+
+      - name: "sagemaker_notebook_job_processing_script"
+        type: "BashOperator"
+        notebook_name: "ForecastDaily"
+        Details:
+          instance_type: "ml.m5.large"
+          instance_count: 1
+        BucketIOConfig:
+          DEV:
+            model_bucket: "hbo-dap-ops-dev"
+          BETA:
+            model_bucket: "hbo-dap-ops-dev"
+          PROD:
+            model_bucket: "hbo-dap-ops"
+        upstream_task_name: "ecr_container_creation"
+
+      - name: "write_to_snowflake"
+        templates_dict:
+          stage: "{{ var.value.CI_STAGING }}"
+          dt: "{{ macros.ds_add(ds,1) }}"
+          yr: "{{ macros.yr(macros.ds_add(ds,1)) }}"
+          mo: "{{ macros.mo(macros.ds_add(ds,1)) }}"
+          dy: "{{ macros.dy(macros.ds_add(ds,1)) }}"
+        upstream_task_name: "sagemaker_notebook_job_processing_script"
+        sql_file_names:
+          - "sample.sql"

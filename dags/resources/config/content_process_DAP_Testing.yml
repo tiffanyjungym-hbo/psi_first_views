@@ -1,0 +1,117 @@
+#================================================================================================
+# Importing common configuration
+#================================================================================================
+
+CommonConf: !include common/snowflake_common_config.yml
+
+#================================================================================================
+# Configuration Job pipeline
+#================================================================================================
+
+
+dags:
+  sagemaker:
+    domain: "dap_content"
+    sub_domain: "job_process"
+    action: "DAP_Testing_glue_test_V2"
+    default_args:
+      owner: "DAP OPS"
+      depends_on_past: True
+      start_date: "2020-08-04"
+      email_prod: "DAPOperationsSupport@hbo.com"
+      email_nonprod: "bobby.dirisala@hbo.com"
+      email_on_failure: True
+      email_on_retry: True
+      retries: 1
+      domain: "content"
+      retry_delay: 15
+    schedule_interval: "@once"
+    max_active_runs: 1
+    catchup: False
+    schema: "VIEWERSHIP"
+    model_name: "DailyForecast"
+    glue_model_name: "DAP_Testing"    
+    slack_channel:
+      NON-PROD: "dap-admin-test"
+      PROD: "dap-admin-test"
+    tasks:    
+    - name: "glue_job_processing_script_2"
+      type: "BashOperator"          
+      Details:
+        script_name: "movies-test2" 
+        param_file_name: "movies-test2_parameters"
+        requirements_file_name: "movies-test2_requirements"
+        script_loc : "model"
+        worker_type: "G.2X"
+        number_of_workers: "2"
+        timeout: 180
+      templates_dict:
+        stage: "{{ var.value.CI_STAGING }}"
+        env: "{{ var.value.ENV }}"
+        dt: "{{ macros.ds_add(ds,1) }}"
+        yr: "{{ macros.yr(macros.ds_add(ds,1)) }}"
+        mo: "{{ macros.mo(macros.ds_add(ds,1)) }}"
+        dy: "{{ macros.dy(macros.ds_add(ds,1)) }}"      
+      BucketIOConfig:
+          DEV: 
+            model_bucket: "hbo-dap-ops-dev"      
+          BETA:
+            model_bucket: "hbo-dap-ops-dev"
+          PROD:
+            model_bucket: "hbo-dap-ops"
+            
+    - name: "glue_job_processing_script"
+      type: "BashOperator"          
+      Details:
+        script_name: "movie-test" 
+        param_file_name: "movies-test_parameters"
+        requirements_file_name: "movies-test_requirements"
+        script_loc : "common"
+        worker_type: "G.2X"
+        number_of_workers: "2"
+        timeout: 180
+      templates_dict:
+        env: "{{ var.value.ENV }}"
+      BucketIOConfig:
+          DEV: 
+            model_bucket: "hbo-dap-ops-dev"      
+          BETA:
+            model_bucket: "hbo-dap-ops-dev"
+          PROD:
+            model_bucket: "hbo-dap-ops"  
+            
+    - name: "python_script_workspace_test_table"
+      type: "BashOperator"
+      model_type:  "glue"
+      script_loc: "model"
+      script_name: "data_validation_v1"
+      param_file_name: "data_validations"
+      templates_dict:
+        stage: "{{ var.value.CI_STAGING }}"
+        env: "{{ var.value.ENV }}"
+   
+    - name: "send_notification_dap_team"
+      type: "EmailOperator"
+      to: "karthikraj.kanagaraj@hbo.com,bobby.dirisala@hbo.com"
+      subject: "sagemaker-airflow: EMAIL TASK test"
+      html: "Hi Team,<br><h3>Test email from sagemaker-airflow DAG task.</h3><br>Regards,<br> DAP"
+      upstream_task_name : "python_script_workspace_test_table"
+
+    - name: "python_script_daptesting_dataval"
+      type: "BashOperator"
+      script_loc: "common"
+      script_name: "daptesting_dataval"
+      param_file_name: "daptesting_dataval_parameters"
+      
+    - name: "write_to_snowflake"
+      model_type: "glue"
+      templates_dict:
+        stage: "{{ var.value.CI_STAGING_DEV }}"
+        dt: "{{ macros.ds_add(ds,1) }}"
+        yr: "{{ macros.yr(macros.ds_add(ds,1)) }}"
+        mo: "{{ macros.mo(macros.ds_add(ds,1)) }}"
+        dy: "{{ macros.dy(macros.ds_add(ds,1)) }}"
+        perc: "{{ 80 }}"
+      upstream_task_name: "python_script_daptesting_dataval"
+      sql_file_names:
+          - "sample.sql"

@@ -1,0 +1,50 @@
+#================================================================================================
+# Importing common configuration
+#================================================================================================
+
+CommonConf: !include common/snowflake_common_config.yml
+
+#================================================================================================
+# Configuration Job pipeline
+#================================================================================================
+
+
+dags:
+  sagemaker:
+    domain: "max"
+    sub_domain: "job_process"
+    action: "PostLaunchMetrics"
+    default_args:
+      owner: "jonny.elliott@warnermedia.com"
+      depends_on_past: True
+      start_date: "2021-03-10"
+      email_prod: "jonny.elliott@warnermedia.com"
+      email_nonprod: "jonny.elliott@warnermedia.com"
+      email_on_failure: True
+      email_on_retry: True
+      retries: 1
+      domain: "content"
+      retry_delay: 15
+    schedule_interval: "@once"
+    max_active_runs: 1
+    catchup: False
+    schema: "WORKSPACE"
+    model_name: "post_launch_metrics"
+    glue_model_name: "post_launch_metrics"    
+    slack_channel:
+      NON-PROD: "hbomax-cds-alerts"
+      PROD: "hbomax-cds-alerts"
+    tasks:
+
+    - name: "python_script_post_launch_metrics"
+      type: "BashOperator"
+      script_loc: "common"
+      script_name: "post_launch_metrics_subscriber"
+      param_file_name: "post_launch_metrics_parameters"
+
+    - name: "send_notification_cds"
+      type: "EmailOperator"
+      to: "jonny.elliott@warnermedia.com"
+      subject: "sagemaker-airflow: EMAIL TASK test"
+      html: "Hi Team,<br><h3>Test email from sagemaker-airflow DAG task.</h3><br>Regards,<br> DAP"
+      upstream_task_name : "post_launch_metrics_subscriber"

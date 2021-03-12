@@ -39,7 +39,7 @@ dags:
     - name: "python_script_post_launch_metrics"
       type: "BashOperator"
       script_loc: "common"
-      script_name: "post_launch_metrics_subscriber"
+      script_name: "post_launch_metrics"
       param_file_name: "post_launch_metrics"
 
     - name: "send_notification_cds"

@@ -3,7 +3,6 @@ import argparse
 import pandas as pd
 
 from airflow.models import Variable
-from lib import sample
 from common import snowflake_utils
 
 SNOWFLAKE_ACCOUNT_NAME = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.us-east-1'

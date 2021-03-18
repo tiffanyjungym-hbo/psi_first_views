@@ -7,7 +7,7 @@ from common import snowflake_utils
 
 SNOWFLAKE_ACCOUNT_NAME = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.us-east-1'
 
-def execute_query(query: str, database, schema) -> pd.DataFrame:
+def execute_query(query: str, database :str, schema: str, warehouse: str, snowflake_env: str) -> pd.DataFrame:
 	"""
 	Execute a query on snowflake
 	"""
@@ -15,9 +15,9 @@ def execute_query(query: str, database, schema) -> pd.DataFrame:
 		  SNOWFLAKE_ACCOUNT_NAME,
 		  database,
 		  schema,
-		  "MAX_DATASCIENCE_DEV",
-		  "MAX_ETL_DEV",
-		  'sf_max_dev',
+		  warehouse,
+		  role,
+		  snowflake_env,
 		  None
 	)
 
@@ -28,12 +28,22 @@ def execute_query(query: str, database, schema) -> pd.DataFrame:
 	return df
 	
 parser = argparse.ArgumentParser()
-parser.add_argument('--db_name', required=True)
-parser.add_argument('--workspace', required=True)
+parser.add_argument('--SNOWFLAKE_ENV', required=True)
+parser.add_argument('--WAREHOUSE', required=True)
+parser.add_argument('--ROLE', required=True)
+parser.add_argument('--DATABASE', required=True)
+parser.add_argument('--SCHEMA', required=True)
 args = parser.parse_args()
 
 query = "select * from MAX_PROD.WORKSPACE.AIRFLOW_CONN_TEST limit 10;"
-df = execute_query(query, database=args.db_name, schema=args.workspace)
+
+df = execute_query(
+	query=query,
+	database=args.DATABASE,
+	schema=args.SCHEMA,
+	warehouse=args.WAREHOUSE,
+	snowflake_env=args.SNOWFLAKE_ENV
+)
 
 print(f'database: {args.db_name}')
 print(f'schema: {args.workspace}')

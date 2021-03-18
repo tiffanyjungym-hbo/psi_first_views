@@ -7,7 +7,7 @@ from common import snowflake_utils
 
 SNOWFLAKE_ACCOUNT_NAME = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.us-east-1'
 
-def execute_query(query: str, database :str, schema: str, warehouse: str, snowflake_env: str) -> pd.DataFrame:
+def execute_query(query: str, database :str, schema: str, warehouse: str, role: str, snowflake_env: str) -> pd.DataFrame:
 	"""
 	Execute a query on snowflake
 	"""
@@ -42,6 +42,7 @@ df = execute_query(
 	database=args.DATABASE,
 	schema=args.SCHEMA,
 	warehouse=args.WAREHOUSE,
+	role=args.ROLE,
 	snowflake_env=args.SNOWFLAKE_ENV
 )
 

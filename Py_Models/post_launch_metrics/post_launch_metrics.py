@@ -15,9 +15,9 @@ def execute_query(query: str, database, schema) -> pd.DataFrame:
 		  SNOWFLAKE_ACCOUNT_NAME,
 		  database,
 		  schema,
-		  "MAX_DATASCIENCE_PROD",
-		  "MAX_ETL_PROD",
-		  'sf_max_prod',
+		  "MAX_DATASCIENCE_DEV",
+		  "MAX_ETL_DEV",
+		  'sf_max_dev',
 		  None
 	)
 

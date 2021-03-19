@@ -5,6 +5,7 @@ import airflow
 import argparse
 import logging
 import pandas as pd
+import pathlib
 
 from airflow.models import Variable
 from common import snowflake_utils
@@ -12,6 +13,7 @@ from common import snowflake_utils
 SNOWFLAKE_ACCOUNT_NAME = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.us-east-1'
 QUERY_SUBSCRIBER_TABLE = 'total_sub_base_table.sql'
 QUERY_METRIC_TABLE = ''
+CURRENT_PATH = pathlib.Path(__file__).parent.absolute()
 
 logger = logging.getLogger()
 
@@ -54,7 +56,7 @@ parser.add_argument('--SCHEMA', required=True)
 args = parser.parse_args()
 
 logger.info(f'Loading query {QUERY_SUBSCRIBER_TABLE}')
-query_subscriber_table = load_query(QUERY_SUBSCRIBER_TABLE, database=args.DATABASE, schema=args.SCHEMA)
+query_subscriber_table = load_query(f'{CURRENT_PATH}/{QUERY_SUBSCRIBER_TABLE}', database=args.DATABASE, schema=args.SCHEMA)
 
 logger.info(f'{query_subscriber_table[:50]}')
 

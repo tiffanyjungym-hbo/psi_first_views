@@ -1,3 +1,6 @@
+"""
+Post-launch ETL that generates subscriber normalized interim table and final viewership KPI table
+"""
 import airflow
 import argparse
 import logging
@@ -38,7 +41,9 @@ def load_query(filename: str, **kwargs) -> str:
 	"""
 	with open(filename, 'r') as f:
 		query = f.read()
-	return query = query.format(**kwargs)
+	
+	query = query.format(**kwargs)
+	return query
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--SNOWFLAKE_ENV', required=True)

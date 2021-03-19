@@ -58,14 +58,14 @@ args = parser.parse_args()
 logger.info(f'Loading query {QUERY_SUBSCRIBER_TABLE}')
 query_subscriber_table = load_query(f'{CURRENT_PATH}/{QUERY_SUBSCRIBER_TABLE}', database=args.DATABASE, schema=args.SCHEMA)
 
-logger.info(f'{query_subscriber_table[:50]}')
+logger.info(f'{query_subscriber_table[:100]}')
 
 logger.info('Executing query using environment:')
-logger.info(f'snowflake env: {args.snowflake_env}')
-logger.info(f'warehouse: {args.warehouse}')
-logger.info(f'role: {args.role}')
-logger.info(f'database: {args.database}')
-logger.info(f'schema: {args.schema}')
+logger.info(f'snowflake env: {args.SNOWFLAKE_ENV}')
+logger.info(f'warehouse: {args.WAREHOUSE}')
+logger.info(f'role: {args.ROLE}')
+logger.info(f'database: {args.DATABASE}')
+logger.info(f'schema: {args.SCHEMA}')
 
 df_subscriber_table = execute_query(
 	query=query_subscriber_table,

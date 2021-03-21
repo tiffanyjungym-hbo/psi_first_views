@@ -205,7 +205,7 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
              from max_viewership_match_id as v
              join offered_date_pairs as o
                 on v.earliest_offered_timestamp = o.earliest_offered_timestamp
-             join table({database}.{schema}.sub_period_in_uuid_test) as a
+             join {database}.{schema}.sub_period_in_uuid_test as a
                  -- give one day butter to both dates, since some titles may release in the late night
                  ------ logic: sessions without the following conditions
                             on (((a.subscription_expire_timestamp < o.earliest_offered_timestamp)
@@ -249,7 +249,7 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
                       -- created by Eileen Dise, the following are the modifications:
                       ------ 1). ignore the subscription gaps <= 24 hours, in order to create continous sub sessions
                       ------ 2). ignore the subcription sessions less than 24 hours
-             left join table({database}.{schema}.sub_period_in_uuid_test) as a
+             left join {database}.{schema}.sub_period_in_uuid_test as a
                  -- give one day butter to both dates, since some titles may release in the late night
                  ------ logic: sessions without the following conditions
                 on (((a.subscription_expire_timestamp <= o.earliest_offered_timestamp)

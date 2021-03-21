@@ -10,17 +10,27 @@ import time
 
 from airflow.models import Variable
 from common import snowflake_utils
+from typing import Dict, List
 
-SNOWFLAKE_ACCOUNT_NAME = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.us-east-1'
-QUERY_SUBSCRIBER_TABLE = 'total_sub_base_table.sql'
-CURRENT_PATH = pathlib.Path(__file__).parent.absolute()
-QUERY_FUNNEL_METRICS = 'title_retail_funnel_metrics_update'
-DAY_LIST = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 28]  # [ndays] since first offered
-PLATFORM_LIST = ['hboMax', 'hboNow']
-DAY_LATENCY = 0  # started counting after [day_latency] days
-STREAM_TABLE = {'hboMax':"'max_prod.viewership.max_user_stream_heartbeat_view'", 'hboNow':"'max_prod.viewership.now_user_stream'"}  # source of viewership, either heartbeat or now_uer_stream
-END_DATE = {'hboNow':"'2020-05-27'", 'hboMax':"'2021-03-02'"}  # the end date of the viewership data
-EXIST_IND_VAL = 0  # indicating if a title_name - platform_name - days_since_first_offered combination exists in the target table
+SNOWFLAKE_ACCOUNT_NAME: str = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.us-east-1'
+QUERY_SUBSCRIBER_TABLE: str = 'total_sub_base_table.sql'
+CURRENT_PATH: str = pathlib.Path(__file__).parent.absolute()
+QUERY_FUNNEL_METRICS: str = 'title_retail_funnel_metrics_update'
+DAY_LIST: List[int] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 28]  # [ndays] since first offered
+PLATFORM_LIST: List[str] = ['hboMax', 'hboNow']
+DAY_LATENCY: int = 0  # started counting after [day_latency] days
+# Source of viewership, either heartbeat or now_uer_stream
+STREAM_TABLE: Dict[str, str] = {
+	'hboMax': "'max_prod.viewership.max_user_stream_heartbeat_view'",
+	'hboNow': "'max_prod.viewership.now_user_stream'"
+}
+TARGET_DATE: str = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+# The end date of the viewership data
+END_DATE: Dict[str, str] = {
+	'hboNow': "'2020-05-27'",
+	'hboMax': f"'{TARGET_DATEINT}'"
+}
+EXIST_IND_VAL: int = 0  # indicating if a title_name - platform_name - days_since_first_offered combination exists in the target table
 
 logger = logging.getLogger()
 
@@ -80,7 +90,7 @@ def update_subscriber_table(
 	"""
 	logger.info(f'Loading query {QUERY_SUBSCRIBER_TABLE}')
 
-	query_subscriber_table = load_query(QUERY_SUBSCRIBER_TABLE, database=database, schema=schema)
+	query_subscriber_table = load_query(f'{CURRENT_PATH}/{QUERY_SUBSCRIBER_TABLE}', database=database, schema=schema)
 
 	df_subscriber_table = execute_query(
 		query=query_subscriber_table,
@@ -121,7 +131,7 @@ def update_funnel_metrics_table(
 			logger.info(f'Getting data for nth day: {nday} on {platform}')
 
 			query_funnel_metrics = load_query(
-				QUERY_FUNNEL_METRICS,
+				f'{CURRENT_PATH}/{QUERY_FUNNEL_METRICS}',
 				database=database,
 				schema=schema,
 				nday=nday,

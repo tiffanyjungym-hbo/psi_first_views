@@ -3,6 +3,7 @@ Post-launch ETL that generates subscriber normalized interim table and final vie
 """
 import airflow
 import argparse
+import datetime
 import logging
 import pandas as pd
 import pathlib

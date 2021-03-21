@@ -22,8 +22,8 @@ DAY_LIST: List[int] = [
 ]
 PLATFORM_LIST: List[str] = ['hboMax', 'hboNow']
 DAY_LATENCY: int = 0  # started counting after [day_latency] days
-# Source of viewership, either heartbeat or now_uer_stream
-STREAM_TABLE: Dict[str, str] = {
+# Source of viewership, either heartbeat or now_user_stream
+VIEWERSHIP_TABLE: Dict[str, str] = {
 	'hboMax': "'max_prod.viewership.max_user_stream_heartbeat_view'",
 	'hboNow': "'max_prod.viewership.now_user_stream'"
 }
@@ -153,7 +153,7 @@ def update_funnel_metrics_table(
 				schema=schema,
 				nday=nday,
 				day_latency=DAY_LATENCY,
-				stream_table=STREAM_TABLE[platform],
+				viewership_table=VIEWERSHIP_TABLE[platform],
 				end_date=END_DATE[platform],
 				exist_ind_val=EXIST_IND_VAL
 			)

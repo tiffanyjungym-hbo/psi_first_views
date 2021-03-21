@@ -15,7 +15,7 @@ from typing import Dict, List
 SNOWFLAKE_ACCOUNT_NAME: str = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.us-east-1'
 QUERY_SUBSCRIBER_TABLE: str = 'total_sub_base_table.sql'
 CURRENT_PATH: str = pathlib.Path(__file__).parent.absolute()
-QUERY_FUNNEL_METRICS: str = 'title_retail_funnel_metrics_update'
+QUERY_FUNNEL_METRICS: str = 'title_retail_funnel_metrics_update.sql'
 # [ndays] since first offered
 DAY_LIST: List[int] = [
 	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 28

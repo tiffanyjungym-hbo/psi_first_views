@@ -1,12 +1,11 @@
 """
 Post-launch ETL that generates subscriber normalized interim table and final viewership KPI table
 """
-import airflow
 import argparse
 import datetime
 import logging
-import pandas as pd
 import pathlib
+import pandas as pd
 import time
 
 from airflow.models import Variable
@@ -17,7 +16,10 @@ SNOWFLAKE_ACCOUNT_NAME: str = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.
 QUERY_SUBSCRIBER_TABLE: str = 'total_sub_base_table.sql'
 CURRENT_PATH: str = pathlib.Path(__file__).parent.absolute()
 QUERY_FUNNEL_METRICS: str = 'title_retail_funnel_metrics_update'
-DAY_LIST: List[int] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 28]  # [ndays] since first offered
+# [ndays] since first offered
+DAY_LIST: List[int] = [
+	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 28
+]
 PLATFORM_LIST: List[str] = ['hboMax', 'hboNow']
 DAY_LATENCY: int = 0  # started counting after [day_latency] days
 # Source of viewership, either heartbeat or now_uer_stream
@@ -29,16 +31,26 @@ TARGET_DATE: str = (datetime.datetime.today() - datetime.timedelta(days=1)).strf
 # The end date of the viewership data
 END_DATE: Dict[str, str] = {
 	'hboNow': "'2020-05-27'",
-	'hboMax': f"'{TARGET_DATEINT}'"
+	'hboMax': f"'{TARGET_DATE}'"
 }
-EXIST_IND_VAL: int = 0  # indicating if a title_name - platform_name - days_since_first_offered combination exists in the target table
+# indicating if a title_name - platform_name - days_since_first_offered combination exists
+# in the target table
+EXIST_IND_VAL: int = 0
 
 logger = logging.getLogger()
 
-def execute_query(query: str, database :str, schema: str, warehouse: str, role: str, snowflake_env: str) -> pd.DataFrame:
+def execute_query(
+	query: str,
+	database :str,
+	schema: str,
+	warehouse: str,
+	role: str,
+	snowflake_env: str
+) -> pd.DataFrame:
 	"""
 	Execute a query on snowflake
 
+	:param query: query to be executed
 	:param database: name of the database
 	:param schema: name of the schema
 	:param warehouse: name of the warehouse
@@ -55,9 +67,9 @@ def execute_query(query: str, database :str, schema: str, warehouse: str, role: 
 		  None
 	)
 
-	cursor = connection.cursor()					
-	cursor.execute(query)	
-	df = pd.DataFrame(cursor.fetchall(), columns = [desc[0] for desc in cursor.description])	
+	cursor = connection.cursor()
+	cursor.execute(query)
+	df = pd.DataFrame(cursor.fetchall(), columns = [desc[0] for desc in cursor.description])
 
 	return df
 
@@ -69,7 +81,7 @@ def load_query(filename: str, **kwargs) -> str:
 	"""
 	with open(filename, 'r') as f:
 		query = f.read()
-	
+
 	query = query.format(**kwargs)
 	return query
 
@@ -91,7 +103,11 @@ def update_subscriber_table(
 	"""
 	logger.info(f'Loading query {QUERY_SUBSCRIBER_TABLE}')
 
-	query_subscriber_table = load_query(f'{CURRENT_PATH}/{QUERY_SUBSCRIBER_TABLE}', database=database, schema=schema)
+	query_subscriber_table = load_query(
+		f'{CURRENT_PATH}/{QUERY_SUBSCRIBER_TABLE}',
+		database=database,
+		schema=schema
+	)
 
 	df_subscriber_table = execute_query(
 		query=query_subscriber_table,

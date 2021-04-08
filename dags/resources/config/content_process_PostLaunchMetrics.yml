@@ -55,7 +55,7 @@ dags:
       script_name: "post_launch_trailer_metrics"
       param_file_name: "post_launch_trailer_metrics"
       upstream_task_name: "python_script_post_launch_subscriber"
-	
+
     - name: "send_notification_cds"
       type: "EmailOperator"
       to: "jonny.elliott@warnermedia.com"

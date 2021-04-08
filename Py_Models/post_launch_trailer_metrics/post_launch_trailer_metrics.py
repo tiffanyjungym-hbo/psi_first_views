@@ -14,23 +14,16 @@ from typing import Dict, List
 
 SNOWFLAKE_ACCOUNT_NAME: str = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.us-east-1'
 CURRENT_PATH: str = pathlib.Path(__file__).parent.absolute()
-QUERY_FUNNEL_METRICS: str = 'title_retail_funnel_metrics_update.sql'
-# [ndays] since first offered
-DAY_LIST: List[int] = [
-	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 28
-]
+QUERY_TRAILER_METRICS: str = 'title_funnel_metrics_retail_trailer_update.sql'
+TARGET_DATE: str = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
 
 # Calculating for different platforms
 PLATFORM_LIST: List[str] = ['hboMax', 'hboNow']
-DAY_LATENCY: int = 1  # started counting after [day_latency] days
-TARGET_DATE: str = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-
 # Source of viewership, either heartbeat or now_user_stream
 VIEWERSHIP_TABLE: Dict[str, str] = {
 	'hboMax': "'max_prod.viewership.max_user_stream_heartbeat_view'",
 	'hboNow': "'max_prod.viewership.now_user_stream'"
 }
-
 # The end date of the viewership data
 END_DATE: Dict[str, str] = {
 	'hboNow': "'2020-05-27'",
@@ -88,7 +81,7 @@ def load_query(filename: str, **kwargs) -> str:
 	query = query.format(**kwargs)
 	return query
 
-def update_funnel_metrics_table(
+def update_trailer_table(
 	database: str,
 	schema: str,
 	warehouse: str,
@@ -105,30 +98,27 @@ def update_funnel_metrics_table(
 	:param snowflake_env: environment used in Snowflake
 	"""
 	# Create latest funnel metrics
-	logger.info(f'Loading query {QUERY_FUNNEL_METRICS}')
+	logger.info(f'Loading query {QUERY_TRAILER_METRICS}')
 
-	df_funnel_metrics = pd.DataFrame()
+	df_trailer_metrics = pd.DataFrame()
 
-	for nday in DAY_LIST:
-		for platform in PLATFORM_LIST:
+	for platform in PLATFORM_LIST:
 
-			logger.info(f'Getting data for nth day: {nday} on {platform}')
+		logger.info(f'Getting data on {platform}')
 
-			query_funnel_metrics = load_query(
-				f'{CURRENT_PATH}/{QUERY_FUNNEL_METRICS}',
+		query_trailer_metrics = load_query(
+				f'{CURRENT_PATH}/{QUERY_TRAILER_METRICS}',
 				database=database,
 				schema=schema,
-				nday=nday,
-				day_latency=DAY_LATENCY,
 				viewership_table=VIEWERSHIP_TABLE[platform],
 				end_date=END_DATE[platform],
 				exist_ind_val=EXIST_IND_VAL
 			)
 
-			start_time = time.time()
+		start_time = time.time()
 
-			_df_funnel_metrics = execute_query(
-				query=query_funnel_metrics,
+		_df_trailer_metrics = execute_query(
+				query=query_trailer_metrics,
 				database=database,
 				schema=schema,
 				warehouse=warehouse,
@@ -136,12 +126,12 @@ def update_funnel_metrics_table(
 				snowflake_env=snowflake_env
 			)
 
-			end_time = time.time()
-			logger.info(f'Time taken {end_time - start_time} seconds')
+		end_time = time.time()
+		logger.info(f'Time taken {end_time - start_time} seconds')
 
-			df_funnel_metrics = pd.concat([df_funnel_metrics, _df_funnel_metrics], axis=0)
+		df_trailer_metrics = pd.concat([df_trailer_metrics, _df_trailer_metrics], axis=0)
 
-	return df_funnel_metrics
+	return df_trailer_metrics
 
 if __name__ == '__main__':
 
@@ -160,8 +150,8 @@ if __name__ == '__main__':
 	logger.info(f'database: {args.DATABASE}')
 	logger.info(f'schema: {args.SCHEMA}')
 
-	logger.info('Updating metrics table')
-	df_funnel_metrics = update_funnel_metrics_table(
+	logger.info('Updating trailer table')
+	df_funnel_metrics = update_trailer_table(
 		database=args.DATABASE,
 		schema=args.SCHEMA,
 		warehouse=args.WAREHOUSE,
@@ -169,4 +159,4 @@ if __name__ == '__main__':
 		snowflake_env=args.SNOWFLAKE_ENV
 	)
 
-	logger.info('Finished table updates')
+	logger.info('Finished trailer table updates')

@@ -15,11 +15,11 @@ dags:
     sub_domain: "job_process"
     action: "PostLaunchMetrics"
     default_args:
-      owner: "jonny.elliott@warnermedia.com"
+      owner: "mei-cheng.shih@warnermedia.com"
       depends_on_past: True
-      start_date: "2021-03-10"
-      email_prod: "jonny.elliott@warnermedia.com"
-      email_nonprod: "jonny.elliott@warnermedia.com"
+      start_date: "2021-03-29"
+      email_prod: "mei-cheng.shih@warnermedia.com"
+      email_nonprod: "mei-cheng.shih@warnermedia.com"
       email_on_failure: True
       email_on_retry: True
       retries: 1
@@ -36,12 +36,26 @@ dags:
       PROD: "hbomax-cds-alerts"
     tasks:
 
+    - name: "python_script_post_launch_subscriber"
+      type: "BashOperator"
+      script_loc: "common"
+      script_name: "post_launch_subscriber"
+      param_file_name: "post_launch_subscriber"
+
     - name: "python_script_post_launch_metrics"
       type: "BashOperator"
       script_loc: "common"
       script_name: "post_launch_metrics"
       param_file_name: "post_launch_metrics"
+      upstream_task_name: "python_script_post_launch_subscriber"
 
+    - name: "python_script_post_launch_trailer_metrics"
+      type: "BashOperator"
+      script_loc: "common"
+      script_name: "post_launch_trailer_metrics"
+      param_file_name: "post_launch_trailer_metrics"
+      upstream_task_name: "python_script_post_launch_subscriber"
+	
     - name: "send_notification_cds"
       type: "EmailOperator"
       to: "jonny.elliott@warnermedia.com"

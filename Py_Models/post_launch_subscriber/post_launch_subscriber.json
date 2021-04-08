@@ -1,0 +1,9 @@
+{
+  "DEV": {
+    "SNOWFLAKE_ENV": "sf_max_dev",
+    "WAREHOUSE": "MAX_DATASCIENCE_DEV",
+    "ROLE": "MAX_ETL_DEV",
+    "DATABASE": "MAX_DEV",
+    "SCHEMA": "workspace"
+  }
+}

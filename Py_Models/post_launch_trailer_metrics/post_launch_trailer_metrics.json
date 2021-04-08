@@ -6,7 +6,7 @@
     "DATABASE": "MAX_DEV",
     "SCHEMA": "workspace"
   }
-}
+},
 
 {
   "BETA": {
@@ -16,7 +16,7 @@
     "DATABASE": "MAX_BETA",
     "SCHEMA": "workspace"
   }
-}
+},
 
 {
   "PROD": {

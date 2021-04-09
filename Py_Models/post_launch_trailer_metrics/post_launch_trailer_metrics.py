@@ -110,6 +110,7 @@ def update_trailer_table(
 				f'{CURRENT_PATH}/{QUERY_TRAILER_METRICS}',
 				database=database,
 				schema=schema,
+                sub_table = 
 				viewership_table=VIEWERSHIP_TABLE[platform],
 				end_date=END_DATE[platform],
 				exist_ind_val=EXIST_IND_VAL

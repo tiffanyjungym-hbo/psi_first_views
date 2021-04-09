@@ -1,5 +1,4 @@
 -- viewership table: source of viewership, either heartbeat or now_uer_stream
--- sub_table: subscriber table, should be updated everytime before updating the heartbeat
 -- end_date: the end date of the viewership data
 
 insert into {database}.{schema}.trailer_view_percent_test (
@@ -93,7 +92,7 @@ retail_sub_count_table as (
                       -- created by Eileen Dise, the following are the modifications:
                       ------ 1). ignore the subscription gaps <= 24 hours, in order to create continous sub sessions
                       ------ 2). ignore the subcription sessions less than 24 hours
-             left join table {sub_table} as a
+             left join table {database}.{schema}.sub_period_in_uuid_test as a
                  -- give one day butter to both dates, since some titles may release in the late night
                  ------ logic: sessions without the following conditions
                 on (((a.subscription_expire_timestamp <= t.min_trailer_offered_timestamp)

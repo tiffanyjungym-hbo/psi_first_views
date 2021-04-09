@@ -50,9 +50,9 @@ left join existing_titles as e
 where 1=1
     and t.platform_name =
         (case
-            when $viewership_table in ('max_prod.viewership.max_user_stream', 'max_prod.viewership.max_user_stream_heartbeat_view')
+            when {viewership_table} in ('max_prod.viewership.max_user_stream', 'max_prod.viewership.max_user_stream_heartbeat_view')
                 then 'hboMax'
-            when $viewership_table = 'max_prod.viewership.now_user_stream'
+            when {viewership_table} = 'max_prod.viewership.now_user_stream'
                 then 'hboNow' end)
     and exist_id = {exist_ind_val}
 order by trailer_title_name),
@@ -67,7 +67,7 @@ max_viewership_match_id as (
             , max(title_offered_timestamp) as title_offered_timestamp
             -- use credits start time as the total runtime for now
             , count(distinct hbo_uuid) as viewe_count
-         from table ($viewership_table) as v
+         from table ({viewership_table}) as v
          -- get trailer data
          join trailer_match_id as f
             on v.viewable_id = f.viewable_id
@@ -76,8 +76,8 @@ max_viewership_match_id as (
             and stream_elapsed_play_seconds > 10
             and stream_min_timestamp_gmt between trailer_offered_timestamp and title_offered_timestamp
             and stream_min_timestamp_gmt >=
-                case when $viewership_table in ('max_prod.viewership.max_user_stream','max_prod.viewership.max_user_stream_heartbeat_view') then '2020-05-27'
-                    when $viewership_table = 'max_prod.viewership.now_user_stream' then '2015-04-07'
+                case when {viewership_table} in ('max_prod.viewership.max_user_stream','max_prod.viewership.max_user_stream_heartbeat_view') then '2020-05-27'
+                    when {viewership_table} = 'max_prod.viewership.now_user_stream' then '2015-04-07'
                         end
         group by 1,2,3,4
          ),

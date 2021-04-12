@@ -38,7 +38,7 @@ trailer_match_id as (select distinct
     , f.earliest_offered_timestamp as title_offered_timestamp
     , case when e.match_id is null then 0 else 1 end as exist_id
 from title_info as t
-join max_dev.workspace.title_retail_funnel_metrics as f
+join {database}.{schema}.title_retail_funnel_metrics as f
     on t.trailer_title_name = get(split(f.title_name, ' S'),0)
         and t.earliest_offered_timestamp
             between dateadd(day, -56, f.earliest_offered_timestamp)
@@ -92,7 +92,7 @@ retail_sub_count_table as (
                       -- created by Eileen Dise, the following are the modifications:
                       ------ 1). ignore the subscription gaps <= 24 hours, in order to create continous sub sessions
                       ------ 2). ignore the subcription sessions less than 24 hours
-             left join table {database}.{schema}.sub_period_in_uuid_test as a
+             left join {database}.{schema}.sub_period_in_uuid_test as a
                  -- give one day butter to both dates, since some titles may release in the late night
                  ------ logic: sessions without the following conditions
                 on (((a.subscription_expire_timestamp <= t.min_trailer_offered_timestamp)

@@ -58,7 +58,7 @@ dags:
 
     - name: "send_notification_cds"
       type: "EmailOperator"
-      to: "jonny.elliott@warnermedia.com"
+      to: "mei-cheng.shih@warnermedia.com"
       subject: "sagemaker-airflow: EMAIL TASK test"
       html: "Hi Team,<br><h3>Test email from sagemaker-airflow DAG task.</h3><br>Regards,<br> DAP"
       upstream_task_name : "python_script_post_launch_metrics"

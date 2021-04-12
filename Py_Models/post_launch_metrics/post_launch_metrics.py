@@ -13,24 +13,37 @@ from common import snowflake_utils
 from typing import Dict, List
 
 SNOWFLAKE_ACCOUNT_NAME: str = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.us-east-1'
+<<<<<<< HEAD
+=======
+QUERY_SUBSCRIBER_TABLE: str = 'total_sub_base_table.sql'
+>>>>>>> e4e7683ddd9e9b1d3f39d56c3479480fd4cd46ef
 CURRENT_PATH: str = pathlib.Path(__file__).parent.absolute()
 QUERY_FUNNEL_METRICS: str = 'title_retail_funnel_metrics_update.sql'
 # [ndays] since first offered
 DAY_LIST: List[int] = [
 	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 28
 ]
+<<<<<<< HEAD
 
 # Calculating for different platforms
 PLATFORM_LIST: List[str] = ['hboMax', 'hboNow']
 DAY_LATENCY: int = 1  # started counting after [day_latency] days
 TARGET_DATE: str = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
 
+=======
+PLATFORM_LIST: List[str] = ['hboMax', 'hboNow']
+DAY_LATENCY: int = 0  # started counting after [day_latency] days
+>>>>>>> e4e7683ddd9e9b1d3f39d56c3479480fd4cd46ef
 # Source of viewership, either heartbeat or now_user_stream
 VIEWERSHIP_TABLE: Dict[str, str] = {
 	'hboMax': "'max_prod.viewership.max_user_stream_heartbeat_view'",
 	'hboNow': "'max_prod.viewership.now_user_stream'"
 }
+<<<<<<< HEAD
 
+=======
+TARGET_DATE: str = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+>>>>>>> e4e7683ddd9e9b1d3f39d56c3479480fd4cd46ef
 # The end date of the viewership data
 END_DATE: Dict[str, str] = {
 	'hboNow': "'2020-05-27'",
@@ -88,6 +101,45 @@ def load_query(filename: str, **kwargs) -> str:
 	query = query.format(**kwargs)
 	return query
 
+<<<<<<< HEAD
+=======
+def update_subscriber_table(
+	database: str,
+	schema: str,
+	warehouse: str,
+	role: str,
+	snowflake_env: str
+) -> pd.DataFrame:
+	"""
+	Update the denominator table for content funnel metrics
+
+	:param database: name of the database
+	:param schema: name of the schema
+	:param warehouse: name of the warehouse
+	:param role: name of the role
+	:param snowflake_env: environment used in Snowflake
+	"""
+	logger.info(f'Loading query {QUERY_SUBSCRIBER_TABLE}')
+
+	query_subscriber_table = load_query(
+		f'{CURRENT_PATH}/{QUERY_SUBSCRIBER_TABLE}',
+		database=database,
+		schema=schema
+	)
+
+	df_subscriber_table = execute_query(
+		query=query_subscriber_table,
+		database=database,
+		schema=schema,
+		warehouse=warehouse,
+		role=role,
+		snowflake_env=snowflake_env
+	)
+	logger.info(f'Query returned shape: {df_subscriber_table.shape}')
+
+	return df_subscriber_table
+
+>>>>>>> e4e7683ddd9e9b1d3f39d56c3479480fd4cd46ef
 def update_funnel_metrics_table(
 	database: str,
 	schema: str,
@@ -160,6 +212,18 @@ if __name__ == '__main__':
 	logger.info(f'database: {args.DATABASE}')
 	logger.info(f'schema: {args.SCHEMA}')
 
+<<<<<<< HEAD
+=======
+	logger.info('Updating subcriber table')
+	df_subscriber_table = update_subscriber_table(
+		database=args.DATABASE,
+		schema=args.SCHEMA,
+		warehouse=args.WAREHOUSE,
+		role=args.ROLE,
+		snowflake_env=args.SNOWFLAKE_ENV
+	)
+
+>>>>>>> e4e7683ddd9e9b1d3f39d56c3479480fd4cd46ef
 	logger.info('Updating metrics table')
 	df_funnel_metrics = update_funnel_metrics_table(
 		database=args.DATABASE,

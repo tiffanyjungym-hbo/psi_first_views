@@ -14,10 +14,10 @@ from typing import Dict, List
 
 SNOWFLAKE_ACCOUNT_NAME: str = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.us-east-1'
 QUERY_SUBSCRIBER_TABLE: str = 'total_sub_base_table.sql'
-
 CURRENT_PATH: str = pathlib.Path(__file__).parent.absolute()
 QUERY_FUNNEL_METRICS: str = 'title_retail_funnel_metrics_update.sql'
-# [ndays] since first offered
+
+## [ndays] since first offered
 DAY_LIST: List[int] = [
 	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 28
 ]
@@ -89,6 +89,7 @@ def load_query(filename: str, **kwargs) -> str:
 
 	query = query.format(**kwargs)
 	return query
+
 
 def update_funnel_metrics_table(
 	database: str,
@@ -205,6 +206,7 @@ if __name__ == '__main__':
 		role=args.ROLE,
 		snowflake_env=args.SNOWFLAKE_ENV
 	)
+
 
 
 	logger.info('Updating metrics table')

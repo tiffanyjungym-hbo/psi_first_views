@@ -90,7 +90,6 @@ def load_query(filename: str, **kwargs) -> str:
 	query = query.format(**kwargs)
 	return query
 
-
 def update_funnel_metrics_table(
 	database: str,
 	schema: str,
@@ -206,6 +205,7 @@ if __name__ == '__main__':
 		role=args.ROLE,
 		snowflake_env=args.SNOWFLAKE_ENV
 	)
+
 
 
 

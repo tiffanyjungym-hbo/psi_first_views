@@ -1,10 +1,7 @@
 -- nday: [ndays] since first offered
 -- day_latency: started counting after [day_latency] days
 -- viewership table: source of viewership, either heartbeat or now_uer_stream
-<<<<<<< HEAD
-=======
 -- sub_table: subscriber table, should be updated everytime before updating the heartbeat
->>>>>>> e4e7683ddd9e9b1d3f39d56c3479480fd4cd46ef
 -- end_date: the end date of the viewership data
 
 -- exist_ind_val: indicating if a title_name - platform_name - days_since_first_offered combination exists in the target table

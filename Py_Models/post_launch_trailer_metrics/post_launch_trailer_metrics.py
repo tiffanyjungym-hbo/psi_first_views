@@ -134,7 +134,6 @@ def update_trailer_table(
 	return df_trailer_metrics
 
 if __name__ == '__main__':
-
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--SNOWFLAKE_ENV', required=True)
 	parser.add_argument('--WAREHOUSE', required=True)

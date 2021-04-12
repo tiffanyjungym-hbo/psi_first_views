@@ -25,7 +25,7 @@ DAY_LIST: List[int] = [
   # Calculating for different platforms
 PLATFORM_LIST: List[str] = ['hboMax', 'hboNow']
 DAY_LATENCY: int = 0  # started counting after [day_latency] days
-TARGET_DATE: str = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+TARGET_DATE: str = (datetime.datetime.today() - datetime.timedelta(days=DAY_LATENCY)).strftime('%Y-%m-%d')
 
 # Source of viewership, either heartbeat or now_user_stream
 VIEWERSHIP_TABLE: Dict[str, str] = {
@@ -90,13 +90,13 @@ def load_query(filename: str, **kwargs) -> str:
 	query = query.format(**kwargs)
 	return query
 
-def update_subscriber_table(
+def update_funnel_metrics_table(
 	database: str,
 	schema: str,
 	warehouse: str,
 	role: str,
 	snowflake_env: str
-) -> pd.DataFrame:
+    ) -> pd.DataFrame:
 	"""
 	Update the denominator table for content funnel metrics
 
@@ -205,6 +205,7 @@ if __name__ == '__main__':
 		role=args.ROLE,
 		snowflake_env=args.SNOWFLAKE_ENV
 	)
+
 
 	logger.info('Updating metrics table')
 	df_funnel_metrics = update_funnel_metrics_table(

@@ -24,6 +24,7 @@ DAY_LIST: List[int] = [
 
 # Calculating for different platforms
 PLATFORM_LIST: List[str] = ['hboMax']
+
 DAY_LATENCY: int = 0  # started counting after [day_latency] days
 TARGET_DATE: str = (datetime.datetime.today() - datetime.timedelta(days=DAY_LATENCY)).strftime('%Y-%m-%d')
 
@@ -90,6 +91,7 @@ def load_query(filename: str, **kwargs) -> str:
 
 	query = query.format(**kwargs)
 	return query
+
 
 def update_funnel_metrics_table(
 	database: str,

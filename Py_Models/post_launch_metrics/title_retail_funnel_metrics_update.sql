@@ -10,7 +10,7 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
     with existing_title_info as (
         select distinct
               match_id
-        from max_dev.workspace.title_retail_funnel_metrics
+        from {database}.{schema}.title_retail_funnel_metrics
         where 1=1
             and days_since_first_offered = {nday}
             and platform_name =

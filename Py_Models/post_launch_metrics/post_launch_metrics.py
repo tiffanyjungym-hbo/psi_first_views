@@ -23,8 +23,7 @@ DAY_LIST: List[int] = [
 ]
 
 # Calculating for different platforms
-PLATFORM_LIST: List[str] = ['hboMax']
-
+PLATFORM_LIST: List[str] = ['hboMax', 'hboNow']
 DAY_LATENCY: int = 0  # started counting after [day_latency] days
 TARGET_DATE: str = (datetime.datetime.today() - datetime.timedelta(days=DAY_LATENCY)).strftime('%Y-%m-%d')
 
@@ -174,4 +173,4 @@ if __name__ == '__main__':
 		snowflake_env=args.SNOWFLAKE_ENV
 	)
 
-	logger.info('Finished metrics table updates')
+	logger.info('Finished table updates')

@@ -25,7 +25,7 @@ dags:
       retries: 1
       domain: "content"
       retry_delay: 15
-    schedule_interval: "@once"
+    schedule_interval: "@daily"
     max_active_runs: 1
     catchup: False
     schema: "WORKSPACE"
@@ -41,7 +41,7 @@ dags:
       script_loc: "common"
       script_name: "post_launch_subscriber"
       param_file_name: "post_launch_subscriber"
-      
+
     - name: "python_script_post_launch_metrics"
       type: "BashOperator"
       script_loc: "common"

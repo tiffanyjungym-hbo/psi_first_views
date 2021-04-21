@@ -36,7 +36,7 @@ dags:
       PROD: "hbomax-cds-alerts"
     tasks:
 
-    - name: "prediction_feature_extraction"
+    - name: "python_script_prediction_feature_extraction"
       type: "BashOperator"
       script_loc: "common"
       script_name: "prediction_feature_extraction"
@@ -46,6 +46,6 @@ dags:
       type: "EmailOperator"
       to: "mei-cheng.shih@warnermedia.com"
       subject: "sagemaker-airflow: EMAIL TASK test"
-      html: "Hi Team,<br><h3>Test email from sagemaker-airflow DAG task.</h3><br>Regards,<br> DAP"
+      html: "Hi Team,<br><h3>Test email from sagemaker-airflow DAG task. The process is completed. </h3><br>Regards,<br> DAP"
       upstream_task_name : "prediction_feature_extraction"
 

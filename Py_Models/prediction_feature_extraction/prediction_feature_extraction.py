@@ -15,7 +15,7 @@ import boto3
 
 SNOWFLAKE_ACCOUNT_NAME: str = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.us-east-1'
 CURRENT_PATH: str = pathlib.Path(__file__).parent.absolute()
-STAGE: str = 'hbo-ingest-datascience-content-dev'
+STAGE: str = '@HBO_INGEST_DATASCIENCE_CONTENT_DEV'
 
 # Feature queries
 PERCENT_VIEW: str = 'feature_extraction_funnel_metric.sql'

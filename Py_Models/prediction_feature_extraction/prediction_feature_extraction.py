@@ -104,10 +104,10 @@ def run_feature_query_list(
 
 	feature_data = pd.DataFrame()
 
-    	for QUERY_NAME in QUERY_LIST:		
-        	logger.info(f'Getting prediction feature group: {QUERY_NAME}')
-    
-        	_query = load_query(
+	for QUERY_NAME in QUERY_LIST:		
+		logger.info(f'Getting prediction feature group: {QUERY_NAME}')
+    		
+		_query = load_query(
  				f'{CURRENT_PATH}/{QUERY_NAME}',
  				database=database,
  				schema=schema,
@@ -116,9 +116,9 @@ def run_feature_query_list(
  				funnel_metrics_table=FUNNEL_METRICS_TABLE_NAME,
  			)
  
-        	start_time = time.time()
+		start_time = time.time()
  
-        	feature_data = execute_query(
+		feature_data = execute_query(
  				query=_query,
  				database=database,
  				schema=schema,
@@ -129,10 +129,10 @@ def run_feature_query_list(
          
         
  
-        	end_time = time.time()
-        	logger.info(f'Time taken {end_time - start_time} seconds')
+		end_time = time.time()
+		logger.info(f'Time taken {end_time - start_time} seconds')
  
- 		feature_data = pd.concat([feature_data, feature_data], axis=1)
+		feature_data = pd.concat([feature_data, feature_data], axis=1)
          
 	return feature_data
 

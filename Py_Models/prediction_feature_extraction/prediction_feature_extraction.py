@@ -100,12 +100,10 @@ def run_feature_query_list(
 	:param snowflake_env: environment used in Snowflake
 	"""
 	# Create latest funnel metrics
-	logger.info(f'Loading query {QUERY_FUNNEL_METRICS}')
-
 	feature_data = pd.DataFrame()
 
-	for QUERY_NAME in QUERY_LIST:		
-		logger.info(f'Getting prediction feature group: {QUERY_NAME}')
+	for QUERY_NAME in QUERY_LIST:	
+    logger.info(f'Loading query {QUERY_NAME}')
     		
 		_query = load_query(
  				f'{CURRENT_PATH}/{QUERY_NAME}',

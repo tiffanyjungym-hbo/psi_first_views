@@ -47,5 +47,5 @@ dags:
       to: "mei-cheng.shih@warnermedia.com"
       subject: "sagemaker-airflow: EMAIL TASK test"
       html: "Hi Team,<br><h3>Test email from sagemaker-airflow DAG task. The process is completed. </h3><br>Regards,<br> DAP"
-      upstream_task_name : "prediction_feature_extraction"
+      upstream_task_name : "python_script_prediction_feature_extraction"
 

@@ -101,7 +101,7 @@ def run_feature_query_list(
 	"""
 	# Create latest funnel metrics
 	logger.info(f'Loading query {QUERY_FUNNEL_METRICS}')
-	 _feature_data = pd.DataFrame()
+	_feature_data = pd.DataFrame()
 
     	for QUERY_NAME in QUERY_LIST:		
         	logger.info(f'Getting prediction feature group: {QUERY_NAME}')

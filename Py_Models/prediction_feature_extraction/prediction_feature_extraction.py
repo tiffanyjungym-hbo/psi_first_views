@@ -26,8 +26,8 @@ METADATA: str = 'feature_extraction_metadata.sql'
 TRAILER: str = 'feature_extraction_trailer.sql'
 
 # Input table name
-TRAILER_TABLE_NAME str: = 'trailer_view_percent_test'
-FUNNEL_METRICS_TABLE_NAME str: = 'funnel_metrics_table'
+TRAILER_TABLE_NAME: str = 'trailer_view_percent_test'
+FUNNEL_METRICS_TABLE_NAME: str = 'funnel_metrics_table'
 
 # Feature query group
 # QUERY_LIST = [PERCENT_VIEW, VTP, MP_CLICK, CONTENT_COST, METADATA, TRAILER]

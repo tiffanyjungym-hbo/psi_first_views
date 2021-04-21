@@ -129,9 +129,8 @@ def run_feature_query_list(
  
 		end_time = time.time()
 		logger.info(f'Time taken {end_time - start_time} seconds')
- 
-        	feature_data = pd.concat([feature_data, feature_data], axis=1)
-         
+		feature_data = pd.concat([feature_data, feature_data], axis=1)
+
 	return feature_data
 
 if __name__ == '__main__':

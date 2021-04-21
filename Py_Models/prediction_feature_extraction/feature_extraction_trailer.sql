@@ -1,4 +1,4 @@
-COPY INTO {stage}/
+COPY INTO {stage}/trailer_feature.csv
 FROM (
     with final as (select distinct
           concat(case when f.platform_name = 'hboNow' then 0

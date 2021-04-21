@@ -103,7 +103,7 @@ def run_feature_query_list(
 	feature_data = pd.DataFrame()
 
 	for QUERY_NAME in QUERY_LIST:	
-    logger.info(f'Loading query {QUERY_NAME}')
+		logger.info(f'Loading query {QUERY_NAME}')
     		
 		_query = load_query(
  				f'{CURRENT_PATH}/{QUERY_NAME}',

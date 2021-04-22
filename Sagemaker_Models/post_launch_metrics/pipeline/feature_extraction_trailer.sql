@@ -11,7 +11,6 @@ FROM (
     order by retail_trailer_view_metric desc)
 
     select * from final
-    order by
 ) file_format = (type='csv') OVERWRITE = TRUE header = TRUE;
 
 ;

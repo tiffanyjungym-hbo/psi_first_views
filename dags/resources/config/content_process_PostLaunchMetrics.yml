@@ -26,7 +26,8 @@ dags:
       retry_delay: 15
     schedule_interval: "@daily"
     max_active_runs: 1
-    catchup: False
+    catchup: False 
+    pipeline_dir: "/dags/resources/pipeline/feature_extraction/"
     schema: "WORKSPACE"
     model_name: "post_launch_metrics"
     glue_model_name: "post_launch_metrics"    

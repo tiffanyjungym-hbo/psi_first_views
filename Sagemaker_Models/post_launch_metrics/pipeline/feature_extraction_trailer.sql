@@ -1,3 +1,5 @@
+USE SCHEMA workspace;
+
 COPY INTO {stage}/trailer_feature.csv
 FROM (
     with final as (select distinct

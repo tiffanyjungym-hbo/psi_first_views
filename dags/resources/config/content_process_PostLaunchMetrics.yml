@@ -27,7 +27,6 @@ dags:
     schedule_interval: "@daily"
     max_active_runs: 1
     catchup: False 
-    pipeline_dir: "/dags/resources/pipeline/feature_extraction/"
     schema: "WORKSPACE"
     model_name: "post_launch_metrics"
     glue_model_name: "post_launch_metrics"    
@@ -39,7 +38,7 @@ dags:
     - name: "trailer_feature_to_staging"
       templates_dict:
         stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
-        schema: schema
+        schema: 'workspace'
       sql_file_names:
         - "feature_extraction_trailer.sql"
 

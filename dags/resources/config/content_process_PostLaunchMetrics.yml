@@ -8,7 +8,6 @@ CommonConf: !include common/snowflake_common_config.yml
 # Configuration Job pipeline
 #================================================================================================
 
-
 dags:
   sagemaker:
     domain: "max"
@@ -36,16 +35,16 @@ dags:
       PROD: "hbomax-cds-alerts"
     tasks:
 
-    - name: "python_script_prediction_feature_extraction"
-      type: "BashOperator"
-      script_loc: "common"
-      script_name: "prediction_feature_extraction"
-      param_file_name: "prediction_feature_extraction"
+    - name: "trailer_feature_to_staging"
+      templates_dict:
+        stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
+      sql_file_names:
+        - "feature_extraction_trailer.sql"
 
     - name: "send_notification_cds"
       type: "EmailOperator"
       to: "mei-cheng.shih@warnermedia.com"
       subject: "sagemaker-airflow: EMAIL TASK test"
       html: "Hi Team,<br><h3>Test email from sagemaker-airflow DAG task. The process is completed. </h3><br>Regards,<br> DAP"
-      upstream_task_name : "python_script_prediction_feature_extraction"
+      upstream_task_name : "trailer_feature_to_staging"
 

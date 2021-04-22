@@ -38,6 +38,7 @@ dags:
     - name: "trailer_feature_to_staging"
       templates_dict:
         stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
+        schema: schema
       sql_file_names:
         - "feature_extraction_trailer.sql"
 

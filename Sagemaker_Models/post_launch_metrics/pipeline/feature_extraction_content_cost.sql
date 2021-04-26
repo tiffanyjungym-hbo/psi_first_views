@@ -1,8 +1,6 @@
+use schema workspace;
 use role max_content_analytics;
-
-USE SCHEMA workspace;
-
-COPY INTO {stage}/content_cost_feature.csv
+COPY INTO {stage}/metadata_feature.csv
 FROM (
     with originals as (
         select distinct

@@ -62,6 +62,13 @@ FROM (
                     , 'DAY019_VTP'
                     , 'DAY020_VTP'
                     , 'DAY021_VTP'
+                    , 'DAY022_VTP'
+                    , 'DAY023_VTP'
+                    , 'DAY024_VTP'
+                    , 'DAY025_VTP'
+                    , 'DAY026_VTP'
+                    , 'DAY027_VTP'
+                    , 'DAY028_VTP'
                 ))
         as vpt
         order by match_id_platform

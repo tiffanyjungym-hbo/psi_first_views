@@ -60,6 +60,12 @@ FROM (
                     , 'DAY019_PERCENT_VIEWED'
                     , 'DAY020_PERCENT_VIEWED'
                     , 'DAY021_PERCENT_VIEWED'
+                    , 'DAY022_PERCENT_VIEWED'
+                    , 'DAY023_PERCENT_VIEWED'
+                    , 'DAY024_PERCENT_VIEWED'
+                    , 'DAY025_PERCENT_VIEWED'
+                    , 'DAY026_PERCENT_VIEWED'
+                    , 'DAY027_PERCENT_VIEWED'
                     , 'DAY028_PERCENT_VIEWED'
                 ))
         as viewed_percent

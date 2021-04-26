@@ -1,5 +1,7 @@
-use role max_content_analytics
+use role max_content_analytics;
 
+COPY INTO {stage}/trailer_feature.csv
+FROM (
 with originals as (
     select distinct
         concat(mapped_id, case when rad.content_category = 'series'

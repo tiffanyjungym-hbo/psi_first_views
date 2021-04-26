@@ -5,7 +5,7 @@ FROM (
     with final as (select distinct
           concat(case when f.platform_name = 'hboNow' then 0
                     else 1 end, '-', f.match_id) as match_id_platform
-        , ifnull(retail_trailer_view_metric, -1) as retail_trailer_view_metric
+        , ifnull(t.retail_view_count_percent, -1) as retail_trailer_view_metric
     from max_beta.{schema}.trailer_view_percent_test as t
     right join max_beta.{schema}.title_retail_funnel_metrics as f
         on t.match_id_platform = concat(case when f.platform_name = 'hboNow' then 0

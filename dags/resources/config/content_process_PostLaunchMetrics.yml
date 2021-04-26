@@ -50,6 +50,38 @@ dags:
         schema: 'workspace'
       sql_file_names:
         - "feature_extraction_funnel_metric.sql"
+
+    - name: "metadata_feature_to_staging"
+      templates_dict:
+        stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
+        database: 'max_beta'
+        schema: 'workspace'
+      sql_file_names:
+        - "feature_extraction_metadata.sql"
+
+    - name: "mp_click_pre_launch_feature_to_staging"
+      templates_dict:
+        stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
+        database: 'max_beta'
+        schema: 'workspace'
+      sql_file_names:
+        - "feature_extraction_mp_click_pre_launch.sql"
+    
+    - name: "sub_total_feature_to_staging"
+      templates_dict:
+        stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
+        database: 'max_beta'
+        schema: 'workspace'
+      sql_file_names:
+        - "feature_extraction_total_sub_num.sql"
+
+    - name: "content_cost_to_staging"
+      templates_dict:
+        stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
+        database: 'max_beta'
+        schema: 'workspace'
+      sql_file_names:
+        - "feature_extraction_content_cost.sql"
     
     - name: "vtp_feature_to_staging"
       templates_dict:

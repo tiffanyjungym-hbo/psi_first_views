@@ -15,7 +15,5 @@ FROM (
     select * from final
 ) file_format = (type='csv') OVERWRITE = TRUE header = TRUE;
 
-;
-
 
 

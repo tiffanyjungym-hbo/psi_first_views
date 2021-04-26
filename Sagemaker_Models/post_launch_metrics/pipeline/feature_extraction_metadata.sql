@@ -154,4 +154,4 @@ FROM (
 
     select * from fin_meta_data_table
     order by match_id
-) file_format = (type='csv' compression = 'NONE') single = true OVERWRITE = TRUE header = TRUE;
+) file_format = (type='csv' compression = 'NONE' field_optionally_enclosed_by='"') single = true OVERWRITE = TRUE header = TRUE;

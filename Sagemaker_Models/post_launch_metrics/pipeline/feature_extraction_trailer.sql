@@ -13,7 +13,7 @@ FROM (
     order by retail_trailer_view_metric desc)
 
     select * from final
-) file_format = (type='csv') single = true OVERWRITE = TRUE header = TRUE;
+) file_format = (type='csv' compression = 'NONE') single = true OVERWRITE = TRUE header = TRUE;
 
 
 

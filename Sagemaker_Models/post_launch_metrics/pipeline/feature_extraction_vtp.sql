@@ -73,7 +73,7 @@ FROM (
 
     order by match_id_platform
 
-) file_format = (type='csv') single = true OVERWRITE = TRUE header = TRUE;
+) file_format = (type='csv' compression = 'NONE') single = true OVERWRITE = TRUE header = TRUE;
 
 
 

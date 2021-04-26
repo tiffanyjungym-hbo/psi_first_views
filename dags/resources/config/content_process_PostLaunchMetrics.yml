@@ -42,6 +42,20 @@ dags:
       sql_file_names:
         - "feature_extraction_trailer.sql"
 
+    - name: "funnel_metric_feature_to_staging"
+      templates_dict:
+        stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
+        schema: 'workspace'
+      sql_file_names:
+        - "feature_extraction_funnel_metric.sql"
+    
+    - name: "vtp_feature_to_staging"
+      templates_dict:
+        stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
+        schema: 'workspace'
+      sql_file_names:
+        - "feature_extraction_vtp.sql"
+
     - name: "send_notification_cds"
       type: "EmailOperator"
       to: "mei-cheng.shih@warnermedia.com"

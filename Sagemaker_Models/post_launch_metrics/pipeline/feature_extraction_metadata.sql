@@ -2,7 +2,6 @@ USE SCHEMA workspace;
 
 COPY INTO {stage}/metadata_feature.csv
 FROM (
-
     with runtime_info as (
         select
             viewable_id

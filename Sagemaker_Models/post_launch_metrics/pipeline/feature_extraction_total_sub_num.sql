@@ -36,7 +36,7 @@ FROM (
         select
             *
         from viewed_pivot_base
-        pivot(mode(retail_viewed_count_percent) for
+        pivot(mode(total_retail_sub_count) for
             days_since_first_offered in (
                     'DAY001_SUB_COUNT'
                     , 'DAY002_SUB_COUNT'

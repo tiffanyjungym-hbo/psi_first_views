@@ -75,13 +75,13 @@ dags:
       sql_file_names:
         - "feature_extraction_total_sub_num.sql"
 
-    - name: "content_cost_to_staging"
-      templates_dict:
-        stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
-        database: 'max_beta'
-        schema: 'workspace'
-      sql_file_names:
-        - "feature_extraction_content_cost.sql"
+ #   - name: "content_cost_to_staging"
+ #     templates_dict:
+ #       stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
+ #       database: 'max_beta'
+ #       schema: 'workspace'
+ #     sql_file_names:
+ #       - "feature_extraction_content_cost.sql"
     
     - name: "vtp_feature_to_staging"
       templates_dict:

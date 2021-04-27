@@ -35,6 +35,26 @@ dags:
       PROD: "hbomax-cds-alerts"
     tasks:
 
+    - name: "python_script_post_launch_subscriber"
+      type: "BashOperator"
+      script_loc: "common"
+      script_name: "post_launch_subscriber"
+      param_file_name: "post_launch_subscriber"
+
+    - name: "python_script_post_launch_metrics"
+      type: "BashOperator"
+      script_loc: "common"
+      script_name: "post_launch_metrics"
+      param_file_name: "post_launch_metrics"
+      upstream_task_name: "python_script_post_launch_subscriber"
+
+    - name: "python_script_post_launch_trailer_metrics"
+      type: "BashOperator"
+      script_loc: "common"
+      script_name: "post_launch_trailer_metrics"
+      param_file_name: "post_launch_trailer_metrics"
+      upstream_task_name: "python_script_post_launch_subscriber"
+
     - name: "trailer_feature_to_staging"
       templates_dict:
         stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
@@ -42,6 +62,7 @@ dags:
         schema: 'workspace'
       sql_file_names:
         - "feature_extraction_trailer.sql"
+      upstream_task_name: "python_script_post_launch_trailer_metrics"
 
     - name: "funnel_metric_feature_to_staging"
       templates_dict:
@@ -50,6 +71,7 @@ dags:
         schema: 'workspace'
       sql_file_names:
         - "feature_extraction_funnel_metric.sql"
+      upstream_task_name: "python_script_post_launch_metrics"
 
     - name: "metadata_feature_to_staging"
       templates_dict:
@@ -90,6 +112,7 @@ dags:
         schema: 'workspace'
       sql_file_names:
         - "feature_extraction_vtp.sql"
+      upstream_task_name: "python_script_post_launch_metrics"
 
     - name: "send_notification_cds"
       type: "EmailOperator"

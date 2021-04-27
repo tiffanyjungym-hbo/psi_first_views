@@ -155,5 +155,4 @@ FROM (
     order by match_id
 ) file_format = (type = 'csv' 
         compression = 'NONE' 
-        null_if = () 
         field_optionally_enclosed_by = '"') single = true OVERWRITE = TRUE header = TRUE;

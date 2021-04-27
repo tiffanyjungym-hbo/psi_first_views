@@ -115,7 +115,9 @@ FROM (
             , datediff(day, m.earliest_public_timestamp, earliest_offered_timestamp)/365.0 as title_age_approx_meta
             , datediff(year, to_date(to_char(prod_release_year), 'YYYY'), earliest_offered_timestamp) as title_age_approx_imdb
         from meta_agg as m
+        -- only to get the platform_name and earliest_offered_timestamp from max
         join {database}.{schema}.title_retail_funnel_metrics as f
+            on m.match_id = f.match_id
     ),
 
     fin_meta_data_table as (

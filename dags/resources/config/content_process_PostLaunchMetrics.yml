@@ -121,6 +121,33 @@ dags:
       html: "Hi Team,<br><h3>Test email from sagemaker-airflow DAG task.</h3><br>Regards,<br> DAP"
       upstream_task_name : "python_script_post_launch_metrics"
 
+<<<<<<< HEAD
+    - name: "ecr_container_creation"
+      type: "BashOperator"
+      kernel: "python3"
+      upstream_task_name : "funnel_metric_feature_to_staging"
+
+    - name: "sagemaker_notebook_job_processing_script"
+      type: "BashOperator"
+      notebook_name: "PrePostLaunch_28d"
+      Details:
+        instance_type: "ml.m5.2xlarge"
+        instance_count: 1
+      templates_dict:
+        env: "{{ var.value.ENV }}"
+        dt: "{{ macros.ds_add(ds,1) }}"
+        yr: "{{ macros.yr(macros.ds_add(ds,1)) }}"
+        mo: "{{ macros.mo(macros.ds_add(ds,1)) }}"
+        bucket_prefix: "datascience-content" 
+      BucketIOConfig:
+        DEV:
+          model_bucket: "datascience-content-dev"
+        BETA:
+          model_bucket: "datascience-content-beta"
+        PROD:
+          model_bucket: "datascience-content"
+      upstream_task_name: "ecr_container_creation"
+=======
       - name: "ecr_container_creation"
         type: "BashOperator"
         kernel: "python3"
@@ -146,3 +173,4 @@ dags:
           PROD:
             model_bucket: "datascience-content"
         upstream_task_name: "ecr_container_creation"
+>>>>>>> 90669add5aa7d1d961d595c981f81baa2c97e521

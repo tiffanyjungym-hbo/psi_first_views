@@ -1,0 +1,60 @@
+#================================================================================================
+# Importing sagemaker common configuration
+#================================================================================================
+
+CommonConf: !include common/sagemaker_config_common.yml
+
+#================================================================================================
+# Configuration sagemaker processing Job pipeline
+#================================================================================================
+
+
+dags:
+  sagemaker:
+    domain: "sagemaker"
+    sub_domain: "job_process"
+    action: "PrePostLaunch_28d"
+    default_args:
+      owner: "Mei-Cheng Shih"
+      depends_on_past: False
+      start_date: "2021-05-04"
+      email_prod: "mei-cheng.shih@warnermedia.com"
+      email_nonprod: "mei-cheng.shih@warnermedia.com"
+      email_on_failure: True
+      email_on_retry: True
+      retries: 0
+      domain: "sagemaker"
+      retry_delay: 15
+    max_active_runs: 1
+    catchup: False
+    schema: "WORKSPACE"
+    slack_channel:
+      NON-PROD: "hbomax-cds-alerts"
+      PROD: "hbomax-cds-alerts"
+    model_name: "PrePostLaunch_28d"
+
+    tasks:
+      - name: "ecr_container_creation"
+        type: "BashOperator"
+        kernel: "python3"
+
+      - name: "sagemaker_notebook_job_processing_script"
+        type: "BashOperator"
+        notebook_name: "PrePostLaunch_28d"
+        Details:
+          instance_type: "ml.m5.2xlarge"
+          instance_count: 1
+        templates_dict:
+          env: "{{ var.value.ENV }}"
+          dt: "{{ macros.ds_add(ds,1) }}"
+          yr: "{{ macros.yr(macros.ds_add(ds,1)) }}"
+          mo: "{{ macros.mo(macros.ds_add(ds,1)) }}"
+          bucket_prefix: "datascience-content" 
+        BucketIOConfig:
+          DEV:
+            model_bucket: "datascience-content-dev"
+          BETA:
+            model_bucket: "datascience-content-beta"
+          PROD:
+            model_bucket: "datascience-content"
+        upstream_task_name: "ecr_container_creation"

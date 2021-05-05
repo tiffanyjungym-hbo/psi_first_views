@@ -26,7 +26,7 @@ dags:
       retry_delay: 15
     schedule_interval: "@daily"
     max_active_runs: 1
-    catchup: False 
+    catchup: False
     schema: "WORKSPACE"
     model_name: "post_launch_metrics"
     glue_model_name: "post_launch_metrics"    
@@ -118,6 +118,6 @@ dags:
       type: "EmailOperator"
       to: "mei-cheng.shih@warnermedia.com"
       subject: "sagemaker-airflow: EMAIL TASK test"
-      html: "Hi Team,<br><h3>Test email from sagemaker-airflow DAG task. The process is completed. </h3><br>Regards,<br> DAP"
-      upstream_task_name : "trailer_feature_to_staging"
+      html: "Hi Team,<br><h3>Test email from sagemaker-airflow DAG task.</h3><br>Regards,<br> DAP"
+      upstream_task_name : "python_script_post_launch_metrics"
 

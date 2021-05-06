@@ -96,6 +96,7 @@ dags:
         schema: 'workspace'
       sql_file_names:
         - "feature_extraction_total_sub_num.sql"
+      upstream_task_name: "python_script_post_launch_metrics"
 
  #   - name: "content_cost_to_staging"
  #     templates_dict:
@@ -113,13 +114,6 @@ dags:
       sql_file_names:
         - "feature_extraction_vtp.sql"
       upstream_task_name: "python_script_post_launch_metrics"
-
-    - name: "send_notification_cds"
-      type: "EmailOperator"
-      to: "mei-cheng.shih@warnermedia.com"
-      subject: "sagemaker-airflow: EMAIL TASK test"
-      html: "Hi Team,<br><h3>Test email from sagemaker-airflow DAG task.</h3><br>Regards,<br> DAP"
-      upstream_task_name : "python_script_post_launch_metrics"
 
     - name: "ecr_container_creation"
       type: "BashOperator"
@@ -146,3 +140,10 @@ dags:
         PROD:
           model_bucket: "datascience-content"
       upstream_task_name: "ecr_container_creation"
+
+    - name: "send_notification_cds"
+      type: "EmailOperator"
+      to: "mei-cheng.shih@warnermedia.com"
+      subject: "sagemaker-airflow: EMAIL TASK test"
+      html: "Hi Team,<br><h3>Test email from sagemaker-airflow DAG task.</h3><br>Regards,<br> DAP"
+      upstream_task_name : "sagemaker_notebook_job_processing_script"

@@ -1,4 +1,4 @@
 pandas
 numpy
-matplotlib
 lightgbm
+boto3

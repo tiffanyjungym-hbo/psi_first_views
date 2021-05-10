@@ -128,11 +128,11 @@ dags:
         instance_count: 1
       BucketIOConfig:
         DEV:
-          model_bucket: "datascience-content-dev"
+          model_bucket: "hbo-ingest-datascience-content-dev"
         BETA:
-          model_bucket: "datascience-content-beta"
+          model_bucket: "hbo-ingest-datascience-content-dev"
         PROD:
-          model_bucket: "datascience-content"
+          model_bucket: "hbo-ingest-datascience-content"
       upstream_task_name: "ecr_container_creation"
 
     - name: "send_notification_cds"

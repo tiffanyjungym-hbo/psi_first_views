@@ -1,7 +1,7 @@
-pandas
-numpy
+pandas=1.2.3
+numpy=1.19.2
 lightgbm
 boto3
 sklearn
-scipy
+scipy=1.6.2
 matplotlib

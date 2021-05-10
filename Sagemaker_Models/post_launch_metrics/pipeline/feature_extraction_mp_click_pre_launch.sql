@@ -19,7 +19,7 @@ FROM (
         , t.match_id_platform
         , ln(sum(clicks+1)) as ln_total_click_from_marketing_spend
     from title_id as t
-    left join max_prod.analytics.marketing_datorama_in_platform_attr_v2 as am
+    left join max_prod.datorama.datorama_media_perf_hbomax as am
         on lower(case when originals_series_calc in ('HBO MAX GROWTH','HBO NOW')
             then custom_dimension_11 else originals_series_calc end) = lower(get(split(t.title_name, ' S'),0))
             and case when hbo_product_calc = 'MAX' then 'hboMax'
@@ -37,7 +37,7 @@ FROM (
                 end as originals_series_calc
             , count(distinct match_id_platform) as title_count
         from title_id as f
-        left join max_prod.analytics.marketing_datorama_in_platform_attr_v2 as am
+        left join max_prod.datorama.datorama_media_perf_hbomax as am
             on lower(case when originals_series_calc in ('HBO MAX GROWTH','HBO NOW')
             then custom_dimension_11 else originals_series_calc end) = lower(get(split(f.title_name, ' S'),0))
             and case when hbo_product_calc = 'MAX' then 'hboMax'

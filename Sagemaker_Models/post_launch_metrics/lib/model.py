@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
 
-from pre_post_launch.feature_engineering import FeatureEngineering
+from lib.feature_engineering import FeatureEngineering
 
 class ModelMain(FeatureEngineering):
     def __init__(self, data_list,

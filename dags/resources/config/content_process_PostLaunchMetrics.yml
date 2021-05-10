@@ -87,7 +87,7 @@ dags:
 #         database: 'max_beta'
 #         schema: 'workspace'
 #       sql_file_names:
-#         - "feature_extraction_mp_click_pre_launch.sql"
+#         - "feature_extraction_mp_click_post_launch.sql"
     
 #     - name: "sub_total_feature_to_staging"
 #       templates_dict:

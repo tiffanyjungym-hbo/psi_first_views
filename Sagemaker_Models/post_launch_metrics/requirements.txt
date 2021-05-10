@@ -2,3 +2,6 @@ pandas
 numpy
 lightgbm
 boto3
+sklearn
+scipy
+matplotlib

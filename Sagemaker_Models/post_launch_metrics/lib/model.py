@@ -4,7 +4,7 @@ import lightgbm as lgb
 import numpy as np
 import pandas as pd
 pd.options.mode.chained_assignment = None
-from numpy.random import default_rng
+#from numpy.random import default_rng
 from sklearn.linear_model import ElasticNet
 from sklearn.linear_model import LinearRegression as lr
 import itertools as it
@@ -347,7 +347,11 @@ class ModelMain(FeatureEngineering):
         plt.xlabel('Feature names', fontsize=16)
         plt.ylabel('Frequency [%]', fontsize=16)
         plot.get_figure().savefig('{}.png'.format(filename))
-        
+
+    '''
+    # unenable bootstrap functions for now, due to numpy version problem: if it is too old, it does not have default_rng
+    # if it is too new, it conflicts with the newest pandas version available
+
     def bootstrap_confidence_inv(self, output, model_name_list, total_iter = 5000, original_only = False):  
         output_copy = output.reset_index(drop = True).copy()
 
@@ -371,7 +375,7 @@ class ModelMain(FeatureEngineering):
         self.performance_bootstrapped_flag = True
         
         return pd.DataFrame(fin_dict)
-        
+  
     def bootstrap_p_value_lgb_benchmark(self, compare_pair = ['smape_lgb', 'smape_benchmark'], total_iter = 5000):
         if self.performance_bootstrapped_flag == False:
             self.bootstrap_confidence_inv()
@@ -390,7 +394,8 @@ class ModelMain(FeatureEngineering):
         
     def bootstrap_p_value_two_samples(self, sample1, sample2, total_iter = 5000):
         return 0
-    
+    '''
+
     def parameter_tunning(self, model_name, 
                           params_tunning_dict, 
                           percent_data_process_info,

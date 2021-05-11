@@ -1,7 +1,5 @@
 lightgbm
-boto3
-matplotlib
-numpy
-scipy
 scikit-learn==0.24.0
 pandas==1.1.5
+boto3
+matplotlib

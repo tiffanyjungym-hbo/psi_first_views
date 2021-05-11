@@ -31,7 +31,8 @@ metadata_process_info = {
          , 'ln_total_click_from_marketing_spend'
          , 'total_hours'
          , 'retail_trailer_view_metric'
-         , 'content_cost'
+ #        , 'content_cost'
+         ,'season_number_adj' 
                  ],
     'label_columns':['content_category', 'program_type'],
     'num_columns':['prod_release_year'
@@ -39,7 +40,8 @@ metadata_process_info = {
                    , 'total_hours'
                    , 'title_age_approx'
                    , 'ln_total_click_from_marketing_spend'
-                   , 'content_cost'
+#                   , 'content_cost'
+                   ,'season_number_adj' 
                    ]
 }
 

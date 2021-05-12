@@ -134,10 +134,22 @@ dags:
         PROD:
           model_bucket: "hbo-ingest-datascience-content"
       upstream_task_name: "ecr_container_creation"
+    
+    - name: "write_prediction_output_to_snowflake"
+        templates_dict:
+          stage: "{{ var.value.CI_STAGING }}"
+          dt: "{{ macros.ds_add(ds,1) }}"
+          yr: "{{ macros.yr(macros.ds_add(ds,1)) }}"
+          mo: "{{ macros.mo(macros.ds_add(ds,1)) }}"
+          dy: "{{ macros.dy(macros.ds_add(ds,1)) }}"
+          perc: "{{ 80 }}"
+        upstream_task_name: "sagemaker_notebook_job_processing_script"
+        sql_file_names:
+          - "weekly_aggregation_write.sql" 
 
     - name: "send_notification_cds"
       type: "EmailOperator"
       to: "mei-cheng.shih@warnermedia.com"
       subject: "sagemaker-airflow: EMAIL TASK test"
       html: "Hi Team,<br><h3>Test email from sagemaker-airflow DAG task.</h3><br>Regards,<br> DAP"
-      upstream_task_name : "sagemaker_notebook_job_processing_script"
+      upstream_task_name : "write_prediction_output_to_snowflake"

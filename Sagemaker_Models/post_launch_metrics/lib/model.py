@@ -305,7 +305,7 @@ class ModelMain(FeatureEngineering):
         self.new_title_output['program_type'] = self.X_pred['program_type']
         self.new_title_output.columns = ['target', 'program_type']
         self.new_title_output['target'] = np.nan
-        self.new_title_output = self.base_copy[['title_name','match_id']].\
+        self.new_title_output = self.base_copy[['title_name','match_id_platform','match_id','platform_name']].\
             merge(self.new_title_output, 
                   left_index = True, 
                   right_index = True)

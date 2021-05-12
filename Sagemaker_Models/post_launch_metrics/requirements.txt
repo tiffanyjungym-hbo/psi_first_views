@@ -3,3 +3,4 @@ scikit-learn
 pandas
 boto3
 matplotlib
+numpy==1.19.1

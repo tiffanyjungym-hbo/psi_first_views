@@ -1,7 +1,7 @@
-use schema workspace;
+use schema {schema};
 
 -- Last Prediction table
-create or replace table title_retail_percent_view_d28_prediction (
+create or replace table {database}.{schema}.title_retail_percent_view_d28_prediction (
     title_name string,
     match_id string,
     match_id_platform string,
@@ -39,7 +39,7 @@ copy into output_d28_temp
   file_format = (type = csv null_if=(''))
   on_error = 'CONTINUE';
 
-insert into title_retail_percent_view_d28_prediction
+insert into {database}.{schema}.title_retail_percent_view_d28_prediction
 (select 
     * 
     , curret_timestamp(0) as last_update_timestamp

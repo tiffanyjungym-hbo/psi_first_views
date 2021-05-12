@@ -115,28 +115,32 @@ dags:
 #         - "feature_extraction_vtp.sql"
 #       upstream_task_name: "python_script_post_launch_metrics"
 
-    - name: "ecr_container_creation"
-      type: "BashOperator"
-      kernel: "python3"
-      # upstream_task_name : "funnel_metric_feature_to_staging"
+    # - name: "ecr_container_creation"
+    #   type: "BashOperator"
+    #   kernel: "python3"
+    #   # upstream_task_name : "funnel_metric_feature_to_staging"
 
-    - name: "sagemaker_notebook_job_processing_script"
-      type: "BashOperator"
-      notebook_name: "PrePostLaunch_28d"
-      Details:
-        instance_type: "ml.m5.2xlarge"
-        instance_count: 1
-      BucketIOConfig:
-        DEV:
-          model_bucket: "hbo-ingest-datascience-content-dev"
-        BETA:
-          model_bucket: "hbo-ingest-datascience-content-dev"
-        PROD:
-          model_bucket: "hbo-ingest-datascience-content"
-      upstream_task_name: "ecr_container_creation"
+    # - name: "sagemaker_notebook_job_processing_script"
+    #   type: "BashOperator"
+    #   notebook_name: "PrePostLaunch_28d"
+    #   Details:
+    #     instance_type: "ml.m5.2xlarge"
+    #     instance_count: 1
+    #   BucketIOConfig:
+    #     DEV:
+    #       model_bucket: "hbo-ingest-datascience-content-dev"
+    #     BETA:
+    #       model_bucket: "hbo-ingest-datascience-content-dev"
+    #     PROD:
+    #       model_bucket: "hbo-ingest-datascience-content"
+    #   upstream_task_name: "ecr_container_creation"
     
     - name: "write_prediction_output_to_snowflake"
       upstream_task_name: "sagemaker_notebook_job_processing_script"
+      templates_dict:
+        stage: "{{ var.value.DS_CONTENT_HBO_OUTBOUND_DATASCIENCE_CONTENT_DEV }}"
+        database: 'max_beta'
+        schema: 'workspace'
       sql_file_names:
           - "output_to_S3.sql" 
 

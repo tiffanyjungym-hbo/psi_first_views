@@ -139,7 +139,7 @@ dags:
       upstream_task_name: "sagemaker_notebook_job_processing_script"
       templates_dict:
         stage: "{{ var.value.DS_CONTENT_HBO_OUTBOUND_DATASCIENCE_CONTENT_DEV }}"
-        database: 'max_beta'
+        database: 'max_dev'
         schema: 'workspace'
       sql_file_names:
           - "output_to_S3.sql" 

@@ -136,16 +136,9 @@ dags:
       upstream_task_name: "ecr_container_creation"
     
     - name: "write_prediction_output_to_snowflake"
-        templates_dict:
-          stage: "{{ var.value.CI_STAGING }}"
-          dt: "{{ macros.ds_add(ds,1) }}"
-          yr: "{{ macros.yr(macros.ds_add(ds,1)) }}"
-          mo: "{{ macros.mo(macros.ds_add(ds,1)) }}"
-          dy: "{{ macros.dy(macros.ds_add(ds,1)) }}"
-          perc: "{{ 80 }}"
-        upstream_task_name: "sagemaker_notebook_job_processing_script"
-        sql_file_names:
-          - "weekly_aggregation_write.sql" 
+      upstream_task_name: "sagemaker_notebook_job_processing_script"
+      sql_file_names:
+          - "output_to_S3.sql" 
 
     - name: "send_notification_cds"
       type: "EmailOperator"

@@ -20,7 +20,7 @@ FROM (
                     end), asset.viewable_id) as match_id
             , case when content_category = 'series'
                     then ifnull(season_number, 1)
-                    else season_number
+                    else ifnull(season_number, -1)
                         end as season_number_adj
             , asset.viewable_id
             , case when program_type is null then 'unknown' else program_type end as program_type
@@ -60,7 +60,7 @@ FROM (
             , season_number_adj
             , mode(m.program_type) as program_type
             , mode(m.content_category) as content_category
-            , sum(credits_start_time)/3600.0 as total_hours
+            , ifnull(sum(credits_start_time)/3600.0,-1) as total_hours
             , max(case when scripted_flag is null then -1 else scripted_flag end) as scripted_flag
             , max(case when sports_flag is null then -1 else sports_flag end) as sports_flag
             , max(case when kids_flag is null then -1 else kids_flag end) as kids_flag

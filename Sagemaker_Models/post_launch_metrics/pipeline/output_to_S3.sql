@@ -2,9 +2,9 @@ use schema {schema};
 
 -- Last Prediction table
 create or replace table {database}.{schema}.title_retail_percent_view_d28_prediction (
-      title_name varchar (255) not null
-    , match_id varchar (255) not null
-    , match_id_platform varchar (255) not null
+      title_name string not null
+    , match_id string not null
+    , match_id_platform string not null
     , platform_name int
     , program_type int
     , pred_day int
@@ -14,9 +14,9 @@ create or replace table {database}.{schema}.title_retail_percent_view_d28_predic
 
 -- Create Temp Table
 create temp table output_d28_temp(
-      title_name varchar (255) not null
-    , match_id varchar (255) not null
-    , match_id_platform varchar (255) not null
+      title_name string not null
+    , match_id string not null
+    , match_id_platform string not null
     , platform_name int
     , program_type int
     , pred_day int

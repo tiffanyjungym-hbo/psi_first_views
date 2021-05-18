@@ -40,7 +40,7 @@ FROM (
         left join max_prod.datorama.datorama_media_perf_hbomax as am
             on lower(case when originals_series_calc in ('HBO MAX GROWTH','HBO NOW')
             then custom_dimension_11 else originals_series_calc end) = lower(get(split(f.title_name, ' S'),0))
-            and case when hbo_product_calc = 'MAX' then 'hboMax'
+            and case when ((hbo_product_calc = 'MAX') or (day>='2020-05-27')) then 'hboMax'
                 else 'hboNow' end = platform_name
         where 1=1
             and hbo_product_calc in ('MAX', 'HBO')

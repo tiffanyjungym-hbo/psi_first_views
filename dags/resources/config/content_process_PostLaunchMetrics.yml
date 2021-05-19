@@ -136,7 +136,7 @@ dags:
           DEV:
             model_bucket: "hbo-ingest-datascience-content-dev"
           BETA:
-            model_bucket: "hbo-ingest-datascience-content-dev"
+            model_bucket: "hbo-ingest-datascience-content-beta"
           PROD:
             model_bucket: "hbo-ingest-datascience-content"
         upstream_task_name: "ecr_container_creation"

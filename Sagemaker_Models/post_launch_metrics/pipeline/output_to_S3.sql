@@ -42,5 +42,5 @@ copy into output_d28_temp
 insert into {database}.{schema}.title_retail_percent_view_d28_prediction (
     select 
         * 
-        , curret_timestamp(0) as last_update_timestamp
+        , current_timestamp(0) as last_update_timestamp
     from output_d28_temp);

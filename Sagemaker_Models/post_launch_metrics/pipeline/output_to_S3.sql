@@ -27,13 +27,13 @@ create temp table output_d28_temp(
 copy into output_d28_temp
     from(
         select 
-              $1:title_name
-            , $1:match_id
-            , $1:match_id_platform
-            , $1:platform_name
-            , $1:program_type
-            , $1:pred_day
-            , $1:percent_view_pred
+              $1
+            , $2
+            , $3
+            , $4
+            , $5
+            , $6
+            , $7
         from {stage}/
         )
     file_format = (type = csv null_if=(''))

@@ -90,7 +90,7 @@ dags:
           database: 'max_dev'
           schema: 'workspace'
         sql_file_names:
-          - "feature_extraction_mp_click_post_launch.sql"
+          - "feature_extraction_mp_click_pre_launch.sql"
         downstream_task_name: ecr_container_creation
 
       - name: "sub_total_feature_to_staging"

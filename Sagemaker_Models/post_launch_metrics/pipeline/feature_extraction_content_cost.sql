@@ -1,5 +1,5 @@
 use schema workspace;
-use role max_content_analytics;
+
 COPY INTO {stage}/metadata_feature.csv
 FROM (
     with originals as (

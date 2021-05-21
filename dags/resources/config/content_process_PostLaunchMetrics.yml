@@ -35,27 +35,27 @@ dags:
       PROD: "hbomax-cds-alerts"
     tasks:
 
-      - name: "python_script_post_launch_subscriber"
-        type: "BashOperator"
-        script_loc: "common"
-        script_name: "post_launch_subscriber"
-        param_file_name: "post_launch_subscriber"
+      # - name: "python_script_post_launch_subscriber"
+      #   type: "BashOperator"
+      #   script_loc: "common"
+      #   script_name: "post_launch_subscriber"
+      #   param_file_name: "post_launch_subscriber"
       
-      # update the trailer first
-      - name: "python_script_post_launch_trailer_metrics"
-        type: "BashOperator"
-        script_loc: "common"
-        script_name: "post_launch_trailer_metrics"
-        param_file_name: "post_launch_trailer_metrics"
-        upstream_task_name: "python_script_post_launch_subscriber"
+      # # update the trailer first
+      # - name: "python_script_post_launch_trailer_metrics"
+      #   type: "BashOperator"
+      #   script_loc: "common"
+      #   script_name: "post_launch_trailer_metrics"
+      #   param_file_name: "post_launch_trailer_metrics"
+      #   upstream_task_name: "python_script_post_launch_subscriber"
       
-      # update the matrics second
-      - name: "python_script_post_launch_metrics"
-        type: "BashOperator"
-        script_loc: "common"
-        script_name: "post_launch_metrics"
-        param_file_name: "post_launch_metrics"
-        upstream_task_name: "python_script_post_launch_trailer_metrics"
+      # # update the matrics second
+      # - name: "python_script_post_launch_metrics"
+      #   type: "BashOperator"
+      #   script_loc: "common"
+      #   script_name: "post_launch_metrics"
+      #   param_file_name: "post_launch_metrics"
+      #   upstream_task_name: "python_script_post_launch_trailer_metrics"
 
       - name: "trailer_feature_to_staging"
         templates_dict:
@@ -64,7 +64,7 @@ dags:
           schema: 'workspace'
         sql_file_names:
           - "feature_extraction_trailer.sql"
-        upstream_task_name: "python_script_post_launch_metrics"
+        #upstream_task_name: "python_script_post_launch_metrics"
         downstream_task_name: ecr_container_creation
 
       - name: "funnel_metric_feature_to_staging"
@@ -74,7 +74,7 @@ dags:
           schema: 'workspace'
         sql_file_names:
           - "feature_extraction_funnel_metric.sql"
-        upstream_task_name: "python_script_post_launch_metrics"
+        #upstream_task_name: "python_script_post_launch_metrics"
         downstream_task_name: ecr_container_creation
 
       - name: "metadata_feature_to_staging"
@@ -84,7 +84,7 @@ dags:
           schema: 'workspace'
         sql_file_names:
           - "feature_extraction_metadata.sql"
-        upstream_task_name: "python_script_post_launch_metrics"
+        #upstream_task_name: "python_script_post_launch_metrics"
         downstream_task_name: ecr_container_creation
 
       - name: "mp_click_pre_launch_feature_to_staging"
@@ -94,7 +94,7 @@ dags:
           schema: 'workspace'
         sql_file_names:
           - "feature_extraction_mp_click_pre_launch.sql"
-        upstream_task_name: "python_script_post_launch_metrics"
+        #upstream_task_name: "python_script_post_launch_metrics"
         downstream_task_name: ecr_container_creation
 
       - name: "sub_total_feature_to_staging"
@@ -104,17 +104,18 @@ dags:
           schema: 'workspace'
         sql_file_names:
           - "feature_extraction_total_sub_num.sql"
-        upstream_task_name: "python_script_post_launch_metrics"
+        #upstream_task_name: "python_script_post_launch_metrics"
         downstream_task_name: ecr_container_creation
 
-    #     - name: "content_cost_to_staging"
-    #       templates_dict:
-    #         stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
-    #         database: 'max_dev'
-    #         schema: 'workspace'
-    #       sql_file_names:
-    #         - "feature_extraction_content_cost.sql"
-    #      downstream_task_name: ecr_container_creation
+      - name: "content_cost_to_staging"
+        templates_dict:
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
+          database: 'max_dev'
+          schema: 'workspace'
+        sql_file_names:
+          - "feature_extraction_content_cost.sql"
+        #upstream_task_name: "python_script_post_launch_metrics"
+        downstream_task_name: ecr_container_creation
 
       - name: "vtp_feature_to_staging"
         templates_dict:
@@ -123,7 +124,7 @@ dags:
           schema: 'workspace'
         sql_file_names:
           - "feature_extraction_vtp.sql"
-        upstream_task_name: "python_script_post_launch_metrics"
+        #upstream_task_name: "python_script_post_launch_metrics"
         downstream_task_name: ecr_container_creation
 
       - name: "ecr_container_creation"

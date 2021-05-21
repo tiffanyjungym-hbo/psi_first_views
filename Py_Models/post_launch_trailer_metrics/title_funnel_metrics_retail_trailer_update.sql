@@ -117,7 +117,7 @@ last_table as (
                 , viewe_count
                 , total_retail_sub_count
                 , {end_date}                       as last_update_timestamp
-                , viewe_count / total_retail_sub_count     as retail_view_count_percent
+                , viewe_count / total_retail_sub_count     as retail_trailer_view_metric
              from max_viewership_match_id as h
              left join retail_sub_count_table as r
                 on h.min_trailer_offered_timestamp = r.min_trailer_offered_timestamp

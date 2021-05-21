@@ -184,6 +184,9 @@ class ModelMain(FeatureEngineering):
             self.output['smape_' + model_name] = abs(self.output['cross_predict_' + model_name] - self.output['target'])/\
                                     ((self.output['cross_predict_' + model_name] + self.output['target'])/2)
             self.output['mae_' + model_name] = abs(self.output['cross_predict_' + model_name] - self.output['target'])
+
+        # merge basic info
+        self.output = self.output.merge(self.base_copy[['title_name','match_id_platform']], left_index = True, right_index = True)
         
     def timesplit(self, nfold = 10):
         # The current setting considers all the dates after and excluding the Max launch date

@@ -25,6 +25,8 @@ create or replace table {database}.{schema}.sub_period_in_uuid_test (
              , is_cancel
              , provider_user_id
         from max_prod.bi_analytics.fact_common_receipt
+        where 1=1
+            and subscription_type = 'SVOD'
     ),
 
          crs_sub_balance as (

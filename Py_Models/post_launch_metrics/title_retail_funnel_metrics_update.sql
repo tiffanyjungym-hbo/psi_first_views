@@ -54,7 +54,7 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
             and title_name is not null
             and first_offered_timestamp_on_platform is not null
             and asset_type in ('FEATURE', 'ELEMENT')
-            and first_offered_timestamp_on_platform <= least(({end_date}), dateadd(day, -{day_latency}, current_timestamp()))
+            and first_offered_timestamp_on_platform <= least(({end_date}), dateadd(day, -{day_latency}, convert_timezone('GMT',current_timestamp())))
             and content_category is not null
             -- this version we consider en version data only
          ),
@@ -91,7 +91,7 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
                   , min(fst_public_timestamp) as earliest_public_timestamp
              from title_basic_info_new_titles
              group by 1, 2
-             having datediff(day, earliest_offered_timestamp, least({end_date}, dateadd(day, -{day_latency}, current_timestamp()))) >= {nday}
+             having datediff(day, earliest_offered_timestamp, least({end_date}, dateadd(day, -{day_latency}, convert_timezone('GMT',current_timestamp())))) >= {nday}
      ),
 
          episode_fst_offered_date as (

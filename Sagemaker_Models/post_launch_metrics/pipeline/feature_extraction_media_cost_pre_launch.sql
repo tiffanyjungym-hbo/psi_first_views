@@ -9,7 +9,7 @@ FROM (
             , earliest_offered_timestamp
             , concat(case when f.platform_name = 'hboNow' then 0
                     else 1 end, '-', f.match_id) as match_id_platform
-        from max_beta.workspace.title_retail_funnel_metrics as f
+        from {database}.{schema}.title_retail_funnel_metrics as f
     ),
 
     cost_value as (

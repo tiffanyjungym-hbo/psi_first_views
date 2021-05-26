@@ -87,13 +87,13 @@ dags:
         upstream_task_name: "python_script_post_launch_metrics"
         downstream_task_name: ecr_container_creation
 
-      - name: "mp_click_pre_launch_feature_to_staging"
+      - name: "media_cost_pre_launch_feature_to_staging"
         templates_dict:
           stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
           database: 'max_dev'
           schema: 'workspace'
         sql_file_names:
-          - "feature_extraction_mp_click_pre_launch.sql"
+          - "feature_extraction_media_cost_pre_launch.sql"
         upstream_task_name: "python_script_post_launch_metrics"
         downstream_task_name: ecr_container_creation
 

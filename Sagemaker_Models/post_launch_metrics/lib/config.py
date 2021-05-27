@@ -28,7 +28,7 @@ metadata_process_info = {
          , 'program_type'
          , 'prod_release_year'
          , 'in_sequantial_releasing_period' 
-         , 'ln_total_click_from_marketing_spend'
+         , 'ln_total_media_cost_pre_launch'
          , 'total_hours'
          , 'retail_trailer_view_metric'
  #        , 'content_cost'

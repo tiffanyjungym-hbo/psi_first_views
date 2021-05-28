@@ -39,7 +39,7 @@ metadata_process_info = {
                    , 'retail_trailer_view_metric'
                    , 'total_hours'
                    , 'title_age_approx'
-                   , 'ln_total_click_from_marketing_spend'
+                   , 'ln_total_media_cost_pre_launch'
 #                   , 'content_cost'
                    ,'season_number_adj' 
                    ]

@@ -158,6 +158,7 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
             , e.last_offered_timestamp
             -- assuming all the NOW titles were on air or in theater before
             , earliest_public_timestamp
+            , stream_min_timestamp_gmt
          from table ({viewership_table}) as v
          join earliest_date as e
             on coalesce(concat(series_id, '-', v.season_number), viewable_id) = e.match_id
@@ -212,6 +213,7 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
                                 or (a.subscription_start_timestamp >= o.end_consideration_timestamp)
                                 ) = FALSE)
                                 and a.hbo_uuid = v.hbo_uuid
+                                and stream_min_timestamp_gmt>=subscription_start_timestamp
              where 1 = 1
                -- use to filter employee id in the future
                --and hbo_uuid not in (select hbo_uuid from employee_hbo_uuid)

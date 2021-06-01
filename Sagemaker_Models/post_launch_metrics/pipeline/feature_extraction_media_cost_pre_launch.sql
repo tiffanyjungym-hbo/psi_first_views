@@ -55,7 +55,7 @@ FROM (
     final as (
         select
             t.match_id_platform
-            , sum(ifnull(ln_total_media_cost_pre_launch,-1))
+            , max(ifnull(ln_total_media_cost_pre_launch,-1))
                 as ln_total_media_cost_pre_launch
         from title_id as t
         left join cost_value as c

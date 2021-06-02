@@ -59,9 +59,9 @@ dags:
 
       - name: "trailer_feature_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
-          database: 'max_dev'
-          schema: 'workspace'
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
           - "feature_extraction_trailer.sql"
         upstream_task_name: "python_script_post_launch_metrics"
@@ -69,9 +69,9 @@ dags:
 
       - name: "funnel_metric_feature_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
-          database: 'max_dev'
-          schema: 'workspace'
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
           - "feature_extraction_funnel_metric.sql"
         upstream_task_name: "python_script_post_launch_metrics"
@@ -79,9 +79,9 @@ dags:
 
       - name: "metadata_feature_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
-          database: 'max_dev'
-          schema: 'workspace'
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
           - "feature_extraction_metadata.sql"
         upstream_task_name: "python_script_post_launch_metrics"
@@ -89,9 +89,9 @@ dags:
 
       - name: "media_cost_pre_launch_feature_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
-          database: 'max_dev'
-          schema: 'workspace'
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
           - "feature_extraction_media_cost_pre_launch.sql"
         upstream_task_name: "python_script_post_launch_metrics"
@@ -99,9 +99,9 @@ dags:
 
       - name: "sub_total_feature_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
-          database: 'max_dev'
-          schema: 'workspace'
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
           - "feature_extraction_total_sub_num.sql"
         upstream_task_name: "python_script_post_launch_metrics"
@@ -119,9 +119,9 @@ dags:
 
       - name: "vtp_feature_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
-          database: 'max_dev'
-          schema: 'workspace'
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
           - "feature_extraction_vtp.sql"
         upstream_task_name: "python_script_post_launch_metrics"
@@ -149,9 +149,9 @@ dags:
       - name: "write_prediction_output_to_snowflake"
         upstream_task_name: "sagemaker_notebook_job_processing_script"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_OUTBOUND_DATASCIENCE_CONTENT_DEV }}"
-          database: 'max_dev'
-          schema: 'workspace'
+          stage: "{{ var.value.DS_CONTENT_HBO_OUTBOUND_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
             - "output_to_S3.sql" 
 

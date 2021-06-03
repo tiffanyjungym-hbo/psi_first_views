@@ -151,6 +151,8 @@ if __name__ == '__main__':
 	logger.info(f'schema: {args.SCHEMA}')
 
 	logger.info('Updating trailer table')
+
+	# Run the code to get trailer metric
 	df_funnel_metrics = update_trailer_table(
 		database=args.DATABASE,
 		schema=args.SCHEMA,

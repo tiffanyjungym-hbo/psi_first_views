@@ -12,6 +12,7 @@ from airflow.models import Variable
 from common import snowflake_utils
 from typing import Dict, List
 
+# Set env variables
 SNOWFLAKE_ACCOUNT_NAME: str = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.us-east-1'
 CURRENT_PATH: str = pathlib.Path(__file__).parent.absolute()
 QUERY_TRAILER_METRICS: str = 'title_funnel_metrics_retail_trailer_update.sql'

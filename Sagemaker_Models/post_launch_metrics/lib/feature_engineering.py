@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 from scipy.spatial.distance import cdist
 from scipy.spatial.distance import squareform
-from lib.data_preprocessing import DataPreprocessing
+from pre_post_launch.data_preprocessing import DataPreprocessing
 from scipy.spatial.distance import cdist 
 pd.options.mode.chained_assignment = None
 
@@ -115,13 +115,16 @@ class FeatureEngineering(DataPreprocessing):
             # log ratio
             if percent_data_process_info['log_ratio_transformation']:
                 for keyword in self.day_column_keywords:
-                    day_column_list.append('log_day001_'+ keyword)
+                    # post launch market budgets are logged already
+                    if 'mc' not in keyword:
+                        day_column_list.append('log_day001_'+ keyword)
                 day_column_list.extend(self.base_columns[((self.base_columns.str.contains('log_ratio')==True)
                                                          #& (self.base_columns.str.contains('vtp')==False)
                                                          )])
             # log
             else:
-                day_column_list.extend(self.base_columns[((self.base_columns.str.contains('log')==True) 
+                if 'mc' not in keyword:
+                    day_column_list.extend(self.base_columns[((self.base_columns.str.contains('log')==True) 
                        & (self.base_columns.str.contains('log_ratio')==False)
                        #& (self.base_columns.str.contains('vtp')==False)
                        )])
@@ -129,6 +132,13 @@ class FeatureEngineering(DataPreprocessing):
         else:
             day_column_list.extend(self.base_columns[((self.base_columns.str.contains('log')==False)&
                                                       ((self.base_columns.str.contains('percent')==True)))])   
+
+        # include postlaunch mc values
+        if percent_data_process_info['cumulative_media_cost']:
+            day_column_list.extend(self.base_columns[((self.base_columns.str.contains('mc')==True)&
+                                                      ((self.base_columns.str.contains(str(percent_data_process_info['max_num_day']).zfill(3))==True)))])
+        else:
+            day_column_list.extend(self.base_columns[self.base_columns.str.contains('mc')==True])
         
         # include raw forcely based on the config input
         if percent_data_process_info['raw_log_feature']:
@@ -144,7 +154,7 @@ class FeatureEngineering(DataPreprocessing):
         
         # filtered the day num then insert into the final list     
         day_column_list = [e for e in day_column_list 
-                               if int(e[e.find('day')+3:e.find('day')+6]) 
+                               if (int(e[e.find('day')+3:e.find('day')+6])) 
                                <= percent_data_process_info['max_num_day']]
         
         self.day_column_list = day_column_list
@@ -219,7 +229,7 @@ class FeatureEngineering(DataPreprocessing):
                                     axis= 1)
                 
             self.last_percent_day = percent_not_null[self.X_pred.index].\
-                apply(lambda x: percent_data_process_info['total_num_day_data']\
+                    apply(lambda x: percent_data_process_info['total_num_day_data']\
                       if x == [] else max(x))
             
             self.y_pred = self.y_pred[self.last_percent_day\

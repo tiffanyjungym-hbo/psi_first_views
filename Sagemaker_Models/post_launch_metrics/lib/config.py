@@ -8,6 +8,7 @@ percent_data_process_info ={
     'log_ratio_transformation': True, # in effect only if target_log_transformation = True
     'target_sigmoid_transformation':False, # in effect only if log_ratio_transformation = True
     'raw_log_feature':True,
+    'cumulative_media_cost':True,
     'last_season_percents': False,
     'max_num_day': 14,
     'total_num_day_data':21,
@@ -31,8 +32,8 @@ metadata_process_info = {
          , 'ln_total_media_cost_pre_launch'
          , 'total_hours'
          , 'retail_trailer_view_metric'
- #        , 'content_cost'
-         ,'season_number_adj' 
+         #, 'content_cost'
+         , 'season_number_adj'
                  ],
     'label_columns':['content_category', 'program_type'],
     'num_columns':['prod_release_year'
@@ -40,8 +41,8 @@ metadata_process_info = {
                    , 'total_hours'
                    , 'title_age_approx'
                    , 'ln_total_media_cost_pre_launch'
-#                   , 'content_cost'
-                   ,'season_number_adj' 
+        #           , 'content_cost'
+                   , 'season_number_adj'
                    ]
 }
 

@@ -1,6 +1,6 @@
 USE SCHEMA workspace;
 
-COPY INTO {stage}/mp_click_prelaunch_feature.csv
+COPY INTO {stage}/media_cost_prelaunch_feature.csv
 FROM (
     with title_id as (
         select distinct

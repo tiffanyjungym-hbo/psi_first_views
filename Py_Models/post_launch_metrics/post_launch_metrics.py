@@ -138,7 +138,7 @@ def update_funnel_metrics_table(
 			)[0][0]
 
 			# if the run date is later than the last update date
-			if last_date <= END_DATE[platform:
+			if last_date <= END_DATE[platform]:
 				logger.info(f'Last date before/equal to current date, so skipping nth day: {nday} on {platform}')
 			else:
 				logger.info(f'Getting data for nth day: {nday} on {platform}')

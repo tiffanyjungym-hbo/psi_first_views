@@ -16,6 +16,7 @@ SNOWFLAKE_ACCOUNT_NAME: str = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.
 QUERY_SUBSCRIBER_TABLE: str = 'total_sub_base_table.sql'
 CURRENT_PATH: str = pathlib.Path(__file__).parent.absolute()
 QUERY_FUNNEL_METRICS: str = 'title_retail_funnel_metrics_update.sql'
+QUERY_FUNNEL_METRICS_LAST_DATE: str = 'title_retail_funnel_metrics_last_date.sql'
 
 ## [ndays] since first offered
 DAY_LIST: List[int] = [
@@ -115,11 +116,9 @@ def update_funnel_metrics_table(
 
 	for nday in DAY_LIST:
 		for platform in PLATFORM_LIST:
-
-			logger.info(f'Getting data for nth day: {nday} on {platform}')
-
-			query_funnel_metrics = load_query(
-				f'{CURRENT_PATH}/{QUERY_FUNNEL_METRICS}',
+			# uf the run date is before than last update date, then stop
+			query_last_date = load_query(
+				f'{CURRENT_PATH}/{QUERY_FUNNEL_METRICS_LAST_DATE}',
 				database=database,
 				schema=schema,
 				nday=nday,
@@ -129,21 +128,47 @@ def update_funnel_metrics_table(
 				exist_ind_val=EXIST_IND_VAL
 			)
 
-			start_time = time.time()
-
-			_df_funnel_metrics = execute_query(
-				query=query_funnel_metrics,
+			last_date = execute_query(
+				query=query_last_date,
 				database=database,
 				schema=schema,
 				warehouse=warehouse,
 				role=role,
 				snowflake_env=snowflake_env
-			)
+			)[0][0]
 
-			end_time = time.time()
-			logger.info(f'Time taken {end_time - start_time} seconds')
+			# if the run date is later than the last update date
+			if last_date <= END_DATE[platform:
+				logger.info(f'Last date before/equal to current date, so skipping nth day: {nday} on {platform}')
+			else:
+				logger.info(f'Getting data for nth day: {nday} on {platform}')
 
-			df_funnel_metrics = pd.concat([df_funnel_metrics, _df_funnel_metrics], axis=0)
+				query_funnel_metrics = load_query(
+					f'{CURRENT_PATH}/{QUERY_FUNNEL_METRICS}',
+					database=database,
+					schema=schema,
+					nday=nday,
+					day_latency=DAY_LATENCY,
+					viewership_table=VIEWERSHIP_TABLE[platform],
+					end_date=END_DATE[platform],
+					exist_ind_val=EXIST_IND_VAL
+				)
+
+				start_time = time.time()
+
+				_df_funnel_metrics = execute_query(
+					query=query_funnel_metrics,
+					database=database,
+					schema=schema,
+					warehouse=warehouse,
+					role=role,
+					snowflake_env=snowflake_env
+				)
+
+				end_time = time.time()
+				logger.info(f'Time taken {end_time - start_time} seconds')
+
+				df_funnel_metrics = pd.concat([df_funnel_metrics, _df_funnel_metrics], axis=0)
 
 	return df_funnel_metrics
 

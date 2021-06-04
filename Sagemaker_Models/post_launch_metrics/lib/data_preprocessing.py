@@ -15,6 +15,7 @@ class DataPreprocessing():
                          'percent_viewed'
                          , 'vtp'
                          , 'sub_count'
+                         , 'mc'
                         ],
                      hard_label_threshold = 0.01):
         # init params
@@ -218,7 +219,7 @@ class DataPreprocessing():
             
             # log ratio
             for keyword in self.day_column_keywords:
-                if ((keyword in col) & (col!= 'day001_' + keyword)):
+                if ((keyword in col) & (col!= 'day001_' + keyword) & ('mc' not in col)):
                     self.base['log_ratio_' + col] = -100
                     self.base.loc[self.base[col]>0,
                            'log_ratio_' + col] = np.log(self.base.loc[self.base[col]>0, col]/

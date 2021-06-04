@@ -4,7 +4,7 @@ import lightgbm as lgb
 import numpy as np
 import pandas as pd
 pd.options.mode.chained_assignment = None
-#from numpy.random import default_rng
+from numpy.random import default_rng
 from sklearn.linear_model import ElasticNet
 from sklearn.linear_model import LinearRegression as lr
 import itertools as it
@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
 
-from lib.feature_engineering import FeatureEngineering
+from pre_post_launch.feature_engineering import FeatureEngineering
 
 class ModelMain(FeatureEngineering):
     def __init__(self, data_list,
@@ -184,7 +184,7 @@ class ModelMain(FeatureEngineering):
             self.output['smape_' + model_name] = abs(self.output['cross_predict_' + model_name] - self.output['target'])/\
                                     ((self.output['cross_predict_' + model_name] + self.output['target'])/2)
             self.output['mae_' + model_name] = abs(self.output['cross_predict_' + model_name] - self.output['target'])
-
+        
         # merge basic info
         self.output = self.output.merge(self.base_copy[['title_name','match_id_platform']], left_index = True, right_index = True)
         
@@ -308,7 +308,7 @@ class ModelMain(FeatureEngineering):
         self.new_title_output['program_type'] = self.X_pred['program_type']
         self.new_title_output.columns = ['target', 'program_type']
         self.new_title_output['target'] = np.nan
-        self.new_title_output = self.base_copy[['title_name','match_id_platform','match_id','platform_name']].\
+        self.new_title_output = self.base_copy[['title_name','match_id','match_id_platform','platform_name']].\
             merge(self.new_title_output, 
                   left_index = True, 
                   right_index = True)
@@ -350,11 +350,7 @@ class ModelMain(FeatureEngineering):
         plt.xlabel('Feature names', fontsize=16)
         plt.ylabel('Frequency [%]', fontsize=16)
         plot.get_figure().savefig('{}.png'.format(filename))
-
-    '''
-    # unenable bootstrap functions for now, due to numpy version problem: if it is too old, it does not have default_rng
-    # if it is too new, it conflicts with the newest pandas version available
-
+        
     def bootstrap_confidence_inv(self, output, model_name_list, total_iter = 5000, original_only = False):  
         output_copy = output.reset_index(drop = True).copy()
 
@@ -378,7 +374,7 @@ class ModelMain(FeatureEngineering):
         self.performance_bootstrapped_flag = True
         
         return pd.DataFrame(fin_dict)
-  
+        
     def bootstrap_p_value_lgb_benchmark(self, compare_pair = ['smape_lgb', 'smape_benchmark'], total_iter = 5000):
         if self.performance_bootstrapped_flag == False:
             self.bootstrap_confidence_inv()
@@ -397,8 +393,7 @@ class ModelMain(FeatureEngineering):
         
     def bootstrap_p_value_two_samples(self, sample1, sample2, total_iter = 5000):
         return 0
-    '''
-
+    
     def parameter_tunning(self, model_name, 
                           params_tunning_dict, 
                           percent_data_process_info,

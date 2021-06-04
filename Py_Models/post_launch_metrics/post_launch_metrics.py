@@ -136,8 +136,8 @@ def update_funnel_metrics_table(
 				role=role,
 				snowflake_env=snowflake_env
 			)
-
-			last_date = last_date[0][0]
+      
+			last_date = last_date.iloc[0, 0]
 
 			# if the run date is later than the last update date
 			if last_date <= END_DATE[platform]:

@@ -35,19 +35,19 @@ dags:
       PROD: "hbomax-cds-alerts"
     tasks:
 
-      - name: "python_script_post_launch_subscriber"
-        type: "BashOperator"
-        script_loc: "common"
-        script_name: "post_launch_subscriber"
-        param_file_name: "post_launch_subscriber"
+      # - name: "python_script_post_launch_subscriber"
+      #   type: "BashOperator"
+      #   script_loc: "common"
+      #   script_name: "post_launch_subscriber"
+      #   param_file_name: "post_launch_subscriber"
       
-      # update the trailer first
-      - name: "python_script_post_launch_trailer_metrics"
-        type: "BashOperator"
-        script_loc: "common"
-        script_name: "post_launch_trailer_metrics"
-        param_file_name: "post_launch_trailer_metrics"
-        upstream_task_name: "python_script_post_launch_subscriber"
+      # # update the trailer first
+      # - name: "python_script_post_launch_trailer_metrics"
+      #   type: "BashOperator"
+      #   script_loc: "common"
+      #   script_name: "post_launch_trailer_metrics"
+      #   param_file_name: "post_launch_trailer_metrics"
+      #   upstream_task_name: "python_script_post_launch_subscriber"
       
       # update the matrics second
       - name: "python_script_post_launch_metrics"
@@ -55,7 +55,7 @@ dags:
         script_loc: "common"
         script_name: "post_launch_metrics"
         param_file_name: "post_launch_metrics"
-        upstream_task_name: "python_script_post_launch_trailer_metrics"
+      #  upstream_task_name: "python_script_post_launch_trailer_metrics"
 
       - name: "trailer_feature_to_staging"
         templates_dict:

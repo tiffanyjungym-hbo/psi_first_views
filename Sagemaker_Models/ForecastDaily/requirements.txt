@@ -1,6 +1,0 @@
-pandas
-geopy
-altair==3.2
-s3fs==0.4.2
-nteract-scrapbook
-requests

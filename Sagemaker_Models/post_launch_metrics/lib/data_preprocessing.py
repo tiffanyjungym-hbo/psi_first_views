@@ -12,7 +12,7 @@ class DataPreprocessing():
     def __init__(self, data_list,
                      label_columns,
                      target_col = 'day028_percent_viewed',
-                     day_column_keywords = metadata_process_info['day_column_keywords']
+                     day_column_keywords = metadata_process_info['day_column_keywords'],
                      hard_label_threshold = 0.01):
         # init params
         self.data_list = data_list

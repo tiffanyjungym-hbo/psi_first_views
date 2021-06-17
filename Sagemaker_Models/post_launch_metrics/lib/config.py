@@ -18,6 +18,8 @@ percent_data_process_info ={
 }
 
 metadata_process_info = {
+    'day_column_keywords':
+        ['percent_viewed', 'vtp', 'sub_count', 'mc'],
     'keywords':
         # flags are usually included in the tags, so excluded here
         ['tag','licensor','title_age', 'dayofweek_earliest_date'],

@@ -26,11 +26,6 @@ FROM (
             , case when program_type is null then 'unknown' else program_type end as program_type
             , asset.content_category
             , credits_start_time
-            , scripted_flag
-            , sports_flag
-            , kids_flag
-            , international_flag
-            , latino_flag
             , release_year
             , licensor
             , descriptive_genre_desc
@@ -98,11 +93,6 @@ FROM (
             , dayofweek(earliest_offered_timestamp) as dayofweek_earliest_date
             , single_episode_ind
             , total_hours
-            , scripted_flag
-            , sports_flag
-            , kids_flag
-            , international_flag
-            , latino_flag
             , prod_release_year
             , licensor_agg
             , descriptive_genre_desc_agg
@@ -135,11 +125,6 @@ FROM (
             , at_release_year
             , dayofweek_earliest_date
             , total_hours
-            , scripted_flag
-            , sports_flag
-            , kids_flag
-            , international_flag
-            , latino_flag
             , prod_release_year
             , case when title_age_approx_meta + 1 < title_age_approx_imdb
                 then title_age_approx_imdb

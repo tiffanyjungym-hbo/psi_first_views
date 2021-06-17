@@ -6,17 +6,13 @@ import numpy as np
 import pandas as pd
 from scipy.special import logit
 from sklearn.preprocessing import LabelEncoder 
+from lib.config import metadata_process_info
 
 class DataPreprocessing():
     def __init__(self, data_list,
                      label_columns,
                      target_col = 'day028_percent_viewed',
-                     day_column_keywords = [
-                         'percent_viewed'
-                         , 'vtp'
-                         , 'sub_count'
-                         , 'mc'
-                        ],
+                     day_column_keywords = metadata_process_info['day_column_keywords']
                      hard_label_threshold = 0.01):
         # init params
         self.data_list = data_list

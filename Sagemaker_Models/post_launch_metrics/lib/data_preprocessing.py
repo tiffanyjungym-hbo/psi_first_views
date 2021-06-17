@@ -11,7 +11,7 @@ from lib.config import metadata_process_info
 class DataPreprocessing():
     def __init__(self, data_list,
                      label_columns,
-                     target_col = 'day028_percent_viewed',
+                     target_col = metadata_process_info['target_col'],
                      day_column_keywords = metadata_process_info['day_column_keywords'],
                      hard_label_threshold = 0.01):
         # init params

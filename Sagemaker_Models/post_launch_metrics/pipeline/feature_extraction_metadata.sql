@@ -56,11 +56,6 @@ FROM (
             , mode(m.program_type) as program_type
             , mode(m.content_category) as content_category
             , ifnull(sum(credits_start_time)/3600.0,-1) as total_hours
-            , max(case when scripted_flag is null then -1 else scripted_flag end) as scripted_flag
-            , max(case when sports_flag is null then -1 else sports_flag end) as sports_flag
-            , max(case when kids_flag is null then -1 else kids_flag end) as kids_flag
-            , max(case when international_flag is null then -1 else international_flag end) as international_flag
-            , max(case when latino_flag is null then -1 else latino_flag end) as latino_flag
             , min(release_year) as prod_release_year
             , listagg(distinct lower(licensor), '|') as licensor_agg
             , listagg(distinct lower(descriptive_genre_desc), '|') as descriptive_genre_desc_agg

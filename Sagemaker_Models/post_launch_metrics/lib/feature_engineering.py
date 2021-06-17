@@ -5,14 +5,16 @@ import numpy as np
 from scipy.spatial.distance import cdist
 from scipy.spatial.distance import squareform
 from lib.data_preprocessing import DataPreprocessing
-from scipy.spatial.distance import cdist 
+from scipy.spatial.distance import cdist
+from lib.config import metadata_process_info
+
 pd.options.mode.chained_assignment = None
 
 class FeatureEngineering(DataPreprocessing):
     def __init__(self, data_list,
                      label_columns,
                      num_columns,
-                     target_col = 'day028_percent_viewed'
+                     target_col = metadata_process_info['target_col']
                 ):
         DataPreprocessing.__init__(self, data_list, label_columns, target_col)
         self.base_columns = self.base.columns

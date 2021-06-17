@@ -18,6 +18,7 @@ percent_data_process_info ={
 }
 
 metadata_process_info = {
+    'target_col':'day028_percent_viewed',
     'day_column_keywords':
         ['percent_viewed', 'vtp', 'sub_count', 'mc'],
     'keywords':

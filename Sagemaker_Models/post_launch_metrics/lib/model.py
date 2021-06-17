@@ -13,12 +13,13 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
 from lib.feature_engineering import FeatureEngineering
+from lib.config import metadata_process_info
 
 class ModelMain(FeatureEngineering):
     def __init__(self, data_list,
                      label_columns,
                      num_columns,
-                     target_col = 'day028_percent_viewed'
+                     target_col = metadata_process_info['target_col']
                 ):
         FeatureEngineering.__init__(self, data_list, label_columns, num_columns, target_col)
         # set parameter_tuned option

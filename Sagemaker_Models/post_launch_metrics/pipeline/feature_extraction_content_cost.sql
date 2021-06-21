@@ -1,6 +1,6 @@
 use schema workspace;
 
-COPY INTO {stage}/metadata_feature.csv
+COPY INTO {stage}/cost_feature.csv
 FROM (
     with cost_base as (
     select

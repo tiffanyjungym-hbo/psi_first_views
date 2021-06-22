@@ -119,7 +119,7 @@ dags:
 
       - name: "content_cost_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_DEV }}"
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
           database: "{{ var.value.DS_SF_MAX_DATABASE }}"
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:

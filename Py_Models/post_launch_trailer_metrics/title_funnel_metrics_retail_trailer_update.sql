@@ -12,7 +12,10 @@ with existing_titles as (
 title_info as (
     select distinct
       asset.viewable_id
-    , regexp_replace(get(split(asset_title_long, ': Trailer'),0), '"', '') as trailer_title_name
+    , case when asset_title_short like '%Season%'
+        then trim(regexp_replace(get(split(asset_title_long, ': Season'),0), '"', ''))
+        else trim(regexp_replace(get(split(asset_title_long, 'Trailer'),0), ':', ''))
+        end as trailer_title_name
     , case when {viewership_table} in ('max_prod.viewership.max_user_stream', 'max_prod.viewership.max_user_stream_heartbeat_view') then first_offered_date_max
         when {viewership_table} = 'max_prod.viewership.now_user_stream' then first_offered_date_now
             end as earliest_offered_timestamp

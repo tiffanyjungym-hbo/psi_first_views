@@ -1,0 +1,19 @@
+{
+  "DEV": {
+    "SNOWFLAKE_ENV": "sf_max_dev",
+    "WAREHOUSE": "MAX_DATASCIENCE_DEV",
+    "ROLE": "MAX_ETL_DEV"
+  },
+  
+  "BETA": {
+    "SNOWFLAKE_ENV": "sf_max_beta",
+    "WAREHOUSE": "MAX_DATASCIENCE_BETA",
+    "ROLE": "MAX_ETL_BETA"
+  },
+
+  "PROD": {
+    "SNOWFLAKE_ENV": "sf_max_prod",
+    "WAREHOUSE": "MAX_DATASCIENCE_PROD",
+    "ROLE": "MAX_ETL_PROD"
+  }
+}

@@ -110,7 +110,7 @@ def update_hours_pct_table(
     df_dates.columns = ['hbo_offer_date', 'window_end']
     
     for row in df_dates.iterrows():
-        logger.info(f'Getting scores for {row[1].hbo_offer_date.strftime('%Y-%m-%d')}')
+        logger.info('Getting scores for {}'.format(row[1].hbo_offer_date.strftime('%Y-%m-%d')))
         update_query = load_query(f'{CURRENT_PATH}/{QUERY_HOURS_PCT_UPDATE}'
                                   ,window_start=row[1].hbo_offer_date.strftime('%Y-%m-%d')
                                   ,window_end=row[1].window_end.strftime('%Y-%m-%d')

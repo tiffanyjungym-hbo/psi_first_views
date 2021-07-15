@@ -1,8 +1,10 @@
 -- window_start: YYYY-MM-DD string for start of window, inclusive
 -- window_end: YYYY-MM-DD string for end of window, exclusive
 -- window_days: number of units(days/weeks) in the window
+-- database: db of table
+-- schema: schema of table
 
-insert into max_dev.workspace.cds_historical_hourspct (
+insert into {database}.{schema}.cds_historical_hourspct (
 select
     match_id
     ,datediff(day, hbo_offer_date, window_end) as window

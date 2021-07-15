@@ -1,5 +1,7 @@
 -- run_date: YYYY-MM-DD string for run date
 -- window_days: number of days as length of window
+-- database: db of table
+-- schema: schema of table
 
 WITH series_agg as (
     SELECT
@@ -28,4 +30,4 @@ WITH series_agg as (
 SELECT *
 FROM series_agg
 WHERE window_end < '{run_date}'
-AND hbo_offer_date > (select max(hbo_offer_date) from MAX_DEV.WORKSPACE.CDS_HISTORICAL_HOURSPCT a join series_agg b on a.match_id=b.catalog_match_id where window = {window_days});
+AND hbo_offer_date > (select max(hbo_offer_date) from {database}.{schema}.CDS_HISTORICAL_HOURSPCT a join series_agg b on a.match_id=b.catalog_match_id where window = {window_days});

@@ -22,69 +22,69 @@ TARGET_DATE: str = (datetime.datetime.today() - datetime.timedelta(days=1)).strf
 logger = logging.getLogger()
 
 def execute_query(
-	query: str,
-	database :str,
-	schema: str,
-	warehouse: str,
-	role: str,
-	snowflake_env: str
+    query: str,
+    database :str,
+    schema: str,
+    warehouse: str,
+    role: str,
+    snowflake_env: str
 ) -> pd.DataFrame:
-	"""
-	Execute a query on snowflake
+    """
+    Execute a query on snowflake
 
-	:param query: query to be executed
-	:param database: name of the database
-	:param schema: name of the schema
-	:param warehouse: name of the warehouse
-	:param role: name of the role
-	:param snowflake_env: environment used in Snowflake
-	"""
-	connection = snowflake_utils.connect(
-		  SNOWFLAKE_ACCOUNT_NAME,
-		  database,
-		  schema,
-		  warehouse,
-		  role,
-		  snowflake_env,
-		  None
-	)
+    :param query: query to be executed
+    :param database: name of the database
+    :param schema: name of the schema
+    :param warehouse: name of the warehouse
+    :param role: name of the role
+    :param snowflake_env: environment used in Snowflake
+    """
+    connection = snowflake_utils.connect(
+          SNOWFLAKE_ACCOUNT_NAME,
+          database,
+          schema,
+          warehouse,
+          role,
+          snowflake_env,
+          None
+    )
 
-	cursor = connection.cursor()
-	cursor.execute(query)
-	df = pd.DataFrame(cursor.fetchall(), columns = [desc[0] for desc in cursor.description])
+    cursor = connection.cursor()
+    cursor.execute(query)
+    df = pd.DataFrame(cursor.fetchall(), columns = [desc[0] for desc in cursor.description])
 
-	return df
+    return df
 
 def load_query(filename: str, **kwargs) -> str:
-	"""
-	Load a query from disk and fill templates parameters
+    """
+    Load a query from disk and fill templates parameters
 
-	:param filename: name of the file that contains the query
-	"""
-	with open(filename, 'r') as f:
-		query = f.read()
+    :param filename: name of the file that contains the query
+    """
+    with open(filename, 'r') as f:
+        query = f.read()
 
-	query = query.format(**kwargs)
-	return query
+    query = query.format(**kwargs)
+    return query
 
 def update_hours_pct_table(
-	database: str,
-	schema: str,
-	warehouse: str,
-	role: str,
-	snowflake_env: str,
+    database: str,
+    schema: str,
+    warehouse: str,
+    role: str,
+    snowflake_env: str,
     window_days: int
-):
-	"""
-	Update the historical table for percent of hours viewed
+    ):
+    """
+    Update the historical table for percent of hours viewed
 
-	:param database: name of the database
-	:param schema: name of the schema
-	:param warehouse: name of the warehouse
-	:param role: name of the role
-	:param snowflake_env: environment used in Snowflake
-	"""
-	# Get unrecorded windows
+    :param database: name of the database
+    :param schema: name of the schema
+    :param warehouse: name of the warehouse
+    :param role: name of the role
+    :param snowflake_env: environment used in Snowflake
+    """
+    # Get unrecorded windows
     logger.info(f'Getting unscored windows {QUERY_HOURS_PCT_WINDOW}')
     
     query_windows = load_query(f'{CURRENT_PATH}/{QUERY_HOURS_PCT_WINDOW}'
@@ -129,22 +129,22 @@ def update_hours_pct_table(
     
     
 if __name__ == '__main__':
-	parser = argparse.ArgumentParser()
-	parser.add_argument('--SNOWFLAKE_ENV', required=True)
-	parser.add_argument('--WAREHOUSE', required=True)
-	parser.add_argument('--ROLE', required=True)
-	parser.add_argument('--DATABASE', required=True)
-	parser.add_argument('--SCHEMA', required=True)
-	args = parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--SNOWFLAKE_ENV', required=True)
+    parser.add_argument('--WAREHOUSE', required=True)
+    parser.add_argument('--ROLE', required=True)
+    parser.add_argument('--DATABASE', required=True)
+    parser.add_argument('--SCHEMA', required=True)
+    args = parser.parse_args()
 
-	logger.info('Environment defined:')
-	logger.info(f'snowflake env: {args.SNOWFLAKE_ENV}')
-	logger.info(f'warehouse: {args.WAREHOUSE}')
-	logger.info(f'role: {args.ROLE}')
-	logger.info(f'database: {args.DATABASE}')
-	logger.info(f'schema: {args.SCHEMA}')
+    logger.info('Environment defined:')
+    logger.info(f'snowflake env: {args.SNOWFLAKE_ENV}')
+    logger.info(f'warehouse: {args.WAREHOUSE}')
+    logger.info(f'role: {args.ROLE}')
+    logger.info(f'database: {args.DATABASE}')
+    logger.info(f'schema: {args.SCHEMA}')
 
-	logger.info('Updating trailer table')
+    logger.info('Updating trailer table')
 
     
     for window in [7,14,21,28,364]:
@@ -159,4 +159,4 @@ if __name__ == '__main__':
     
     
 
-	logger.info('Finished trailer table updates')
+    logger.info('Finished trailer table updates')

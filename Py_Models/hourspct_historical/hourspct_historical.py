@@ -100,7 +100,7 @@ def update_hours_pct_table(
                               ,schema=schema
                               ,warehouse=warehouse
                               ,role=role
-                              ,showflake_env=snowflake_env
+                              ,snowflake_env=snowflake_env
                               )
     df_windows.columns = ['catalog_match_id','match_title','hbo_offer_date','window_end']
     

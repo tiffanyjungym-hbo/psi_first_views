@@ -90,6 +90,8 @@ def update_hours_pct_table(
     query_windows = load_query(f'{CURRENT_PATH}/{QUERY_HOURS_PCT_WINDOW}'
                                ,run_date=TARGET_DATE
                                ,window_days=window_days
+                               ,database=database
+                               ,schema=schema
                               )
     
     start_time = time.time()
@@ -115,6 +117,8 @@ def update_hours_pct_table(
                                   ,window_start=row[1].hbo_offer_date.strftime('%Y-%m-%d')
                                   ,window_end=row[1].window_end.strftime('%Y-%m-%d')
                                   ,window_days=window_days
+                                  ,database=database
+                                  ,schema=schema
                                  )
         df_result = execute_query(query=update_query
                                   ,database=database

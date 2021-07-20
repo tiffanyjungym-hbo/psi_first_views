@@ -52,7 +52,7 @@ dags:
         # cols not used
       - name: "funnel_metric_feature_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_PIPELINE }}"
           database: "{{ var.value.DS_SF_MAX_DATABASE }}"
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
@@ -62,7 +62,7 @@ dags:
 
       - name: "metadata_feature_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_PIPELINE }}"
           database: "{{ var.value.DS_SF_MAX_DATABASE }}"
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
@@ -72,7 +72,7 @@ dags:
 
       - name: "media_cost_pre_launch_feature_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_PIPELINE }}"
           database: "{{ var.value.DS_SF_MAX_DATABASE }}"
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
@@ -83,7 +83,7 @@ dags:
         # cols not used?
       - name: "media_cost_post_launch_feature_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_PIPELINE }}"
           database: "{{ var.value.DS_SF_MAX_DATABASE }}"
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
@@ -93,7 +93,7 @@ dags:
 
       - name: "content_cost_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_PIPELINE }}"
           database: "{{ var.value.DS_SF_MAX_DATABASE }}"
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
@@ -111,20 +111,19 @@ dags:
         Details:
           instance_type: "ml.m5.2xlarge"
           instance_count: 1
-        # TODO create beta and prod buckets
         BucketIOConfig:
           DEV:
             model_bucket: "hbo-ingest-datascience-content-pipeline-dev"
           BETA:
-            model_bucket: "hbo-ingest-datascience-content-pipeline-dev"
+            model_bucket: "hbo-ingest-datascience-content-pipeline-beta"
           PROD:
-            model_bucket: "hbo-ingest-datascience-content-pipeline-dev"
+            model_bucket: "hbo-ingest-datascience-content-pipeline-prod"
         upstream_task_name: "ecr_container_creation"
 
       - name: "write_prediction_output_to_snowflake"
         upstream_task_name: "sagemaker_notebook_job_processing_script"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_OUTBOUND_DATASCIENCE_CONTENT }}"
+          stage: "{{ var.value.DS_CONTENT_HBO_OUTBOUND_DATASCIENCE_CONTENT_PIPELINE }}"
           database: "{{ var.value.DS_SF_MAX_DATABASE }}"
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:

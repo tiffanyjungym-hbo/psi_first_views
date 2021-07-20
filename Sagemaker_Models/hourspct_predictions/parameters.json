@@ -6,12 +6,12 @@
     },
     "BETA":
     {
-        "input_bucket": "hbo-ingest-datascience-content-pipeline-dev",
-        "output_bucket": "hbo-outbound-datascience-content-pipeline-dev"
+        "input_bucket": "hbo-ingest-datascience-content-pipeline-beta",
+        "output_bucket": "hbo-outbound-datascience-content-pipeline-beta"
     },
     "PROD":
     {
-        "input_bucket": "hbo-ingest-datascience-content-pipeline-dev",
-        "output_bucket": "hbo-outbound-datascience-content-pipeline-dev"
+        "input_bucket": "hbo-ingest-datascience-content-pipeline-prod",
+        "output_bucket": "hbo-outbound-datascience-content-pipeline-prod"
     }
 }

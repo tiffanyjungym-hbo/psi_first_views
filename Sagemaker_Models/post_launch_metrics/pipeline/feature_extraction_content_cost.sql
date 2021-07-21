@@ -1,6 +1,6 @@
 use schema workspace;
 
-COPY INTO {stage}/cost_feature.csv
+COPY INTO {stage}/input_percent_view/cost_feature.csv
 FROM (
     with cost_base as (
     select

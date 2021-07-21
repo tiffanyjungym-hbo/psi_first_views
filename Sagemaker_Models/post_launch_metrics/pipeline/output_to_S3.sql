@@ -47,7 +47,7 @@ copy into output_d28_temp_existing
             , $9
             , $10
             , $11
-        from {stage}/existing_title_prediction.csv
+        from {stage}/output_percent_view/existing_title_prediction.csv
         )
     file_format = (type = csv null_if=(''))
     on_error = 'CONTINUE';
@@ -94,7 +94,7 @@ copy into output_d28_temp
             , $5
             , $6
             , $7
-        from {stage}/new_title_prediction.csv
+        from {stage}/output_percent_view/new_title_prediction.csv
         )
     file_format = (type = csv null_if=(''))
     on_error = 'CONTINUE';

@@ -1,6 +1,6 @@
 USE SCHEMA workspace;
 
-COPY INTO {stage}/metadata_feature.csv
+COPY INTO {stage}/input_percent_view/metadata_feature.csv
 FROM (
     with runtime_info as (
         select

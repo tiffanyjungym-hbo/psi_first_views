@@ -1,6 +1,6 @@
 USE SCHEMA workspace;
 
-COPY INTO {stage}/vtp_feature.csv
+COPY INTO {stage}/input_percent_view/vtp_feature.csv
 FROM (
 
     with base_info_table as (

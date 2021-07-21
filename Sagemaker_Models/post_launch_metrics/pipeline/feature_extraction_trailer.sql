@@ -1,6 +1,6 @@
 USE SCHEMA workspace;
 
-COPY INTO {stage}/trailer_feature.csv
+COPY INTO {stage}/input_percent_view/trailer_feature.csv
 FROM (
     with final as (select distinct
           concat(case when f.platform_name = 'hboNow' then 0

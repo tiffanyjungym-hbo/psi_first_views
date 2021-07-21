@@ -1,6 +1,6 @@
 USE SCHEMA workspace;
 
-COPY INTO {stage}/sub_total_feature.csv
+COPY INTO {stage}/input_percent_view/sub_total_feature.csv
 FROM (
     with base_info_table as (
         select distinct

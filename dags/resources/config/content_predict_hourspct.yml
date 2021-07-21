@@ -15,7 +15,7 @@ dags:
     action: "HoursPctPrediction"
     default_args:
       owner: "colin.zhou@warnermedia.com"
-      depends_on_past: True
+      depends_on_past: False
       start_date: "2021-07-14"
       email_prod: "colin.zhou@warnermedia.com"
       email_nonprod: "colin.zhou@warnermedia.com"
@@ -113,11 +113,11 @@ dags:
           instance_count: 1
         BucketIOConfig:
           DEV:
-            model_bucket: "hbo-ingest-datascience-content-pipeline-dev"
+            model_bucket: "hbo-ingest-datascience-content-dev"
           BETA:
-            model_bucket: "hbo-ingest-datascience-content-pipeline-beta"
+            model_bucket: "hbo-ingest-datascience-content-beta"
           PROD:
-            model_bucket: "hbo-ingest-datascience-content-pipeline-prod"
+            model_bucket: "hbo-ingest-datascience-content"
         upstream_task_name: "ecr_container_creation"
 
       - name: "write_prediction_output_to_snowflake"

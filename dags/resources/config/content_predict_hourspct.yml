@@ -52,7 +52,7 @@ dags:
         # cols not used
       - name: "funnel_metric_feature_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_PIPELINE }}"
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
           database: "{{ var.value.DS_SF_MAX_DATABASE }}"
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
@@ -62,7 +62,7 @@ dags:
 
       - name: "metadata_feature_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_PIPELINE }}"
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
           database: "{{ var.value.DS_SF_MAX_DATABASE }}"
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
@@ -72,7 +72,7 @@ dags:
 
       - name: "media_cost_pre_launch_feature_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_PIPELINE }}"
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
           database: "{{ var.value.DS_SF_MAX_DATABASE }}"
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
@@ -80,10 +80,9 @@ dags:
         upstream_task_name: "python_script_post_launch_metrics"
         downstream_task_name: ecr_container_creation
 
-        # cols not used?
       - name: "media_cost_post_launch_feature_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_PIPELINE }}"
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
           database: "{{ var.value.DS_SF_MAX_DATABASE }}"
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
@@ -93,11 +92,21 @@ dags:
 
       - name: "content_cost_to_staging"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT_PIPELINE }}"
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
           database: "{{ var.value.DS_SF_MAX_DATABASE }}"
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
           - "feature_extraction_content_cost.sql"
+        upstream_task_name: "python_script_post_launch_metrics"
+        downstream_task_name: ecr_container_creation
+        
+      - name: "hours_pct_to_staging"
+        templates_dict:
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
+        sql_file_names:
+          - "feature_extraction_hours_pct.sql"
         upstream_task_name: "python_script_post_launch_metrics"
         downstream_task_name: ecr_container_creation
 
@@ -123,7 +132,7 @@ dags:
       - name: "write_prediction_output_to_snowflake"
         upstream_task_name: "sagemaker_notebook_job_processing_script"
         templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_OUTBOUND_DATASCIENCE_CONTENT_PIPELINE }}"
+          stage: "{{ var.value.DS_CONTENT_HBO_OUTBOUND_DATASCIENCE_CONTENT }}"
           database: "{{ var.value.DS_SF_MAX_DATABASE }}"
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:

@@ -64,7 +64,7 @@ dags:
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
           - "feature_extraction_trailer.sql"
-        upstream_task_name: "python_script_post_launch_metrics"
+        upstream_task_name: "python_script_post_launch_trailer_metrics"
         downstream_task_name: ecr_container_creation
 
       - name: "funnel_metric_feature_to_staging"
@@ -74,7 +74,7 @@ dags:
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
           - "feature_extraction_funnel_metric.sql"
-        upstream_task_name: "python_script_post_launch_metrics"
+        upstream_task_name: "python_script_post_launch_trailer_metrics"
         downstream_task_name: ecr_container_creation
 
       - name: "metadata_feature_to_staging"
@@ -84,7 +84,7 @@ dags:
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
           - "feature_extraction_metadata.sql"
-        upstream_task_name: "python_script_post_launch_metrics"
+        upstream_task_name: "python_script_post_launch_trailer_metrics"
         downstream_task_name: ecr_container_creation
 
       - name: "media_cost_pre_launch_feature_to_staging"
@@ -94,7 +94,7 @@ dags:
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
           - "feature_extraction_media_cost_pre_launch.sql"
-        upstream_task_name: "python_script_post_launch_metrics"
+        upstream_task_name: "python_script_post_launch_trailer_metrics"
         downstream_task_name: ecr_container_creation
 
       - name: "media_cost_post_launch_feature_to_staging"
@@ -104,7 +104,7 @@ dags:
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
           - "feature_extraction_media_cost_post_launch.sql"
-        upstream_task_name: "python_script_post_launch_metrics"
+        upstream_task_name: "python_script_post_launch_trailer_metrics"
         downstream_task_name: ecr_container_creation
 
       - name: "sub_total_feature_to_staging"
@@ -114,7 +114,7 @@ dags:
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
           - "feature_extraction_total_sub_num.sql"
-        upstream_task_name: "python_script_post_launch_metrics"
+        upstream_task_name: "python_script_post_launch_trailer_metrics"
         downstream_task_name: ecr_container_creation
 
       - name: "content_cost_to_staging"
@@ -124,7 +124,7 @@ dags:
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
           - "feature_extraction_content_cost.sql"
-        upstream_task_name: "python_script_post_launch_metrics"
+        upstream_task_name: "python_script_post_launch_trailer_metrics"
         downstream_task_name: ecr_container_creation
 
       - name: "vtp_feature_to_staging"
@@ -134,7 +134,7 @@ dags:
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
           - "feature_extraction_vtp.sql"
-        upstream_task_name: "python_script_post_launch_metrics"
+        upstream_task_name: "python_script_post_launch_trailer_metrics"
         downstream_task_name: ecr_container_creation
 
       - name: "ecr_container_creation"

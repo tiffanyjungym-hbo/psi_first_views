@@ -179,6 +179,7 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
                 case when {viewership_table} in ('max_prod.viewership.max_user_stream','max_prod.viewership.max_user_stream_heartbeat_view') then '2020-05-27'
                     when {viewership_table} = 'max_prod.viewership.now_user_stream' then '2015-04-07'
                         end
+            and stream_min_timestamp_gmt >= {end_date}
             -- consider en-US viewerships only for this version
          ),
 

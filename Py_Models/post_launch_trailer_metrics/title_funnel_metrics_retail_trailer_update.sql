@@ -82,6 +82,7 @@ max_viewership_match_id as (
                 case when {viewership_table} in ('max_prod.viewership.max_user_stream','max_prod.viewership.max_user_stream_heartbeat_view') then '2020-05-27'
                     when {viewership_table} = 'max_prod.viewership.now_user_stream' then '2015-04-07'
                         end
+            and stream_min_timestamp_gmt <= {end_date}
         group by 1,2,3,4
          ),
 

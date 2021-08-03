@@ -17,7 +17,7 @@ SNOWFLAKE_ACCOUNT_NAME: str = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.
 CURRENT_PATH: str = pathlib.Path(__file__).parent.absolute()
 QUERY_HOURS_PCT_WINDOW: str = 'hourspct_windows.sql'
 QUERY_HOURS_PCT_UPDATE: str = 'hourspct_historical_update.sql'
-TARGET_DATE: str = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+TARGET_DATE: str = (datetime.datetime.today()).strftime('%Y-%m-%d')
 
 logger = logging.getLogger()
 

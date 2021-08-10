@@ -1,13 +1,36 @@
 -- viewership table: source of viewership, either heartbeat or now_uer_stream
 -- end_date: the end date of the viewership data
 
-insert into {database}.{schema}.trailer_view_percent_test (
-with existing_titles as (
-    select distinct
-          match_id
-        , platform_name
-    from {database}.{schema}.trailer_view_percent_test
-),
+/*create or replace table max_dev.workspace.trailer_retail_view_percent (
+      trailer_title_name varchar (255) not null
+    , title_name varchar (255) not null
+    , match_id varchar (255) not null
+    , platform_name varchar (255) not null
+    , nday_before integer
+    , cumulative_day_num integer
+    , match_id_platform varchar (255) not null
+    , min_trailer_offered_timestamp timestamp
+    , title_offered_timestamp timestamp
+-- use credits start time as the total runtime for now
+    , viewe_count integer
+    , total_retail_sub_count integer
+    , end_date timestamp
+    , retail_trailer_view_metric float
+    , constraint id_plt_session primary key (match_id, platform_name, match_id_platform)
+    , constraint id_plt_session_unique unique (match_id, platform_name, match_id_platform)
+)*/
+
+insert into {database}.{schema}.trailer_retail_view_percent (
+with existing_title_info as (
+            select distinct
+                  match_id
+            from {database}.{schema}.trailer_view_percent_test
+            where 1=1
+                and platform_name =
+                    case when {viewership_table} = 'max_prod.viewership.max_user_stream_heartbeat_view' then 'hboMax'
+                        when {viewership_table} = 'max_prod.viewership.now_user_stream' then 'hboNow'
+                            end
+        ),
 
 title_info as (
     select distinct
@@ -41,15 +64,14 @@ trailer_match_id as (select distinct
     , f.earliest_offered_timestamp as title_offered_timestamp
     , case when e.match_id is null then 0 else 1 end as exist_id
 from title_info as t
-join {database}.{schema}.title_retail_funnel_metrics as f
+join max_dev.workspace.title_retail_funnel_metrics as f
     on t.trailer_title_name = get(split(f.title_name, ' S'),0)
         and t.earliest_offered_timestamp
             between dateadd(day, -56, f.earliest_offered_timestamp)
                 and dateadd(min, -1, f.earliest_offered_timestamp)
         and t.platform_name = f.platform_name
-left join existing_titles as e
-    on e.match_id = f.match_id
-        and e.platform_name = f.platform_name
+left join existing_title_info as e
+    on f.match_id = e.match_id
 where 1=1
     and t.platform_name =
         (case
@@ -58,6 +80,7 @@ where 1=1
             when {viewership_table} = 'max_prod.viewership.now_user_stream'
                 then 'hboNow' end)
     and exist_id = {exist_ind_val}
+    and trailer_offered_timestamp <= {end_date}
 order by trailer_title_name),
 
 max_viewership_match_id as (
@@ -66,6 +89,10 @@ max_viewership_match_id as (
             , title_name
             , match_id
             , f.platform_name
+            , {nday_before}
+            , datediff(day,
+                greatest(trailer_offered_timestamp, dateadd(day, -28, title_offered_timestamp))
+                    , dateadd(day, {nday_before},title_offered_timestamp)) as cumulative_day_num
             , min(trailer_offered_timestamp) as min_trailer_offered_timestamp
             , max(title_offered_timestamp) as title_offered_timestamp
             -- use credits start time as the total runtime for now
@@ -77,13 +104,17 @@ max_viewership_match_id as (
          where 1=1
             and match_id is not null
             and stream_elapsed_play_seconds > 10
-            and stream_min_timestamp_gmt between trailer_offered_timestamp and title_offered_timestamp
+            and stream_min_timestamp_gmt between
+                greatest(trailer_offered_timestamp, dateadd(day, -28, title_offered_timestamp))
+                    and dateadd(day, {nday_before}, title_offered_timestamp)
             and stream_min_timestamp_gmt >=
                 case when {viewership_table} in ('max_prod.viewership.max_user_stream','max_prod.viewership.max_user_stream_heartbeat_view') then '2020-05-27'
                     when {viewership_table} = 'max_prod.viewership.now_user_stream' then '2015-04-07'
                         end
             and stream_min_timestamp_gmt <= {end_date}
-        group by 1,2,3,4
+            and trailer_offered_timestamp < title_offered_timestamp
+            and cumulative_day_num > 0
+        group by 1,2,3,4,5,6
          ),
 
 retail_sub_count_table as (
@@ -113,6 +144,8 @@ last_table as (
                 , title_name
                 , match_id
                 , h.platform_name
+                , {nday_before} as nday_before
+                , cumulative_day_num
                 , concat(case when h.platform_name = 'hboNow' then 0
                         else 1 end, '-', match_id) as match_id_platform
                 , h.min_trailer_offered_timestamp
@@ -120,7 +153,7 @@ last_table as (
             -- use credits start time as the total runtime for now
                 , viewe_count
                 , total_retail_sub_count
-                , {end_date}                       as last_update_timestamp
+                , {end_date}                      as last_update_timestamp
                 , viewe_count / total_retail_sub_count     as retail_trailer_view_metric
              from max_viewership_match_id as h
              left join retail_sub_count_table as r

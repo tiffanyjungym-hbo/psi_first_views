@@ -18,6 +18,12 @@ CURRENT_PATH: str = pathlib.Path(__file__).parent.absolute()
 QUERY_TRAILER_METRICS: str = 'title_funnel_metrics_retail_trailer_update.sql'
 TARGET_DATE: str = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
 
+## [nday_before] since first offered
+DAY_LIST: List[int] = [
+	-27, -26, -25, -24, -23, -22, -21, -20, -19, -18, -17, -16, -15, -14, -13, -12, -11
+	, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0
+]
+
 # Calculating for different platforms
 PLATFORM_LIST: List[str] = ['hboMax', 'hboNow']
 # Source of viewership, either heartbeat or now_user_stream
@@ -102,35 +108,36 @@ def update_trailer_table(
 	logger.info(f'Loading query {QUERY_TRAILER_METRICS}')
 
 	df_trailer_metrics = pd.DataFrame()
+	for nday_before in DAY_LIST:
+		for platform in PLATFORM_LIST:
 
-	for platform in PLATFORM_LIST:
+			logger.info(f'Getting data on {platform}')
 
-		logger.info(f'Getting data on {platform}')
+			query_trailer_metrics = load_query(
+					f'{CURRENT_PATH}/{QUERY_TRAILER_METRICS}',
+					database=database,
+					schema=schema,
+					viewership_table=VIEWERSHIP_TABLE[platform],
+					end_date=END_DATE[platform],
+					exist_ind_val=EXIST_IND_VAL,
+					nday_before = nday_before
+				)
 
-		query_trailer_metrics = load_query(
-				f'{CURRENT_PATH}/{QUERY_TRAILER_METRICS}',
-				database=database,
-				schema=schema,
-				viewership_table=VIEWERSHIP_TABLE[platform],
-				end_date=END_DATE[platform],
-				exist_ind_val=EXIST_IND_VAL
-			)
+			start_time = time.time()
 
-		start_time = time.time()
+			_df_trailer_metrics = execute_query(
+					query=query_trailer_metrics,
+					database=database,
+					schema=schema,
+					warehouse=warehouse,
+					role=role,
+					snowflake_env=snowflake_env
+				)
 
-		_df_trailer_metrics = execute_query(
-				query=query_trailer_metrics,
-				database=database,
-				schema=schema,
-				warehouse=warehouse,
-				role=role,
-				snowflake_env=snowflake_env
-			)
+			end_time = time.time()
+			logger.info(f'Time taken {end_time - start_time} seconds')
 
-		end_time = time.time()
-		logger.info(f'Time taken {end_time - start_time} seconds')
-
-		df_trailer_metrics = pd.concat([df_trailer_metrics, _df_trailer_metrics], axis=0)
+			df_trailer_metrics = pd.concat([df_trailer_metrics, _df_trailer_metrics], axis=0)
 
 	return df_trailer_metrics
 
@@ -153,6 +160,7 @@ if __name__ == '__main__':
 	logger.info('Updating trailer table')
 
 	# Run the code to get trailer metric
+
 	df_funnel_metrics = update_trailer_table(
 		database=args.DATABASE,
 		schema=args.SCHEMA,

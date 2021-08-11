@@ -21,6 +21,7 @@ class FeatureEngineering(DataPreprocessing):
         self.num_columns = num_columns
         self.X_flag = False
         self.y_flag = False
+        self.pred_empty_flag = False
     
     def get_X_y(self, 
                 percent_data_process_info,
@@ -35,6 +36,11 @@ class FeatureEngineering(DataPreprocessing):
         self.target_copy = self.target.copy()
         self.target_copy['match_id'] = self.base_copy['match_id']
         self.day_column_list = []
+
+        # step 0.1: reset the flags
+        self.X_flag = False
+        self.y_flag = False
+        self.pred_empty_flag = False
         
         # step 1.1: original filter
         self.filter_non_originals(original_only)
@@ -248,6 +254,10 @@ class FeatureEngineering(DataPreprocessing):
         
         # get y_pred align with X_pred again
         self.y_pred = self.y_pred[self.X_pred.index]
+
+        # flag empty prediction set if X_pred is empty
+        if self.X_pred.shape[0]<1:
+            self.pred_empty_flag = True
         
     def calculate_growth_trend_projection(self, percent_data_process_info):        
         self.max_order = percent_data_process_info['growth_trend_num']

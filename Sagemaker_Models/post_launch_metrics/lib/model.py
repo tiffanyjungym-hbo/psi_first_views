@@ -241,10 +241,10 @@ class ModelMain(FeatureEngineering):
         
     def _param_tunning_flag_init(self, model_name):
         # initialize parameter tunning flags
-        self.parameter_tunning_stats = {}
-        self.parameter_tunning_stats[model_name] = {}
-        self.parameter_tunning_stats[model_name]['min_smape_original_flag'] = False
-        self.parameter_tunning_stats[model_name]['min_smape_all_flag'] = False     
+        self.parameter_tuning_stats = {}
+        self.parameter_tuning_stats[model_name] = {}
+        self.parameter_tuning_stats[model_name]['min_smape_original_flag'] = False
+        self.parameter_tuning_stats[model_name]['min_smape_all_flag'] = False     
 
         
     def _output_transformation(self, y_predict, y_test, 
@@ -393,7 +393,7 @@ class ModelMain(FeatureEngineering):
     def bootstrap_p_value_two_samples(self, sample1, sample2, total_iter = 5000):
         return 0
     
-    def parameter_tunning(self, model_name, 
+    def parameter_tuning(self, model_name, 
                           params_tunning_dict, 
                           percent_data_process_info,
                           nfold = 6):
@@ -401,7 +401,7 @@ class ModelMain(FeatureEngineering):
             self._param_tunning_flag_init(model_name)
             
             model_name_list = [model_name]
-            combinations, allNames = self._parameter_tunning_init(params_tunning_dict, model_name)
+            combinations, allNames = self._parameter_tuning_init(params_tunning_dict, model_name)
             
             ct= 1
             for com in combinations:
@@ -424,23 +424,23 @@ class ModelMain(FeatureEngineering):
                                         ['min_smape_original', 'maximum_smape_original']]
         smape_flag = ['min_smape_all_flag','min_smape_original_flag']
         for smape, min_max_name, flag in zip(smape_list, smape_type, smape_flag):            
-            if smape < self.parameter_tunning_stats[min_max_name[0]]:
-                self.parameter_tunning_stats[min_max_name[0]]  = smape
+            if smape < self.parameter_tuning_stats[min_max_name[0]]:
+                self.parameter_tuning_stats[min_max_name[0]]  = smape
                 self.min_smape_param[min_max_name[0]] = params_dict_input
-                self.parameter_tunning_stats[flag] = True
+                self.parameter_tuning_stats[flag] = True
                 
-            if smape > self.parameter_tunning_stats[min_max_name[1]]:
-                self.parameter_tunning_stats[min_max_name[1]]  = smape
+            if smape > self.parameter_tuning_stats[min_max_name[1]]:
+                self.parameter_tuning_stats[min_max_name[1]]  = smape
                 
 
-    def _parameter_tunning_init(self, params_tunning_dict, model_name):
-        self.parameter_tunning_stats = {}
-        self.parameter_tunning_stats['min_smape_all'] = np.inf
-        self.parameter_tunning_stats['maximum_smape_all'] = -np.inf
-        self.parameter_tunning_stats['min_smape_original'] = np.inf
-        self.parameter_tunning_stats['maximum_smape_original'] = -np.inf
-        self.parameter_tunning_stats['min_smape_all_flag'] = False
-        self.parameter_tunning_stats['min_smape_original_flag'] = False
+    def _parameter_tuning_init(self, params_tunning_dict, model_name):
+        self.parameter_tuning_stats = {}
+        self.parameter_tuning_stats['min_smape_all'] = np.inf
+        self.parameter_tuning_stats['maximum_smape_all'] = -np.inf
+        self.parameter_tuning_stats['min_smape_original'] = np.inf
+        self.parameter_tuning_stats['maximum_smape_original'] = -np.inf
+        self.parameter_tuning_stats['min_smape_all_flag'] = False
+        self.parameter_tuning_stats['min_smape_original_flag'] = False
         self.min_smape_param = {}
         
         return self._gen_combinations(params_tunning_dict, model_name)

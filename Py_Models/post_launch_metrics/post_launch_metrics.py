@@ -16,11 +16,12 @@ SNOWFLAKE_ACCOUNT_NAME: str = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.
 QUERY_SUBSCRIBER_TABLE: str = 'total_sub_base_table.sql'
 CURRENT_PATH: str = pathlib.Path(__file__).parent.absolute()
 QUERY_FUNNEL_METRICS: str = 'title_retail_funnel_metrics_update.sql'
+QUERY_FUNNEL_METRICS_PPRELAUNCH: str = 'title_retail_funnel_metrics_update_prelaunch.sql'
 QUERY_FUNNEL_METRICS_LAST_DATE: str = 'title_retail_funnel_metrics_last_date.sql'
 
 ## [ndays] since first offered
 DAY_LIST: List[int] = [
-	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28
 ]
 
 # Calculating for different platforms
@@ -143,20 +144,30 @@ def update_funnel_metrics_table(
 
 			# if the run date is later than the last update date
 			if ((f"'{last_date}'" >= END_DATE[platform])  &  (last_date!=None)):
-				logger.info(f'Last date after/equal to end date, so skipping nth day: {nday} on {platform}')
+				logger.info(f'Last date after/equal to end date, so skipping nth day: {nday} on {platform}')				
 			else:
 				logger.info(f'Getting data for nth day: {nday} on {platform}')
 
-				query_funnel_metrics = load_query(
-					f'{CURRENT_PATH}/{QUERY_FUNNEL_METRICS}',
-					database=database,
-					schema=schema,
-					nday=nday,
-					day_latency=DAY_LATENCY,
-					viewership_table=VIEWERSHIP_TABLE[platform],
-					end_date=END_DATE[platform],
-					exist_ind_val=EXIST_IND_VAL
-				)
+				if nday == 0:
+					query_funnel_metrics = load_query(
+						f'{CURRENT_PATH}/{QUERY_FUNNEL_METRICS_PPRELAUNCH}',
+						database=database,
+						schema=schema,
+						end_date=END_DATE[platform],
+						exist_ind_val=EXIST_IND_VAL
+					)
+
+				else:
+					query_funnel_metrics = load_query(
+						f'{CURRENT_PATH}/{QUERY_FUNNEL_METRICS}',
+						database=database,
+						schema=schema,
+						nday=nday,
+						day_latency=DAY_LATENCY,
+						viewership_table=VIEWERSHIP_TABLE[platform],
+						end_date=END_DATE[platform],
+						exist_ind_val=EXIST_IND_VAL
+					)
 
 				start_time = time.time()
 

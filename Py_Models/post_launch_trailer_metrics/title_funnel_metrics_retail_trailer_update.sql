@@ -14,7 +14,7 @@
 -- use credits start time as the total runtime for now
     , viewe_count integer
     , total_retail_sub_count integer
-    , end_date timestamp
+    , last_update_timestamp timestamp
     , retail_trailer_view_metric float
     , constraint id_plt_session primary key (match_id, platform_name, match_id_platform)
     , constraint id_plt_session_unique unique (match_id, platform_name, match_id_platform)

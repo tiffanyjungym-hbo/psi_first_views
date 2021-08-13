@@ -7,7 +7,7 @@ FROM (
         concat(title_id, case when c.content_category = 'series'
             then concat('-',to_char(ifnull(right(season_or_movie_title, 1), '1'))) else '' end) as match_id
         , total_cost/1000000 as content_cost
-    from  max_prod.content_revenue.content_efficiency_main as c
+    from  max_dev.content_revenue.content_efficiency_main as c
     )
 
     select distinct

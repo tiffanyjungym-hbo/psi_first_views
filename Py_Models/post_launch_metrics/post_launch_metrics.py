@@ -123,10 +123,7 @@ def update_funnel_metrics_table(
 				database=database,
 				schema=schema,
 				nday=nday,
-				day_latency=DAY_LATENCY,
-				viewership_table=VIEWERSHIP_TABLE[platform],
-				end_date=END_DATE[platform],
-				exist_ind_val=EXIST_IND_VAL
+				viewership_table=VIEWERSHIP_TABLE[platform]
 			)
 
 			last_date = execute_query(
@@ -153,6 +150,7 @@ def update_funnel_metrics_table(
 						f'{CURRENT_PATH}/{QUERY_FUNNEL_METRICS_PPRELAUNCH}',
 						database=database,
 						schema=schema,
+						viewership_table=VIEWERSHIP_TABLE[platform],
 						end_date=END_DATE[platform],
 						exist_ind_val=EXIST_IND_VAL
 					)

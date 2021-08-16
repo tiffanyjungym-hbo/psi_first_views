@@ -35,7 +35,7 @@ metadata_process_info = {
          , 'ln_total_media_cost_pre_launch'
          , 'total_hours'
          , 'retail_trailer_view_metric'
-         #, 'content_cost'
+         , 'content_cost'
          , 'season_number_adj'
                  ],
     'label_columns':['content_category', 'program_type'],

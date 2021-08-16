@@ -23,8 +23,9 @@ FROM (
                         else 1 end, '-', f.match_id) as match_id_platform
             , ifnull(t.retail_trailer_view_metric, -1) as retail_trailer_view_metric
         from base as t
-        right join {database}.{schema}.trailer_retail_view_percent as f
-            on t.match_id_platform = f.match_id_platform
+        right join {database}.{schema}.title_retail_funnel_metrics as f
+            on t.match_id_platform = concat(case when f.platform_name = 'hboNow' then 0
+                    else 1 end, '-', f.match_id)
         order by retail_trailer_view_metric desc
     )
 

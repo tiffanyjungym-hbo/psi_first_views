@@ -151,7 +151,7 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
             , content_category
             , single_episode_ind
             -- use credits start time as the total runtime for now
-            , credits_start_time as runtime
+            , coalesce(credits_start_time, runtime) as runtime
             , hbo_uuid
             , stream_elapsed_play_seconds
             , e.earliest_offered_timestamp

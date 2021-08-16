@@ -45,7 +45,6 @@ insert into {database}.{schema}.trailer_retail_view_percent (
         , case when {viewership_table} in ('max_prod.viewership.max_user_stream', 'max_prod.viewership.max_user_stream_heartbeat_view') then 'hboMax'
             when {viewership_table} = 'max_prod.viewership.now_user_stream' then 'hboNow'
                 end as platform_name
-        , runtime
         , edit_language
     from max_prod.catalog.asset_dim as asset
     join max_prod.catalog.asset_edit_dim as edit
@@ -95,7 +94,6 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                         , dateadd(day, {nday_before},title_offered_timestamp)) as cumulative_day_num
                 , min(trailer_offered_timestamp) as min_trailer_offered_timestamp
                 , max(title_offered_timestamp) as title_offered_timestamp
-                -- use credits start time as the total runtime for now
                 , count(distinct hbo_uuid) as viewe_count
             from table ({viewership_table}) as v
             -- get trailer data
@@ -150,7 +148,6 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                             else 1 end, '-', match_id) as match_id_platform
                     , h.min_trailer_offered_timestamp
                     , h.title_offered_timestamp
-                -- use credits start time as the total runtime for now
                     , viewe_count
                     , total_retail_sub_count
                     , {end_date}                      as last_update_timestamp

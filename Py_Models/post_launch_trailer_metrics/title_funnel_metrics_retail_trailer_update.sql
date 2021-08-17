@@ -23,9 +23,10 @@
 insert into {database}.{schema}.trailer_retail_view_percent (
     with existing_title_info as (
                 select distinct
-                    match_id
+                    match_id_platform
                 from {database}.{schema}.trailer_view_percent_test
                 where 1=1
+                    and nday_before = {nday_before}
                     and platform_name =
                         case when {viewership_table} = 'max_prod.viewership.max_user_stream_heartbeat_view' then 'hboMax'
                             when {viewership_table} = 'max_prod.viewership.now_user_stream' then 'hboNow'
@@ -70,7 +71,7 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                     and dateadd(min, -1, f.earliest_offered_timestamp)
             and t.platform_name = f.platform_name
     left join existing_title_info as e
-        on f.match_id = e.match_id
+        on f.match_id_platform = e.match_id_platform
     where 1=1
         and t.platform_name =
             (case

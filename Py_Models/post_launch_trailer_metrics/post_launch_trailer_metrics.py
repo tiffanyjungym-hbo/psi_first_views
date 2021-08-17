@@ -117,7 +117,7 @@ def update_trailer_table(
 				f'{CURRENT_PATH}/{QUERY_FUNNEL_METRICS_TRAILER_LAST_DATE}',
 				database=database,
 				schema=schema,
-				nday=nday_before,
+				nday_before=nday_before,
 				viewership_table=VIEWERSHIP_TABLE[platform]
 			)
 

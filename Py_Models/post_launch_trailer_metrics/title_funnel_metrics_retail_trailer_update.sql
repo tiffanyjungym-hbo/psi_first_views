@@ -71,7 +71,7 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                     and dateadd(min, -1, f.earliest_offered_timestamp)
             and t.platform_name = f.platform_name
     left join existing_title_info as e
-        on f.match_id_platform = e.match_id_platform
+        on f.match_id= e.match_id
     where 1=1
         and t.platform_name =
             (case

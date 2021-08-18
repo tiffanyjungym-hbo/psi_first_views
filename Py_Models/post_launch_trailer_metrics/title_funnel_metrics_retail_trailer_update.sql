@@ -24,7 +24,7 @@ insert into {database}.{schema}.trailer_retail_view_percent (
     with existing_title_info as (
                 select distinct
                     match_id_platform
-                from {database}.{schema}.trailer_view_percent_test
+                from {database}.{schema}.trailer_retail_view_percent
                 where 1=1
                     and nday_before = {nday_before}
                     and platform_name =

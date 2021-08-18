@@ -129,9 +129,8 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                 left join {database}.{schema}.sub_period_in_uuid_test as a
                     -- give one day butter to both dates, since some titles may release in the late night
                     ------ logic: sessions without the following conditions
-                    on (((a.subscription_expire_timestamp <= t.min_trailer_offered_timestamp)
-                        or (a.subscription_start_timestamp >= t.title_offered_timestamp)
-                            ) = FALSE)
+                    on a.subscription_expire_timestamp >= t.min_trailer_offered_timestamp
+                        and a.subscription_start_timestamp <= dateadd(day, {nday_before}, title_offered_timestamp)
                 where 1 = 1
                     and t.platform_name = a.platform_name
                 group by 1,2

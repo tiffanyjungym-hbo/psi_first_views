@@ -122,6 +122,7 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                     case when {viewership_table} in ('max_prod.viewership.max_user_stream','max_prod.viewership.max_user_stream_heartbeat_view') then '2020-05-27'
                         when {viewership_table} = 'max_prod.viewership.now_user_stream' then '2015-04-07'
                             end
+                and dateadd(day, {nday_before}, first_title_offered_timestamp) < {end_date}
                 and stream_min_timestamp_gmt <= {end_date}
                 and first_trailer_offered_timestamp < first_title_offered_timestamp
                 and cumulative_day_num > 0

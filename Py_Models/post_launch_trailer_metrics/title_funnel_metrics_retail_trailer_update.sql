@@ -81,7 +81,6 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                     then 'hboNow' end)
         and exist_id = {exist_ind_val}
         and trailer_offered_timestamp <= {end_date}
-        and title_name = 'Judas and the Black Messiah'
     order by trailer_title_name),
 
     trailer_match_id_agg as (

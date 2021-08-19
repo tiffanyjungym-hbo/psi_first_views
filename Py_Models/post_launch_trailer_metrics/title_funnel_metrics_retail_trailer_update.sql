@@ -2,16 +2,15 @@
 -- end_date: the end date of the viewership data
 
 /*create or replace table max_dev.workspace.trailer_retail_view_percent (
-      trailer_title_name varchar (255) not null
-    , title_name varchar (255) not null
+      title_name varchar (255) not null
     , match_id varchar (255) not null
     , platform_name varchar (255) not null
     , nday_before integer
+    , total_trailer_num integer
     , cumulative_day_num integer
     , match_id_platform varchar (255) not null
     , min_trailer_offered_timestamp timestamp
     , title_offered_timestamp timestamp
--- use credits start time as the total runtime for now
     , viewe_count integer
     , total_retail_sub_count integer
     , last_update_timestamp timestamp
@@ -39,7 +38,7 @@ insert into {database}.{schema}.trailer_retail_view_percent (
         , case when asset_title_short like '%Season%'
             then trim(regexp_replace(get(split(asset_title_long, ': Season'),0), '"', ''))
             else trim(regexp_replace(get(split(asset_title_long, 'Trailer'),0), ':', ''))
-            end as trailer_title_name
+                end as trailer_title_name
         , case when {viewership_table} in ('max_prod.viewership.max_user_stream', 'max_prod.viewership.max_user_stream_heartbeat_view') then first_offered_date_max
             when {viewership_table} = 'max_prod.viewership.now_user_stream' then first_offered_date_now
                 end as earliest_offered_timestamp
@@ -64,7 +63,7 @@ insert into {database}.{schema}.trailer_retail_view_percent (
         , f.earliest_offered_timestamp as title_offered_timestamp
         , case when e.match_id is null then 0 else 1 end as exist_id
     from title_info as t
-    join max_dev.workspace.title_retail_funnel_metrics as f
+    join {database}.{schema}.title_retail_funnel_metrics as f
         on t.trailer_title_name = get(split(f.title_name, ' S'),0)
             and t.earliest_offered_timestamp
                 between dateadd(day, -56, f.earliest_offered_timestamp)
@@ -85,17 +84,14 @@ insert into {database}.{schema}.trailer_retail_view_percent (
 
     max_viewership_match_id as (
                 select
-                trailer_title_name
-                , title_name
-                , match_id
-                , f.platform_name
-                , {nday_before}
-                , datediff(day,
-                    greatest(trailer_offered_timestamp, dateadd(day, -28, title_offered_timestamp))
-                        , dateadd(day, {nday_before},title_offered_timestamp)) as cumulative_day_num
-                , min(trailer_offered_timestamp) as min_trailer_offered_timestamp
-                , max(title_offered_timestamp) as title_offered_timestamp
-                , count(distinct hbo_uuid) as viewe_count
+                      title_name
+                    , match_id
+                    , f.platform_name
+                    , {nday_before}
+                    , count(distinct f.viewable_id) as total_trailer_num
+                    , min(trailer_offered_timestamp) as min_trailer_offered_timestamp
+                    , max(title_offered_timestamp) as title_offered_timestamp
+                    , count(distinct hbo_uuid) as view_count
             from table ({viewership_table}) as v
             -- get trailer data
             join trailer_match_id as f
@@ -118,7 +114,7 @@ insert into {database}.{schema}.trailer_retail_view_percent (
 
     retail_sub_count_table as (
                 select
-                        min_trailer_offered_timestamp
+                      min_trailer_offered_timestamp
                     , title_offered_timestamp
                     , count(distinct hbo_uuid) as total_retail_sub_count
                 from max_viewership_match_id as t
@@ -138,20 +134,23 @@ insert into {database}.{schema}.trailer_retail_view_percent (
 
     last_table as (
                 select
-                    trailer_title_name
-                    , title_name
+                      title_name
                     , match_id
                     , h.platform_name
                     , {nday_before} as nday_before
+                    , total_trailer_num
                     , cumulative_day_num
+                    , datediff(day,
+                        greatest(trailer_offered_timestamp, dateadd(day, -28, title_offered_timestamp))
+                            , dateadd(day, {nday_before},title_offered_timestamp)) as cumulative_day_num
                     , concat(case when h.platform_name = 'hboNow' then 0
                             else 1 end, '-', match_id) as match_id_platform
                     , h.min_trailer_offered_timestamp
                     , h.title_offered_timestamp
-                    , viewe_count
+                    , view_count
                     , total_retail_sub_count
                     , {end_date}                      as last_update_timestamp
-                    , viewe_count / total_retail_sub_count     as retail_trailer_view_metric
+                    , view_count / total_retail_sub_count     as retail_trailer_view_metric
                 from max_viewership_match_id as h
                 left join retail_sub_count_table as r
                     on h.min_trailer_offered_timestamp = r.min_trailer_offered_timestamp

@@ -6,10 +6,10 @@
     , match_id varchar (255) not null
     , platform_name varchar (255) not null
     , nday_before integer
-    , total_trailer_num integer
     , cumulative_day_num integer
+    , total_trailer_num integer
     , match_id_platform varchar (255) not null
-    , min_trailer_offered_timestamp timestamp
+    , first_trailer_offered_timestamp timestamp
     , title_offered_timestamp timestamp
     , viewe_count integer
     , total_retail_sub_count integer
@@ -89,7 +89,7 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                     , f.platform_name
                     , {nday_before}
                     , count(distinct f.viewable_id) as total_trailer_num
-                    , min(trailer_offered_timestamp) as min_trailer_offered_timestamp
+                    , min(trailer_offered_timestamp) as first_trailer_offered_timestamp
                     , max(title_offered_timestamp) as title_offered_timestamp
                     , count(distinct hbo_uuid) as view_count
             from table ({viewership_table}) as v
@@ -114,7 +114,7 @@ insert into {database}.{schema}.trailer_retail_view_percent (
 
     retail_sub_count_table as (
                 select
-                      min_trailer_offered_timestamp
+                      first_trailer_offered_timestamp
                     , title_offered_timestamp
                     , count(distinct hbo_uuid) as total_retail_sub_count
                 from max_viewership_match_id as t
@@ -125,7 +125,7 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                 left join {database}.{schema}.sub_period_in_uuid_test as a
                     -- give one day butter to both dates, since some titles may release in the late night
                     ------ logic: sessions without the following conditions
-                    on a.subscription_expire_timestamp >= t.min_trailer_offered_timestamp
+                    on a.subscription_expire_timestamp >= t.first_trailer_offered_timestamp
                         and a.subscription_start_timestamp <= dateadd(day, {nday_before}, title_offered_timestamp)
                 where 1 = 1
                     and t.platform_name = a.platform_name
@@ -138,22 +138,21 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                     , match_id
                     , h.platform_name
                     , {nday_before} as nday_before
-                    , total_trailer_num
-                    , cumulative_day_num
                     , datediff(day,
                         greatest(trailer_offered_timestamp, dateadd(day, -28, title_offered_timestamp))
-                            , dateadd(day, {nday_before},title_offered_timestamp)) as cumulative_day_num
+                            , dateadd(day, {nday_before}, title_offered_timestamp)) as cumulative_day_num
+                    , total_trailer_num
                     , concat(case when h.platform_name = 'hboNow' then 0
                             else 1 end, '-', match_id) as match_id_platform
-                    , h.min_trailer_offered_timestamp
+                    , h.first_trailer_offered_timestamp
                     , h.title_offered_timestamp
                     , view_count
                     , total_retail_sub_count
-                    , {end_date}                      as last_update_timestamp
+                    , {end_date}                              as last_update_timestamp
                     , view_count / total_retail_sub_count     as retail_trailer_view_metric
                 from max_viewership_match_id as h
                 left join retail_sub_count_table as r
-                    on h.min_trailer_offered_timestamp = r.min_trailer_offered_timestamp
+                    on h.first_trailer_offered_timestamp = r.first_trailer_offered_timestamp
                         and h.title_offered_timestamp = r.title_offered_timestamp
             )
 

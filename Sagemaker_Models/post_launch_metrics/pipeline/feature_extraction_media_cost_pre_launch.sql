@@ -14,8 +14,11 @@ FROM (
 
     mk_title_clean as (
         select distinct
-            case when originals_series_calc in ('HBO MAX GROWTH','HBO NOW','-')
-                    then custom_dimension_11
+                case when originals_series_calc in ('HBO MAX GROWTH','HBO NOW','-')
+                    then (case when custom_dimension_11 = 'The Conjuring'
+                                then 'The Conjuring: The Devil Made Me Do It'
+                            else custom_dimension_11 
+                            end)
                 when originals_series_calc = 'LOVECRAFT'
                     then 'lovecraft country'
                 when originals_series_calc = 'PLOT AGAINST AMERICA'

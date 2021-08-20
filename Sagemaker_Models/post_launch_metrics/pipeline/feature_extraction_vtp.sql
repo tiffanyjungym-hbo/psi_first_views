@@ -69,7 +69,36 @@ FROM (
                     , 'DAY026_VTP'
                     , 'DAY027_VTP'
                     , 'DAY028_VTP'
-                ))
+                )) as p (
+                      DAY001_VTP
+                    , DAY002_VTP
+                    , DAY003_VTP
+                    , DAY004_VTP
+                    , DAY005_VTP
+                    , DAY006_VTP
+                    , DAY007_VTP
+                    , DAY008_VTP
+                    , DAY009_VTP
+                    , DAY010_VTP
+                    , DAY011_VTP
+                    , DAY012_VTP
+                    , DAY013_VTP
+                    , DAY014_VTP
+                    , DAY015_VTP
+                    , DAY016_VTP
+                    , DAY017_VTP
+                    , DAY018_VTP
+                    , DAY019_VTP
+                    , DAY020_VTP
+                    , DAY021_VTP
+                    , DAY022_VTP
+                    , DAY023_VTP
+                    , DAY024_VTP
+                    , DAY025_VTP
+                    , DAY026_VTP
+                    , DAY027_VTP
+                    , DAY028_VTP    
+                )
         as vpt
         order by match_id_platform
     )

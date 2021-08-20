@@ -16,7 +16,10 @@ FROM (
     mk_title_clean as (
         select distinct
             case when originals_series_calc in ('HBO MAX GROWTH','HBO NOW','-')
-                    then custom_dimension_11
+                    then (case when custom_dimension_11 = 'The Conjuring'
+                                then 'The Conjuring: The Devil Made Me Do It'
+                            else custom_dimension_11 
+                            end)
                 when originals_series_calc = 'LOVECRAFT'
                     then 'lovecraft country'
                 when originals_series_calc = 'PLOT AGAINST AMERICA'
@@ -128,7 +131,36 @@ FROM (
                     , 'DAY026_MC'
                     , 'DAY027_MC'
                     , 'DAY028_MC'
-                ))
+                )) as p (
+                      DAY001_MC
+                    , DAY002_MC
+                    , DAY003_MC
+                    , DAY004_MC
+                    , DAY005_MC
+                    , DAY006_MC
+                    , DAY007_MC
+                    , DAY008_MC
+                    , DAY009_MC
+                    , DAY010_MC
+                    , DAY011_MC
+                    , DAY012_MC
+                    , DAY013_MC
+                    , DAY014_MC
+                    , DAY015_MC
+                    , DAY016_MC
+                    , DAY017_MC
+                    , DAY018_MC
+                    , DAY019_MC
+                    , DAY020_MC
+                    , DAY021_MC
+                    , DAY022_MC
+                    , DAY023_MC
+                    , DAY024_MC
+                    , DAY025_MC
+                    , DAY026_MC
+                    , DAY027_MC
+                    , DAY028_MC
+                )
         as mc
         order by match_id_platform
     )

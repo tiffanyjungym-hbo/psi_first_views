@@ -67,7 +67,36 @@ FROM (
                     , 'DAY026_PERCENT_VIEWED'
                     , 'DAY027_PERCENT_VIEWED'
                     , 'DAY028_PERCENT_VIEWED'
-                ))
+                )) as p(
+                      DAY001_PERCENT_VIEWED
+                    , DAY002_PERCENT_VIEWED
+                    , DAY003_PERCENT_VIEWED
+                    , DAY004_PERCENT_VIEWED
+                    , DAY005_PERCENT_VIEWED
+                    , DAY006_PERCENT_VIEWED
+                    , DAY007_PERCENT_VIEWED
+                    , DAY008_PERCENT_VIEWED
+                    , DAY009_PERCENT_VIEWED
+                    , DAY010_PERCENT_VIEWED
+                    , DAY011_PERCENT_VIEWED
+                    , DAY012_PERCENT_VIEWED
+                    , DAY013_PERCENT_VIEWED
+                    , DAY014_PERCENT_VIEWED
+                    , DAY015_PERCENT_VIEWED
+                    , DAY016_PERCENT_VIEWED
+                    , DAY017_PERCENT_VIEWED
+                    , DAY018_PERCENT_VIEWED
+                    , DAY019_PERCENT_VIEWED
+                    , DAY020_PERCENT_VIEWED
+                    , DAY021_PERCENT_VIEWED
+                    , DAY022_PERCENT_VIEWED
+                    , DAY023_PERCENT_VIEWED
+                    , DAY024_PERCENT_VIEWED
+                    , DAY025_PERCENT_VIEWED
+                    , DAY026_PERCENT_VIEWED
+                    , DAY027_PERCENT_VIEWED
+                    , DAY028_PERCENT_VIEWED
+                )
         as viewed_percent
         order by match_id_platform
     )

@@ -132,7 +132,6 @@ FROM (
                     , 'DAY028_MC'
                 )) as p (
                       MATCH_ID_PLATFORM 
-                    , DAYS_SINCE_FIRST_OFFERED 
                     , DAY001_MC
                     , DAY002_MC
                     , DAY003_MC

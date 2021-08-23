@@ -14,6 +14,7 @@ FROM (
     viewed_pivot_base as (
         select distinct
             b.match_id_platform
+            , concat('DAY', lpad(to_char(b.days_since_first_offered),3, 0), '_SUB_COUNT') as days_since_first_offered
             , total_retail_sub_count
         from base_info_table as b
     ),

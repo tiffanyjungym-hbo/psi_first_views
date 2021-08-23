@@ -19,6 +19,7 @@ FROM (
     vpt_pivot_base as (
         select
             b.match_id_platform
+            , concat('DAY', lpad(to_char(b.days_since_first_offered),3, 0), '_VTP') as days_since_first_offered
             , viewed_through_portion
         from base_info_table as b
     ),

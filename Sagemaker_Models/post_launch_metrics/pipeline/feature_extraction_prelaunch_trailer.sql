@@ -129,4 +129,4 @@ FROM (
         select
             f.*
         from final as f
-file_format = (type='csv' compression = 'NONE') single = true OVERWRITE = TRUE header = TRUE;
+) file_format = (type='csv' compression = 'NONE') single = true OVERWRITE = TRUE header = TRUE;

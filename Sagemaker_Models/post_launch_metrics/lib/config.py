@@ -17,6 +17,35 @@ percent_data_process_info ={
     'linear_pred_as_feature':False
 }
 
+prelaunch_process_info = {
+    'target_col':'day028_percent_viewed',
+    'day_column_keywords':
+        [],
+    'keywords':
+        # flags are usually included in the tags, so excluded here
+        ['tag','licensor','title_age', 'dayofweek_earliest_date'],
+    'other_col':
+        ['single_episode_ind'
+         , 'at_release_year'
+         , 'content_category'
+         , 'platform_name'
+         , 'program_type'
+         , 'prod_release_year'
+         , 'in_sequantial_releasing_period' 
+         , 'total_hours'
+         , 'retail_trailer_view_metric'
+         , 'content_cost'
+         , 'season_number_adj'
+                 ],
+    'label_columns':['content_category', 'program_type'],
+    'num_columns':['prod_release_year'
+                   , 'retail_trailer_view_metric'
+                   , 'total_hours'
+                   , 'title_age_approx'
+                   , 'season_number_adj'
+                   ]
+}
+
 metadata_process_info = {
     'target_col':'day028_percent_viewed',
     'day_column_keywords':
@@ -44,7 +73,7 @@ metadata_process_info = {
                    , 'total_hours'
                    , 'title_age_approx'
                    , 'ln_total_media_cost_pre_launch'
-        #           , 'content_cost'
+                   , 'content_cost'
                    , 'season_number_adj'
                    ]
 }

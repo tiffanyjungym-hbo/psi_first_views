@@ -7,6 +7,7 @@ FROM (
             concat(case when platform_name = 'hboNow' then 0
                     else 1 end, '-', match_id) as match_id_platform
             , days_since_first_offered
+            , datediff(day, earliest_offered_timestamp, last_update_timestamp) as days_since_offered
             , total_retail_sub_count
         from {database}.{schema}.title_retail_funnel_metrics
     ),

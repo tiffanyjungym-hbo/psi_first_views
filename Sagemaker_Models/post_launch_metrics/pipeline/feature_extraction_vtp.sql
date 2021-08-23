@@ -8,6 +8,7 @@ FROM (
             concat(case when platform_name = 'hboNow' then 0
                     else 1 end, '-', match_id) as match_id_platform
             , days_since_first_offered
+            , datediff(day, earliest_offered_timestamp, last_update_timestamp) as days_since_offered
             , case when retail_played_count_percent is not null and retail_played_count_percent>0
                     then retail_viewed_count_percent/retail_played_count_percent
                     else 0

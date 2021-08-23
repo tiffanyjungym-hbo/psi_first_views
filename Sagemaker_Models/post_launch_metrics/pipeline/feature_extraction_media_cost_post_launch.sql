@@ -8,9 +8,19 @@ FROM (
             , platform_name
             , earliest_offered_timestamp
             , days_since_first_offered
+            , datediff(day, earliest_offered_timestamp, last_update_timestamp) as days_since_offered
             , concat(case when f.platform_name = 'hboNow' then 0
                     else 1 end, '-', f.match_id) as match_id_platform
-        from {database}.{schema}.title_retail_funnel_metrics as f
+        from {max_dev}.{workspace}.title_retail_funnel_metrics as f
+    ),
+
+
+    min_days_since_offered_table as (
+        select
+            match_id_platform
+            , max(days_since_offered) as min_days_since_offered
+        from title_id
+        group by 1
     ),
 
     mk_title_clean as (
@@ -18,7 +28,7 @@ FROM (
             case when originals_series_calc in ('HBO MAX GROWTH','HBO NOW','-')
                     then (case when custom_dimension_11 = 'The Conjuring'
                                 then 'The Conjuring: The Devil Made Me Do It'
-                            else custom_dimension_11 
+                            else custom_dimension_11
                             end)
                 when originals_series_calc = 'LOVECRAFT'
                     then 'lovecraft country'
@@ -76,18 +86,22 @@ FROM (
 
     pivot_base as (
             select
-                match_id_platform
+                s.match_id_platform
                 , days_since_first_offered
+                , min_days_since_offered
                 , sum(total_media_cost_from_marketing_spend) over
-                    (partition by match_id_platform order by days_since_first_offered)
+                    (partition by s.match_id_platform order by days_since_first_offered)
                         as cum_total_media_cost_from_marketing_spend
-            from total_mk_spend
+            from total_mk_spend as s
+            join min_days_since_offered_table as o
+                on s.match_id_platform = o.match_id_platform
             order by match_id_platform, days_since_first_offered
         ),
 
     null_val_proc as (
         select
             match_id_platform
+            , min_days_since_offered
             , days_since_first_offered
             , case when ((cum_total_media_cost_from_marketing_spend is null)
                             or (cum_total_media_cost_from_marketing_spend<0)) then -1
@@ -131,7 +145,8 @@ FROM (
                     , 'DAY027_MC'
                     , 'DAY028_MC'
                 )) as p (
-                      MATCH_ID_PLATFORM 
+                      MATCH_ID_PLATFORM
+                    , MIN_DAYS_SINCE_OFFERED
                     , DAY001_MC
                     , DAY002_MC
                     , DAY003_MC

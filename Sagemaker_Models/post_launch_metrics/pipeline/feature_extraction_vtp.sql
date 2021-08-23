@@ -99,7 +99,6 @@ FROM (
                     , DAY027_VTP
                     , DAY028_VTP    
                 )
-        as vpt
         order by match_id_platform
     )
 

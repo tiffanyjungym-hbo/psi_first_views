@@ -161,7 +161,6 @@ FROM (
                     , DAY027_MC
                     , DAY028_MC
                 )
-        as mc
         order by match_id_platform
     )
 

@@ -97,7 +97,6 @@ FROM (
                     , DAY027_PERCENT_VIEWED
                     , DAY028_PERCENT_VIEWED
                 )
-        as viewed_percent
         order by match_id_platform
     )
 

@@ -84,7 +84,6 @@ FROM (
                     , DAY027_SUB_COUNT
                     , DAY028_SUB_COUNT
                 )
-        as viewed_percent
         order by match_id_platform
     )
 

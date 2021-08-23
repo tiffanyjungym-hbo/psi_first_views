@@ -64,7 +64,7 @@ dags:
           database: "{{ var.value.DS_SF_MAX_DATABASE }}"
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
-          - "feature_extraction_pre_launch_trailer.sql"
+          - "feature_extraction_prelaunch_trailer.sql"
         upstream_task_name: "python_script_post_launch_trailer_metrics"
         downstream_task_name: ecr_container_creation
       

@@ -69,7 +69,6 @@ FROM (
                 and c.days_since_first_offered = t.days_since_first_offered
         where 1=1
             and t.days_since_first_offered<=28
-            --and t.match_id_platform in ('1-GYBllVQbyTkOLlAEAAAAC-1','1-GYCiC1Q8picLCfAEAAAAC-1')
         group by 1, 2
         order by match_id_platform, days_since_first_offered,
                 total_media_cost_from_marketing_spend desc
@@ -132,7 +131,8 @@ FROM (
                     , 'DAY027_MC'
                     , 'DAY028_MC'
                 )) as p (
-                      MATCH_ID_PLATFORM  
+                      MATCH_ID_PLATFORM 
+                    , DAYS_SINCE_FIRST_OFFERED 
                     , DAY001_MC
                     , DAY002_MC
                     , DAY003_MC

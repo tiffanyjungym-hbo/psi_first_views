@@ -16,12 +16,24 @@ FROM (
 
     ),
 
+        min_days_since_offered_table as (
+        select
+            match_id_platform
+            , max(days_since_offered) as min_days_since_offered
+        from base_info_table
+        group by 1
+
+    ),
+
     vpt_pivot_base as (
         select
             b.match_id_platform
+            , min_days_since_offered
             , concat('DAY', lpad(to_char(b.days_since_first_offered),3, 0), '_VTP') as days_since_first_offered
             , viewed_through_portion
         from base_info_table as b
+        join min_days_since_offered_table as m 
+            on b.match_id_platform = m.match_id_platform
     ),
 
     vpt_pivot_table as (
@@ -60,6 +72,7 @@ FROM (
                     , 'DAY028_VTP'
                 )) as p (
                       MATCH_ID_PLATFORM
+                    , MIN_DAYS_SINCE_OFFERED
                     , DAY001_VTP
                     , DAY002_VTP
                     , DAY003_VTP

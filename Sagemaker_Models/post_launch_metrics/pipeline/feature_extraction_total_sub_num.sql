@@ -11,12 +11,24 @@ FROM (
         from {database}.{schema}.title_retail_funnel_metrics
     ),
 
+    min_days_since_offered_table as (
+        select
+            match_id_platform
+            , max(days_since_offered) as min_days_since_offered
+        from base_info_table
+        group by 1
+
+    ),
+
     viewed_pivot_base as (
         select distinct
             b.match_id_platform
+            , min_days_since_offered
             , concat('DAY', lpad(to_char(b.days_since_first_offered),3, 0), '_SUB_COUNT') as days_since_first_offered
             , total_retail_sub_count
         from base_info_table as b
+        join min_days_since_offered_table as m 
+            on b.match_id_platform = m.match_id_platform
     ),
 
     viewed_pivot_table as (
@@ -55,6 +67,7 @@ FROM (
                     , 'DAY028_SUB_COUNT'
                 )) as p (
                       MATCH_ID_PLATFORM
+                    , MIN_DAYS_SINCE_OFFERED
                     , DAY001_SUB_COUNT
                     , DAY002_SUB_COUNT
                     , DAY003_SUB_COUNT

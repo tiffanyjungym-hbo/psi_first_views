@@ -7,7 +7,6 @@ FROM (
             concat(case when platform_name = 'hboNow' then 0
                     else 1 end, '-', match_id) as match_id_platform
             , days_since_first_offered
-            , datediff(day, earliest_offered_timestamp, last_update_timestamp) as days_since_offered
             , total_retail_sub_count
         from {database}.{schema}.title_retail_funnel_metrics
     ),
@@ -15,7 +14,6 @@ FROM (
     viewed_pivot_base as (
         select distinct
             b.match_id_platform
-            , concat('DAY', lpad(to_char(days_since_first_offered),3, 0), '_SUB_COUNT') as days_since_first_offered
             , total_retail_sub_count
         from base_info_table as b
     ),
@@ -55,7 +53,8 @@ FROM (
                     , 'DAY027_SUB_COUNT'
                     , 'DAY028_SUB_COUNT'
                 )) as p (
-                      DAY001_SUB_COUNT
+                      MATCH_ID_PLATFORM
+                    , DAY001_SUB_COUNT
                     , DAY002_SUB_COUNT
                     , DAY003_SUB_COUNT
                     , DAY004_SUB_COUNT

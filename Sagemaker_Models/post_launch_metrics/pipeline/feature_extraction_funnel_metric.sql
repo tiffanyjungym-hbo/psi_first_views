@@ -67,8 +67,10 @@ FROM (
                     , 'DAY026_PERCENT_VIEWED'
                     , 'DAY027_PERCENT_VIEWED'
                     , 'DAY028_PERCENT_VIEWED'
-                )) as p(
-                      DAY001_PERCENT_VIEWED
+                )) as p ( 
+                      MATCH_ID_PLATFORM
+                    , DAYS_SINCE_FIRST_OFFERED
+                    , DAY001_PERCENT_VIEWED
                     , DAY002_PERCENT_VIEWED
                     , DAY003_PERCENT_VIEWED
                     , DAY004_PERCENT_VIEWED

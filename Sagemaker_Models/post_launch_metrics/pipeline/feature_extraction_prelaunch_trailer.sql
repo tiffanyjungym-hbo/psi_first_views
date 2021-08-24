@@ -52,7 +52,6 @@ FROM (
                         , 'DAY_025_TRAILER_METRIC_BEFORE'
                         , 'DAY_026_TRAILER_METRIC_BEFORE'
                         , 'DAY_027_TRAILER_METRIC_BEFORE'
-                        , 'DAY_028_TRAILER_METRIC_BEFORE'
                     )) as p (
                             MATCH_ID_PLATFORM
                             , DAY_000_TRAILER_METRIC_BEFORE
@@ -82,8 +81,7 @@ FROM (
                             , DAY_024_TRAILER_METRIC_BEFORE
                             , DAY_025_TRAILER_METRIC_BEFORE
                             , DAY_026_TRAILER_METRIC_BEFORE
-                            , DAY_027_TRAILER_METRIC_BEFORE
-                            , DAY_028_TRAILER_METRIC_BEFORE)
+                            , DAY_027_TRAILER_METRIC_BEFORE)
             order by match_id_platform
         ),
 
@@ -118,7 +116,6 @@ FROM (
             , case when DAY_025_TRAILER_METRIC_BEFORE is null then -1 else DAY_025_TRAILER_METRIC_BEFORE end as DAY_025_TRAILER_METRIC_BEFORE
             , case when DAY_026_TRAILER_METRIC_BEFORE is null then -1 else DAY_026_TRAILER_METRIC_BEFORE end as DAY_026_TRAILER_METRIC_BEFORE
             , case when DAY_027_TRAILER_METRIC_BEFORE is null then -1 else DAY_027_TRAILER_METRIC_BEFORE end as DAY_027_TRAILER_METRIC_BEFORE
-            , case when DAY_028_TRAILER_METRIC_BEFORE is null then -1 else DAY_028_TRAILER_METRIC_BEFORE end as DAY_028_TRAILER_METRIC_BEFORE
         from viewed_pivot_table as v
         right join {database}.{schema}.title_retail_funnel_metrics as f
             on v.match_id_platform = concat(case when f.platform_name = 'hboNow' then 0

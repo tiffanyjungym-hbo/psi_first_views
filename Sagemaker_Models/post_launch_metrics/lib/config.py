@@ -22,7 +22,6 @@ prelaunch_process_info = {
     'day_column_keywords':
         [],
     'keywords':
-        # flags are usually included in the tags, so excluded here
         ['tag','licensor','title_age', 'dayofweek_earliest_date'],
     'other_col':
         ['single_episode_ind'
@@ -49,9 +48,8 @@ prelaunch_process_info = {
 metadata_process_info = {
     'target_col':'day028_percent_viewed',
     'day_column_keywords':
-        ['percent_viewed', 'vtp', 'sub_count', 'mc'],
+        ['percent_viewed', 'vtp', 'sub_count', 'mc', 'trailer_percent_view'],
     'keywords':
-        # flags are usually included in the tags, so excluded here
         ['tag','licensor','title_age', 'dayofweek_earliest_date'],
     'other_col':
         ['single_episode_ind'

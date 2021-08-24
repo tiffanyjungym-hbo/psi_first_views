@@ -1,6 +1,6 @@
 USE SCHEMA workspace;
 
-COPY INTO {stage}/input_prelaunch_percent_view/prelaunch_trailer_feature.csv
+COPY INTO {stage}/input_percent_view/prelaunch_trailer_feature.csv
 FROM (
     with base_info_table as (
             select distinct
@@ -24,66 +24,66 @@ FROM (
             from viewed_pivot_base
             pivot(mode(retail_trailer_view_metric) for
                 days_since_first_offered in (
-                          'DAY_BEFORE_000_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_001_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_002_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_003_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_004_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_005_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_006_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_007_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_008_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_009_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_010_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_011_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_012_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_013_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_014_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_015_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_016_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_017_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_018_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_019_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_020_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_021_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_022_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_023_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_024_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_025_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_026_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_027_TRAILER_PERCENT_VIEW'
-                        , 'DAY_BEFORE_028_TRAILER_PERCENT_VIEW'
+                          'DAY_-000_TRAILER_METRICS'
+                        , 'DAY_-001_TRAILER_METRICS'
+                        , 'DAY_-002_TRAILER_METRICS'
+                        , 'DAY_-003_TRAILER_METRICS'
+                        , 'DAY_-004_TRAILER_METRICS'
+                        , 'DAY_-005_TRAILER_METRICS'
+                        , 'DAY_-006_TRAILER_METRICS'
+                        , 'DAY_-007_TRAILER_METRICS'
+                        , 'DAY_-008_TRAILER_METRICS'
+                        , 'DAY_-009_TRAILER_METRICS'
+                        , 'DAY_-010_TRAILER_METRICS'
+                        , 'DAY_-011_TRAILER_METRICS'
+                        , 'DAY_-012_TRAILER_METRICS'
+                        , 'DAY_-013_TRAILER_METRICS'
+                        , 'DAY_-014_TRAILER_METRICS'
+                        , 'DAY_-015_TRAILER_METRICS'
+                        , 'DAY_-016_TRAILER_METRICS'
+                        , 'DAY_-017_TRAILER_METRICS'
+                        , 'DAY_-018_TRAILER_METRICS'
+                        , 'DAY_-019_TRAILER_METRICS'
+                        , 'DAY_-020_TRAILER_METRICS'
+                        , 'DAY_-021_TRAILER_METRICS'
+                        , 'DAY_-022_TRAILER_METRICS'
+                        , 'DAY_-023_TRAILER_METRICS'
+                        , 'DAY_-024_TRAILER_METRICS'
+                        , 'DAY_-025_TRAILER_METRICS'
+                        , 'DAY_-026_TRAILER_METRICS'
+                        , 'DAY_-027_TRAILER_METRICS'
+                        , 'DAY_-028_TRAILER_METRICS'
                     )) as p (
                             MATCH_ID_PLATFORM
-                            , DAY_BEFORE_000_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_001_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_002_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_003_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_004_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_005_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_006_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_007_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_008_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_009_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_010_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_011_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_012_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_013_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_014_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_015_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_016_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_017_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_018_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_019_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_020_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_021_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_022_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_023_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_024_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_025_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_026_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_027_TRAILER_PERCENT_VIEW
-                            , DAY_BEFORE_028_TRAILER_PERCENT_VIEW)
+                            , DAY_-000_TRAILER_METRICS
+                            , DAY_-001_TRAILER_METRICS
+                            , DAY_-002_TRAILER_METRICS
+                            , DAY_-003_TRAILER_METRICS
+                            , DAY_-004_TRAILER_METRICS
+                            , DAY_-005_TRAILER_METRICS
+                            , DAY_-006_TRAILER_METRICS
+                            , DAY_-007_TRAILER_METRICS
+                            , DAY_-008_TRAILER_METRICS
+                            , DAY_-009_TRAILER_METRICS
+                            , DAY_-010_TRAILER_METRICS
+                            , DAY_-011_TRAILER_METRICS
+                            , DAY_-012_TRAILER_METRICS
+                            , DAY_-013_TRAILER_METRICS
+                            , DAY_-014_TRAILER_METRICS
+                            , DAY_-015_TRAILER_METRICS
+                            , DAY_-016_TRAILER_METRICS
+                            , DAY_-017_TRAILER_METRICS
+                            , DAY_-018_TRAILER_METRICS
+                            , DAY_-019_TRAILER_METRICS
+                            , DAY_-020_TRAILER_METRICS
+                            , DAY_-021_TRAILER_METRICS
+                            , DAY_-022_TRAILER_METRICS
+                            , DAY_-023_TRAILER_METRICS
+                            , DAY_-024_TRAILER_METRICS
+                            , DAY_-025_TRAILER_METRICS
+                            , DAY_-026_TRAILER_METRICS
+                            , DAY_-027_TRAILER_METRICS
+                            , DAY_-028_TRAILER_METRICS)
             order by match_id_platform
         ),
 

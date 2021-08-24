@@ -38,7 +38,7 @@ prelaunch_process_info = {
                  ],
     'label_columns':['content_category', 'program_type'],
     'num_columns':['prod_release_year'
-                   , 'retail_trailer_view_metric'
+                   , 'trailer_metric'
                    , 'total_hours'
                    , 'title_age_approx'
                    , 'season_number_adj'

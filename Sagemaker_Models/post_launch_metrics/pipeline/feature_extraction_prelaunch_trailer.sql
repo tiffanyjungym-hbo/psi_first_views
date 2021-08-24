@@ -13,7 +13,7 @@ FROM (
         viewed_pivot_base as (
             select
                 b.match_id_platform
-                , concat('DAY_', lpad(to_char(-nday_before),3, 0), '_TRAILER_METRIC_BEFORE') as days_since_first_offered
+                , concat('DAY', lpad(to_char(-nday_before),3, 0), '_TRAILER_METRIC_BEFORE') as days_since_first_offered
                 , retail_trailer_view_metric
             from base_info_table as b
         ),

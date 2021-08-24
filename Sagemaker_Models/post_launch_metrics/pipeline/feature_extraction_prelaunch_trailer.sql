@@ -24,98 +24,98 @@ FROM (
             from viewed_pivot_base
             pivot(mode(retail_trailer_view_metric) for
                 days_since_first_offered in (
-                          'DAY_000_TRAILER_METRIC_BEFORE'
-                        , 'DAY_001_TRAILER_METRIC_BEFORE'
-                        , 'DAY_002_TRAILER_METRIC_BEFORE'
-                        , 'DAY_003_TRAILER_METRIC_BEFORE'
-                        , 'DAY_004_TRAILER_METRIC_BEFORE'
-                        , 'DAY_005_TRAILER_METRIC_BEFORE'
-                        , 'DAY_006_TRAILER_METRIC_BEFORE'
-                        , 'DAY_007_TRAILER_METRIC_BEFORE'
-                        , 'DAY_008_TRAILER_METRIC_BEFORE'
-                        , 'DAY_009_TRAILER_METRIC_BEFORE'
-                        , 'DAY_010_TRAILER_METRIC_BEFORE'
-                        , 'DAY_011_TRAILER_METRIC_BEFORE'
-                        , 'DAY_012_TRAILER_METRIC_BEFORE'
-                        , 'DAY_013_TRAILER_METRIC_BEFORE'
-                        , 'DAY_014_TRAILER_METRIC_BEFORE'
-                        , 'DAY_015_TRAILER_METRIC_BEFORE'
-                        , 'DAY_016_TRAILER_METRIC_BEFORE'
-                        , 'DAY_017_TRAILER_METRIC_BEFORE'
-                        , 'DAY_018_TRAILER_METRIC_BEFORE'
-                        , 'DAY_019_TRAILER_METRIC_BEFORE'
-                        , 'DAY_020_TRAILER_METRIC_BEFORE'
-                        , 'DAY_021_TRAILER_METRIC_BEFORE'
-                        , 'DAY_022_TRAILER_METRIC_BEFORE'
-                        , 'DAY_023_TRAILER_METRIC_BEFORE'
-                        , 'DAY_024_TRAILER_METRIC_BEFORE'
-                        , 'DAY_025_TRAILER_METRIC_BEFORE'
-                        , 'DAY_026_TRAILER_METRIC_BEFORE'
-                        , 'DAY_027_TRAILER_METRIC_BEFORE'
+                          'DAY000_TRAILER_METRIC_BEFORE'
+                        , 'DAY001_TRAILER_METRIC_BEFORE'
+                        , 'DAY002_TRAILER_METRIC_BEFORE'
+                        , 'DAY003_TRAILER_METRIC_BEFORE'
+                        , 'DAY004_TRAILER_METRIC_BEFORE'
+                        , 'DAY005_TRAILER_METRIC_BEFORE'
+                        , 'DAY006_TRAILER_METRIC_BEFORE'
+                        , 'DAY007_TRAILER_METRIC_BEFORE'
+                        , 'DAY008_TRAILER_METRIC_BEFORE'
+                        , 'DAY009_TRAILER_METRIC_BEFORE'
+                        , 'DAY010_TRAILER_METRIC_BEFORE'
+                        , 'DAY011_TRAILER_METRIC_BEFORE'
+                        , 'DAY012_TRAILER_METRIC_BEFORE'
+                        , 'DAY013_TRAILER_METRIC_BEFORE'
+                        , 'DAY014_TRAILER_METRIC_BEFORE'
+                        , 'DAY015_TRAILER_METRIC_BEFORE'
+                        , 'DAY016_TRAILER_METRIC_BEFORE'
+                        , 'DAY017_TRAILER_METRIC_BEFORE'
+                        , 'DAY018_TRAILER_METRIC_BEFORE'
+                        , 'DAY019_TRAILER_METRIC_BEFORE'
+                        , 'DAY020_TRAILER_METRIC_BEFORE'
+                        , 'DAY021_TRAILER_METRIC_BEFORE'
+                        , 'DAY022_TRAILER_METRIC_BEFORE'
+                        , 'DAY023_TRAILER_METRIC_BEFORE'
+                        , 'DAY024_TRAILER_METRIC_BEFORE'
+                        , 'DAY025_TRAILER_METRIC_BEFORE'
+                        , 'DAY026_TRAILER_METRIC_BEFORE'
+                        , 'DAY027_TRAILER_METRIC_BEFORE'
                     )) as p (
                             MATCH_ID_PLATFORM
-                            , DAY_000_TRAILER_METRIC_BEFORE
-                            , DAY_001_TRAILER_METRIC_BEFORE
-                            , DAY_002_TRAILER_METRIC_BEFORE
-                            , DAY_003_TRAILER_METRIC_BEFORE
-                            , DAY_004_TRAILER_METRIC_BEFORE
-                            , DAY_005_TRAILER_METRIC_BEFORE
-                            , DAY_006_TRAILER_METRIC_BEFORE
-                            , DAY_007_TRAILER_METRIC_BEFORE
-                            , DAY_008_TRAILER_METRIC_BEFORE
-                            , DAY_009_TRAILER_METRIC_BEFORE
-                            , DAY_010_TRAILER_METRIC_BEFORE
-                            , DAY_011_TRAILER_METRIC_BEFORE
-                            , DAY_012_TRAILER_METRIC_BEFORE
-                            , DAY_013_TRAILER_METRIC_BEFORE
-                            , DAY_014_TRAILER_METRIC_BEFORE
-                            , DAY_015_TRAILER_METRIC_BEFORE
-                            , DAY_016_TRAILER_METRIC_BEFORE
-                            , DAY_017_TRAILER_METRIC_BEFORE
-                            , DAY_018_TRAILER_METRIC_BEFORE
-                            , DAY_019_TRAILER_METRIC_BEFORE
-                            , DAY_020_TRAILER_METRIC_BEFORE
-                            , DAY_021_TRAILER_METRIC_BEFORE
-                            , DAY_022_TRAILER_METRIC_BEFORE
-                            , DAY_023_TRAILER_METRIC_BEFORE
-                            , DAY_024_TRAILER_METRIC_BEFORE
-                            , DAY_025_TRAILER_METRIC_BEFORE
-                            , DAY_026_TRAILER_METRIC_BEFORE
-                            , DAY_027_TRAILER_METRIC_BEFORE)
+                            , DAY000_TRAILER_METRIC_BEFORE
+                            , DAY001_TRAILER_METRIC_BEFORE
+                            , DAY002_TRAILER_METRIC_BEFORE
+                            , DAY003_TRAILER_METRIC_BEFORE
+                            , DAY004_TRAILER_METRIC_BEFORE
+                            , DAY005_TRAILER_METRIC_BEFORE
+                            , DAY006_TRAILER_METRIC_BEFORE
+                            , DAY007_TRAILER_METRIC_BEFORE
+                            , DAY008_TRAILER_METRIC_BEFORE
+                            , DAY009_TRAILER_METRIC_BEFORE
+                            , DAY010_TRAILER_METRIC_BEFORE
+                            , DAY011_TRAILER_METRIC_BEFORE
+                            , DAY012_TRAILER_METRIC_BEFORE
+                            , DAY013_TRAILER_METRIC_BEFORE
+                            , DAY014_TRAILER_METRIC_BEFORE
+                            , DAY015_TRAILER_METRIC_BEFORE
+                            , DAY016_TRAILER_METRIC_BEFORE
+                            , DAY017_TRAILER_METRIC_BEFORE
+                            , DAY018_TRAILER_METRIC_BEFORE
+                            , DAY019_TRAILER_METRIC_BEFORE
+                            , DAY020_TRAILER_METRIC_BEFORE
+                            , DAY021_TRAILER_METRIC_BEFORE
+                            , DAY022_TRAILER_METRIC_BEFORE
+                            , DAY023_TRAILER_METRIC_BEFORE
+                            , DAY024_TRAILER_METRIC_BEFORE
+                            , DAY025_TRAILER_METRIC_BEFORE
+                            , DAY026_TRAILER_METRIC_BEFORE
+                            , DAY027_TRAILER_METRIC_BEFORE)
             order by match_id_platform
         ),
 
         final as (
             select distinct
               concat(case when f.platform_name = 'hboNow' then 0 else 1 end, '-', f.match_id) as match_id_platform
-            , case when DAY_000_TRAILER_METRIC_BEFORE is null then -1 else DAY_000_TRAILER_METRIC_BEFORE end as DAY_000_TRAILER_METRIC_BEFORE
-            , case when DAY_001_TRAILER_METRIC_BEFORE is null then -1 else DAY_001_TRAILER_METRIC_BEFORE end as DAY_001_TRAILER_METRIC_BEFORE
-            , case when DAY_002_TRAILER_METRIC_BEFORE is null then -1 else DAY_002_TRAILER_METRIC_BEFORE end as DAY_002_TRAILER_METRIC_BEFORE
-            , case when DAY_003_TRAILER_METRIC_BEFORE is null then -1 else DAY_003_TRAILER_METRIC_BEFORE end as DAY_003_TRAILER_METRIC_BEFORE
-            , case when DAY_004_TRAILER_METRIC_BEFORE is null then -1 else DAY_004_TRAILER_METRIC_BEFORE end as DAY_004_TRAILER_METRIC_BEFORE
-            , case when DAY_005_TRAILER_METRIC_BEFORE is null then -1 else DAY_005_TRAILER_METRIC_BEFORE end as DAY_005_TRAILER_METRIC_BEFORE
-            , case when DAY_006_TRAILER_METRIC_BEFORE is null then -1 else DAY_006_TRAILER_METRIC_BEFORE end as DAY_006_TRAILER_METRIC_BEFORE
-            , case when DAY_007_TRAILER_METRIC_BEFORE is null then -1 else DAY_007_TRAILER_METRIC_BEFORE end as DAY_007_TRAILER_METRIC_BEFORE
-            , case when DAY_008_TRAILER_METRIC_BEFORE is null then -1 else DAY_008_TRAILER_METRIC_BEFORE end as DAY_008_TRAILER_METRIC_BEFORE
-            , case when DAY_009_TRAILER_METRIC_BEFORE is null then -1 else DAY_009_TRAILER_METRIC_BEFORE end as DAY_009_TRAILER_METRIC_BEFORE
-            , case when DAY_010_TRAILER_METRIC_BEFORE is null then -1 else DAY_010_TRAILER_METRIC_BEFORE end as DAY_010_TRAILER_METRIC_BEFORE
-            , case when DAY_011_TRAILER_METRIC_BEFORE is null then -1 else DAY_011_TRAILER_METRIC_BEFORE end as DAY_011_TRAILER_METRIC_BEFORE
-            , case when DAY_012_TRAILER_METRIC_BEFORE is null then -1 else DAY_012_TRAILER_METRIC_BEFORE end as DAY_012_TRAILER_METRIC_BEFORE
-            , case when DAY_013_TRAILER_METRIC_BEFORE is null then -1 else DAY_013_TRAILER_METRIC_BEFORE end as DAY_013_TRAILER_METRIC_BEFORE
-            , case when DAY_014_TRAILER_METRIC_BEFORE is null then -1 else DAY_014_TRAILER_METRIC_BEFORE end as DAY_014_TRAILER_METRIC_BEFORE
-            , case when DAY_015_TRAILER_METRIC_BEFORE is null then -1 else DAY_015_TRAILER_METRIC_BEFORE end as DAY_015_TRAILER_METRIC_BEFORE
-            , case when DAY_016_TRAILER_METRIC_BEFORE is null then -1 else DAY_016_TRAILER_METRIC_BEFORE end as DAY_016_TRAILER_METRIC_BEFORE
-            , case when DAY_017_TRAILER_METRIC_BEFORE is null then -1 else DAY_017_TRAILER_METRIC_BEFORE end as DAY_017_TRAILER_METRIC_BEFORE
-            , case when DAY_018_TRAILER_METRIC_BEFORE is null then -1 else DAY_018_TRAILER_METRIC_BEFORE end as DAY_018_TRAILER_METRIC_BEFORE
-            , case when DAY_019_TRAILER_METRIC_BEFORE is null then -1 else DAY_019_TRAILER_METRIC_BEFORE end as DAY_019_TRAILER_METRIC_BEFORE
-            , case when DAY_020_TRAILER_METRIC_BEFORE is null then -1 else DAY_020_TRAILER_METRIC_BEFORE end as DAY_020_TRAILER_METRIC_BEFORE
-            , case when DAY_021_TRAILER_METRIC_BEFORE is null then -1 else DAY_021_TRAILER_METRIC_BEFORE end as DAY_021_TRAILER_METRIC_BEFORE
-            , case when DAY_022_TRAILER_METRIC_BEFORE is null then -1 else DAY_022_TRAILER_METRIC_BEFORE end as DAY_022_TRAILER_METRIC_BEFORE
-            , case when DAY_023_TRAILER_METRIC_BEFORE is null then -1 else DAY_023_TRAILER_METRIC_BEFORE end as DAY_023_TRAILER_METRIC_BEFORE
-            , case when DAY_024_TRAILER_METRIC_BEFORE is null then -1 else DAY_024_TRAILER_METRIC_BEFORE end as DAY_024_TRAILER_METRIC_BEFORE
-            , case when DAY_025_TRAILER_METRIC_BEFORE is null then -1 else DAY_025_TRAILER_METRIC_BEFORE end as DAY_025_TRAILER_METRIC_BEFORE
-            , case when DAY_026_TRAILER_METRIC_BEFORE is null then -1 else DAY_026_TRAILER_METRIC_BEFORE end as DAY_026_TRAILER_METRIC_BEFORE
-            , case when DAY_027_TRAILER_METRIC_BEFORE is null then -1 else DAY_027_TRAILER_METRIC_BEFORE end as DAY_027_TRAILER_METRIC_BEFORE
+            , case when DAY000_TRAILER_METRIC_BEFORE is null then -1 else DAY000_TRAILER_METRIC_BEFORE end as DAY000_TRAILER_METRIC_BEFORE
+            , case when DAY001_TRAILER_METRIC_BEFORE is null then -1 else DAY001_TRAILER_METRIC_BEFORE end as DAY001_TRAILER_METRIC_BEFORE
+            , case when DAY002_TRAILER_METRIC_BEFORE is null then -1 else DAY002_TRAILER_METRIC_BEFORE end as DAY002_TRAILER_METRIC_BEFORE
+            , case when DAY003_TRAILER_METRIC_BEFORE is null then -1 else DAY003_TRAILER_METRIC_BEFORE end as DAY003_TRAILER_METRIC_BEFORE
+            , case when DAY004_TRAILER_METRIC_BEFORE is null then -1 else DAY004_TRAILER_METRIC_BEFORE end as DAY004_TRAILER_METRIC_BEFORE
+            , case when DAY005_TRAILER_METRIC_BEFORE is null then -1 else DAY005_TRAILER_METRIC_BEFORE end as DAY005_TRAILER_METRIC_BEFORE
+            , case when DAY006_TRAILER_METRIC_BEFORE is null then -1 else DAY006_TRAILER_METRIC_BEFORE end as DAY006_TRAILER_METRIC_BEFORE
+            , case when DAY007_TRAILER_METRIC_BEFORE is null then -1 else DAY007_TRAILER_METRIC_BEFORE end as DAY007_TRAILER_METRIC_BEFORE
+            , case when DAY008_TRAILER_METRIC_BEFORE is null then -1 else DAY008_TRAILER_METRIC_BEFORE end as DAY008_TRAILER_METRIC_BEFORE
+            , case when DAY009_TRAILER_METRIC_BEFORE is null then -1 else DAY009_TRAILER_METRIC_BEFORE end as DAY009_TRAILER_METRIC_BEFORE
+            , case when DAY010_TRAILER_METRIC_BEFORE is null then -1 else DAY010_TRAILER_METRIC_BEFORE end as DAY010_TRAILER_METRIC_BEFORE
+            , case when DAY011_TRAILER_METRIC_BEFORE is null then -1 else DAY011_TRAILER_METRIC_BEFORE end as DAY011_TRAILER_METRIC_BEFORE
+            , case when DAY012_TRAILER_METRIC_BEFORE is null then -1 else DAY012_TRAILER_METRIC_BEFORE end as DAY012_TRAILER_METRIC_BEFORE
+            , case when DAY013_TRAILER_METRIC_BEFORE is null then -1 else DAY013_TRAILER_METRIC_BEFORE end as DAY013_TRAILER_METRIC_BEFORE
+            , case when DAY014_TRAILER_METRIC_BEFORE is null then -1 else DAY014_TRAILER_METRIC_BEFORE end as DAY014_TRAILER_METRIC_BEFORE
+            , case when DAY015_TRAILER_METRIC_BEFORE is null then -1 else DAY015_TRAILER_METRIC_BEFORE end as DAY015_TRAILER_METRIC_BEFORE
+            , case when DAY016_TRAILER_METRIC_BEFORE is null then -1 else DAY016_TRAILER_METRIC_BEFORE end as DAY016_TRAILER_METRIC_BEFORE
+            , case when DAY017_TRAILER_METRIC_BEFORE is null then -1 else DAY017_TRAILER_METRIC_BEFORE end as DAY017_TRAILER_METRIC_BEFORE
+            , case when DAY018_TRAILER_METRIC_BEFORE is null then -1 else DAY018_TRAILER_METRIC_BEFORE end as DAY018_TRAILER_METRIC_BEFORE
+            , case when DAY019_TRAILER_METRIC_BEFORE is null then -1 else DAY019_TRAILER_METRIC_BEFORE end as DAY019_TRAILER_METRIC_BEFORE
+            , case when DAY020_TRAILER_METRIC_BEFORE is null then -1 else DAY020_TRAILER_METRIC_BEFORE end as DAY020_TRAILER_METRIC_BEFORE
+            , case when DAY021_TRAILER_METRIC_BEFORE is null then -1 else DAY021_TRAILER_METRIC_BEFORE end as DAY021_TRAILER_METRIC_BEFORE
+            , case when DAY022_TRAILER_METRIC_BEFORE is null then -1 else DAY022_TRAILER_METRIC_BEFORE end as DAY022_TRAILER_METRIC_BEFORE
+            , case when DAY023_TRAILER_METRIC_BEFORE is null then -1 else DAY023_TRAILER_METRIC_BEFORE end as DAY023_TRAILER_METRIC_BEFORE
+            , case when DAY024_TRAILER_METRIC_BEFORE is null then -1 else DAY024_TRAILER_METRIC_BEFORE end as DAY024_TRAILER_METRIC_BEFORE
+            , case when DAY025_TRAILER_METRIC_BEFORE is null then -1 else DAY025_TRAILER_METRIC_BEFORE end as DAY025_TRAILER_METRIC_BEFORE
+            , case when DAY026_TRAILER_METRIC_BEFORE is null then -1 else DAY026_TRAILER_METRIC_BEFORE end as DAY026_TRAILER_METRIC_BEFORE
+            , case when DAY027_TRAILER_METRIC_BEFORE is null then -1 else DAY027_TRAILER_METRIC_BEFORE end as DAY027_TRAILER_METRIC_BEFORE
         from viewed_pivot_table as v
         right join {database}.{schema}.title_retail_funnel_metrics as f
             on v.match_id_platform = concat(case when f.platform_name = 'hboNow' then 0

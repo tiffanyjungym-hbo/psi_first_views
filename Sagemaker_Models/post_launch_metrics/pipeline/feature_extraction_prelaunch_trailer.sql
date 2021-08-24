@@ -87,7 +87,7 @@ FROM (
 
         final as (
             select distinct
-              match_id_platform
+              concat(case when f.platform_name = 'hboNow' then 0 else 1 end, '-', f.match_id) as match_id_platform as match_id_platform
             , case when DAY_000_TRAILER_METRIC_BEFORE is null then -1 else DAY_000_TRAILER_METRIC_BEFORE end as DAY_000_TRAILER_METRIC_BEFORE
             , case when DAY_001_TRAILER_METRIC_BEFORE is null then -1 else DAY_001_TRAILER_METRIC_BEFORE end as DAY_001_TRAILER_METRIC_BEFORE
             , case when DAY_002_TRAILER_METRIC_BEFORE is null then -1 else DAY_002_TRAILER_METRIC_BEFORE end as DAY_002_TRAILER_METRIC_BEFORE
@@ -119,8 +119,7 @@ FROM (
         from viewed_pivot_table as v
         right join {database}.{schema}.title_retail_funnel_metrics as f
             on v.match_id_platform = concat(case when f.platform_name = 'hboNow' then 0
-                                                          else 1 end, '-', f.match_id)
-        where match_id_platform is not null
+                                                  else 1 end, '-', f.match_id)
         )
 
         select

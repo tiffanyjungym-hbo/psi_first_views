@@ -48,7 +48,7 @@ prelaunch_process_info = {
 metadata_process_info = {
     'target_col':'day028_percent_viewed',
     'day_column_keywords':
-        ['percent_viewed', 'vtp', 'sub_count', 'mc', 'trailer_percent_view'],
+        ['percent_viewed', 'vtp', 'sub_count', 'mc'],
     'keywords':
         ['tag','licensor','title_age', 'dayofweek_earliest_date'],
     'other_col':

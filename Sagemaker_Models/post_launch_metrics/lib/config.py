@@ -35,13 +35,17 @@ prelaunch_process_info = {
          , 'retail_trailer_view_metric'
          , 'content_cost'
          , 'season_number_adj'
+         , 'cumulative_day'
+         , 'trailer_num'
                  ],
     'label_columns':['content_category', 'program_type'],
     'num_columns':['prod_release_year'
-                   , 'trailer_metric'
-                   , 'total_hours'
-                   , 'title_age_approx'
-                   , 'season_number_adj'
+                    , 'trailer_metric'
+                    , 'total_hours'
+                    , 'title_age_approx'
+                    , 'season_number_adj'
+                    , 'cumulative_day'
+                    , 'trailer_num'
                    ]
 }
 

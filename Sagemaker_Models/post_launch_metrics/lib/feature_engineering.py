@@ -18,7 +18,6 @@ class FeatureEngineering(DataPreprocessing):
                 ):
         DataPreprocessing.__init__(self, data_list, label_columns, target_col)
         self.base_columns = self.base.columns
-        self.num_columns = num_columns
         self.X_flag = False
         self.y_flag = False
         self.pred_empty_flag = False
@@ -36,6 +35,7 @@ class FeatureEngineering(DataPreprocessing):
         self.target_copy = self.target.copy()
         self.target_copy['match_id'] = self.base_copy['match_id']
         self.day_column_list = []
+        self.num_columns = metadata_process_info['num_columns']
 
         # step 0.1: reset the flags
         self.X_flag = False
@@ -50,17 +50,23 @@ class FeatureEngineering(DataPreprocessing):
         
         # step 1.3: clean past growth trend records
         self.clean_past_growth_trend_records()
-        
-        # step 2: process percent data
+
+        # step 2: process prelaunch features
+        self.select_prelaunch_features(percent_data_process_info, metadata_process_info)
+
+        # set 2.1: prelaunch feature filter
+        self.filter_prelaunch(percent_data_process_info, metadata_process_info)
+
+        # step 3: process percent data
         self.percent_columns_and_target_process(percent_data_process_info)
         
-        # step 3: process metadata
+        # step 4: process metadata
         self.select_metadata_columns(metadata_process_info, select_label_threshold)
         
-        # step 4: set y
+        # step 5: set y
         self.extract_X_y(percent_data_process_info)
         
-        # step 5: set data type 
+        # step 6: set data type 
         self.set_column_dtype()
         
         # step 7: calculate growth trend
@@ -93,14 +99,46 @@ class FeatureEngineering(DataPreprocessing):
             self.target_copy = self.target_copy.loc[self.base_copy['day001_percent_viewed']>=threshold,:]
             self.base_copy  = self.base_copy.loc[self.base_copy['day001_percent_viewed']>=threshold,:]
             print('only {} titles considered'.format(self.base_copy.shape[0]))
-            
+    
     def clean_past_growth_trend_records(self):
         if self.X_flag:
             # drop existing growth trend columns if any
             cleaned_columns = [col for col in self.num_columns if 'growth_trend' in col]
             self.num_columns = [col for col in self.num_columns if col not in cleaned_columns]
             self.selected_columns = [col for col in self.selected_columns if col not in cleaned_columns]
-            
+    
+    def select_prelaunch_features(self, percent_data_process_info, metadata_process_info):
+        if percent_data_process_info['max_num_day'] < 1:
+            for keyword in metadata_process_info['prelaunch_spec_process']:
+                key_columns = self.base_columns[self.base_columns.str.contains(keyword)==True]
+                selected_group_columns = key_columns[[-percent_data_process_info['max_num_day'] <= int(col[col.find('day')+3:col.find('day')+6]) for col in key_columns]]
+                selected_column = selected_group_columns[0]
+                
+                if percent_data_process_info['target_log_transformation']:
+                    self.base_copy[keyword + '_selected'] = np.log(self.base[selected_column])
+                    self.base_copy[keyword + '_selected'] = self.base_copy[keyword + '_selected'].fillna(-1)
+                else:
+                    self.base_copy[keyword + '_selected'] = self.base[selected_column]
+    
+                # calculate cumulative days
+                self.base_copy[keyword + '_cumday_selected'] = self._calculate_cumulative_days(percent_data_process_info, selected_group_columns)
+                
+    def _calculate_cumulative_days(self, percent_data_process_info, selected_group_columns):
+        tmp = self.base_copy[selected_group_columns]
+        tmp = tmp.iloc[:,::-1] 
+        tmp[tmp==-1] = None
+        tmp = tmp.loc[tmp.isnull().sum(axis=1)!=(28-(-percent_data_process_info['max_num_day'])), :]
+        fin = 28 - tmp.apply(lambda x: x.first_valid_index(), axis = 1).\
+            apply(lambda x: int(x[(x.find('day')+3):(x.find('day')+6)]))
+        
+        return fin
+    
+    def filter_prelaunch(self, percent_data_process_info, metadata_process_info):
+        if percent_data_process_info['max_num_day'] < 1:
+            for keyword in metadata_process_info['prelaunch_spec_process']:
+                self.base_copy = self.base_copy.loc[self.base_copy[keyword+'_selected']!=-1,:]
+        
+            print('only {} titles considered after prelaunch filter'.format(self.base_copy.shape[0]))
             
     def percent_columns_and_target_process(self, percent_data_process_info):
         # create/empty the selected_column

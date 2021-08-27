@@ -100,7 +100,7 @@ default_params_dict = {
          'l1_ratio': 0.2}
 }
     
-params_tunning_dict = {
+params_tuning_dict = {
     'lgb': {
         'objective': ['mae'],
         'num_boost_round':[120,240],

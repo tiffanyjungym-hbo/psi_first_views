@@ -5,8 +5,10 @@ model_name_list = ['lgb']
 
 percent_data_process_info ={
     'target_log_transformation':True,
-    'log_ratio_transformation': True,
+    'log_ratio_transformation': True, # in effect only if target_log_transformation = True
+    'target_sigmoid_transformation':False, # in effect only if log_ratio_transformation = True
     'raw_log_feature':True,
+    'cumulative_media_cost':True,
     'last_season_percents': False,
     'max_num_day': 14,
     'total_num_day_data':21,

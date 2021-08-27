@@ -97,7 +97,7 @@ class ModelMain(FeatureEngineering):
         return model
         
     def model_predict(self, model_name, x_test, percent_data_process_info):
-        if ((percent_data_process_info['max_num_day']==0) & (model_name in ['lr', 'enet'])):
+        if ((percent_data_process_info['max_num_day']<1) & (model_name in ['lr', 'enet'])):
             y_predict = [np.nan]*x_test.shape[0]
             print('no data for model {}'.format(model_name))
         elif model_name in ['lr','enet','lgb']:

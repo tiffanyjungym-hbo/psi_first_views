@@ -145,7 +145,7 @@ class FeatureEngineering(DataPreprocessing):
         self.selected_columns = []
         
         # step 1a: a simple percent feature list if max_num_day <= 1
-        if percent_data_process_info['max_num_day'] < 1:
+        if percent_data_process_info['max_num_day'] <= 1:
             percent_data_process_info['log_ratio_transformation'] = False
             print('the number of days is not large enough to use log ratio transformation')
             

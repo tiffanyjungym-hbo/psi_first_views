@@ -169,12 +169,10 @@ class FeatureEngineering(DataPreprocessing):
                                                          )])
             # log
             else:
-                for keyword in self.day_column_keywords:
-                    if 'mc' not in keyword:
-                        day_column_list.extend(self.base_columns[((self.base_columns.str.contains('log')==True) 
-                        & (self.base_columns.str.contains('log_ratio')==False)
-                        #& (self.base_columns.str.contains('vtp')==False)
-                        )])
+                day_column_list.extend(self.base_columns[((self.base_columns.str.contains('log')==True) 
+                & (self.base_columns.str.contains('log_ratio')==False)
+                #& (self.base_columns.str.contains('vtp')==False)
+                )])
         # raw
         else:
             day_column_list.extend(self.base_columns[((self.base_columns.str.contains('log')==False)&

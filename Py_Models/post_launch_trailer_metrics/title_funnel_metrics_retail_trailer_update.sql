@@ -36,26 +36,33 @@ insert into {database}.{schema}.trailer_retail_view_percent (
         select distinct
         asset.viewable_id
         , case when asset_title_short like '%Season%'
-            then trim(regexp_replace(get(split(asset_title_long, ': Season'),0), '"', ''))
-            else trim(regexp_replace(get(split(asset_title_long, 'Trailer'),0), ':', ''))
+            then trim(trim(get(split(asset_title_long, ': Season'),0), '"'))
+            else trim(
+                    get(split(
+                        get(split(
+                            get(split(asset_title_long, ': Trailer'),0),
+                                'Trailer: '), 0),
+                                    ' Trailer'), 0)) -- handle different trailer locations in different formats
                 end as trailer_title_name
         , case when {viewership_table} in ('max_prod.viewership.max_user_stream', 'max_prod.viewership.max_user_stream_heartbeat_view') then first_offered_date_max
             when {viewership_table} = 'max_prod.viewership.now_user_stream' then first_offered_date_now
-                end as earliest_offered_timestamp
+               end as earliest_offered_timestamp
         , case when {viewership_table} in ('max_prod.viewership.max_user_stream', 'max_prod.viewership.max_user_stream_heartbeat_view') then 'hboMax'
             when {viewership_table} = 'max_prod.viewership.now_user_stream' then 'hboNow'
                 end as platform_name
-        , edit_language
     from max_prod.catalog.asset_dim as asset
     join max_prod.catalog.asset_edit_dim as edit
         on asset.viewable_id = edit.viewable_id
     where 1 = 1
-        and asset_title_short like '%Trailer%'
+        and asset_title_long like '%Trailer%'
         and earliest_offered_timestamp is not null
         ),
 
     trailer_match_id as (select distinct
-        regexp_replace(trailer_title_name, 'Trailer', '') as trailer_title_name
+        case when trailer_title_name like '%Space Jam: A New Legacy%' then 'Space Jam: A New Legacy'
+              else regexp_replace(trailer_title_name, 'Trailer', '') end as trailer_title_name 
+              -- Space jam as the special case, because it is in this format Space Jam: A New Legacy - 
+              -- and there are two different '-'s that cant be distinguished easily
         , title_name
         , t.viewable_id
         , f.match_id
@@ -65,9 +72,10 @@ insert into {database}.{schema}.trailer_retail_view_percent (
         , case when e.match_id is null then 0 else 1 end as exist_id
     from title_info as t
     join {database}.{schema}.title_retail_funnel_metrics as f
-        on t.trailer_title_name = get(split(f.title_name, ' S'),0)
+        on t.trailer_title_name = (case when title_name regexp '[a-z/-/A-z/.]+ S[0-9]' = True
+                then get(split(f.title_name, ' S'),0) else title_name end)
             and t.earliest_offered_timestamp
-                between dateadd(day, -56, f.earliest_offered_timestamp)
+                between dateadd(day, -91, f.earliest_offered_timestamp)
                     and dateadd(min, -1, f.earliest_offered_timestamp)
             and t.platform_name = f.platform_name
     left join existing_title_info as e
@@ -135,14 +143,10 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                     , first_title_offered_timestamp
                     , count(distinct hbo_uuid) as total_retail_sub_count
                 from max_viewership_match_id as t
-                        -- the below table is modified from the max_prod.workspace.content_eval_first_sub_start table
-                        -- created by Eileen Dise, the following are the modifications:
-                        ------ 1). ignore the subscription gaps <= 24 hours, in order to create continous sub sessions
-                        ------ 2). ignore the subcription sessions less than 24 hours
                 left join {database}.{schema}.sub_period_in_uuid_test as a
                     -- give one day butter to both dates, since some titles may release in the late night
                     ------ logic: sessions without the following conditions
-                    on a.subscription_expire_timestamp >= t.first_trailer_offered_timestamp
+                    on a.subscription_expire_timestamp >= greatest(t.first_trailer_offered_timestamp, dateadd(day, -28, t.first_title_offered_timestamp))
                         and a.subscription_start_timestamp <= dateadd(day, {nday_before}, first_title_offered_timestamp)
                 where 1 = 1
                     and t.platform_name = a.platform_name

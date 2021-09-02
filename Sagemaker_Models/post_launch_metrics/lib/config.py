@@ -31,7 +31,8 @@ prelaunch_process_info = {
          , 'platform_name'
          , 'program_type'
          , 'prod_release_year'
-         , 'in_sequantial_releasing_period' 
+         , 'in_sequantial_releasing_period'
+         , 'ln_total_media_cost_pre_launch' 
          , 'total_hours'
          , 'content_cost'
          , 'season_number_adj'
@@ -43,6 +44,7 @@ prelaunch_process_info = {
     'num_columns':['prod_release_year'
                    , 'total_hours'
                    , 'title_age_approx'
+                   , 'ln_total_media_cost_pre_launch'
                    , 'season_number_adj'
                    , 'trailer_metric_before_selected'
                    , 'trailer_metric_before_cumday_selected'
@@ -51,7 +53,8 @@ prelaunch_process_info = {
 
 metadata_process_info = {
     'target_col':'day028_percent_viewed',
-    'day_column_keywords':['percent_viewed', 'vtp', 'sub_count'],
+    'day_column_keywords':
+        ['percent_viewed', 'vtp', 'sub_count','mc'],
     'keywords':
         # flags are usually included in the tags, so excluded here
         ['tag','licensor','title_age', 'dayofweek_earliest_date'],

@@ -106,8 +106,9 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                     , f.match_id
                     , f.platform_name
                     , {nday_before}
-                    , datediff(day,
-                        greatest(first_trailer_offered_timestamp, dateadd(day, -28, title_offered_timestamp))
+                    , datediff(day
+                        --, greatest(first_trailer_offered_timestamp, dateadd(day, -28, title_offered_timestamp))
+                        , first_trailer_offered_timestamp
                             , dateadd(day, {nday_before}, title_offered_timestamp)) as cumulative_day_num
                     , first_trailer_offered_timestamp
                     , first_title_offered_timestamp
@@ -124,7 +125,8 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                 and f.match_id is not null
                 and stream_elapsed_play_seconds > 10
                 and stream_min_timestamp_gmt between
-                    greatest(first_trailer_offered_timestamp, dateadd(day, -28, first_title_offered_timestamp))
+                    --greatest(first_trailer_offered_timestamp, dateadd(day, -28, first_title_offered_timestamp))
+                    first_trailer_offered_timestamp
                         and dateadd(day, {nday_before}, first_title_offered_timestamp)
                 and stream_min_timestamp_gmt >=
                     case when {viewership_table} in ('max_prod.viewership.max_user_stream','max_prod.viewership.max_user_stream_heartbeat_view') then '2020-05-27'
@@ -146,7 +148,8 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                 left join {database}.{schema}.sub_period_in_uuid_test as a
                     -- give one day butter to both dates, since some titles may release in the late night
                     ------ logic: sessions without the following conditions
-                    on a.subscription_expire_timestamp >= greatest(t.first_trailer_offered_timestamp, dateadd(day, -28, t.first_title_offered_timestamp))
+                    on --a.subscription_expire_timestamp >= greatest(t.first_trailer_offered_timestamp, dateadd(day, -28, t.first_title_offered_timestamp))
+                        a.subscription_expire_timestamp >= t.first_trailer_offered_timestamp
                         and a.subscription_start_timestamp <= dateadd(day, {nday_before}, first_title_offered_timestamp)
                 where 1 = 1
                     and t.platform_name = a.platform_name

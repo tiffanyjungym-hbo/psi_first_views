@@ -4,7 +4,6 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import numpy as np
 import pandas as pd
-from scipy.special import logit
 from sklearn.preprocessing import LabelEncoder 
 from lib.config import metadata_process_info
 
@@ -29,7 +28,6 @@ class DataPreprocessing():
         self.clean_and_generate_tags_based_on_genres()
         self.clean_and_generate_licensors()
         self.log_and_log_ratio_cal()
-        self.sigmoid_target_cal()
         self.categorical_feature_label_encoding()
         self.get_list_all_percent()
         # binarize the day of week feature for linear regression to use
@@ -229,12 +227,6 @@ class DataPreprocessing():
             np.log(self.target.loc[target_greater_than_zero,'target']/self.base.loc[target_greater_than_zero, 'day001_percent_viewed'])
         self.target.loc[target_greater_than_zero, 'log_target']       =\
             np.log(self.target.loc[target_greater_than_zero,'target'])
-
-    def sigmoid_target_cal(self):
-        target_greater_than_zero = (self.target['target']>0)
-        self.target['sigmoid_target'] = -100
-        self.target.loc[target_greater_than_zero, 'sigmoid_target'] =\
-            logit(self.target.loc[target_greater_than_zero,'target'])
 
     def categorical_feature_label_encoding(self):
         le = LabelEncoder()

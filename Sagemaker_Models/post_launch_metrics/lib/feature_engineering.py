@@ -234,9 +234,7 @@ class FeatureEngineering(DataPreprocessing):
         self.X = self.base_copy[self.selected_columns]
         
         # if the target is log ratio, then include the log ratio train features
-        if percent_data_process_info['target_sigmoid_transformation']:
-            self.y = self.target_copy['sigmoid_target']    
-        elif percent_data_process_info['target_log_transformation']:       
+        if percent_data_process_info['target_log_transformation']:       
             # log ratio
             if percent_data_process_info['log_ratio_transformation']:
                 self.y = self.target_copy['log_ratio_target']

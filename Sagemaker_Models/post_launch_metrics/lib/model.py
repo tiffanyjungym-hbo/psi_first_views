@@ -252,13 +252,7 @@ class ModelMain(FeatureEngineering):
                                x_test, percent_data_process_info):
     # result processing
 
-        if percent_data_process_info['target_sigmoid_transformation']:
-            y_predict = expit(y_predict)
-            y_test = expit(y_test)
-            y_predict_benchmark = expit(y_predict_benchmark)
-            y_predict_enet = expit(y_predict_enet)
-
-        elif percent_data_process_info['target_log_transformation']:
+        if percent_data_process_info['target_log_transformation']:
             y_predict = np.exp(y_predict)
             y_test = np.exp(y_test)
             y_predict_benchmark = np.exp(y_predict_benchmark)

@@ -7,7 +7,6 @@ from scipy.spatial.distance import squareform
 from lib.data_preprocessing import DataPreprocessing
 from scipy.spatial.distance import cdist
 from lib.config import metadata_process_info
-
 pd.options.mode.chained_assignment = None
 
 class FeatureEngineering(DataPreprocessing):
@@ -21,6 +20,7 @@ class FeatureEngineering(DataPreprocessing):
         self.X_flag = False
         self.y_flag = False
         self.pred_empty_flag = False
+        self.base_columns = self.base.columns
     
     def get_X_y(self, 
                 percent_data_process_info,
@@ -62,7 +62,7 @@ class FeatureEngineering(DataPreprocessing):
         
         # step 4: process metadata
         self.select_metadata_columns(metadata_process_info, select_label_threshold)
-        
+
         # step 5: set y
         self.extract_X_y(percent_data_process_info)
         
@@ -100,13 +100,6 @@ class FeatureEngineering(DataPreprocessing):
             self.base_copy  = self.base_copy.loc[self.base_copy['day001_percent_viewed']>=threshold,:]
             print('only {} titles considered'.format(self.base_copy.shape[0]))
     
-    def clean_past_growth_trend_records(self):
-        if self.X_flag:
-            # drop existing growth trend columns if any
-            cleaned_columns = [col for col in self.num_columns if 'growth_trend' in col]
-            self.num_columns = [col for col in self.num_columns if col not in cleaned_columns]
-            self.selected_columns = [col for col in self.selected_columns if col not in cleaned_columns]
-    
     def select_prelaunch_features(self, percent_data_process_info, metadata_process_info):
         if percent_data_process_info['max_num_day'] < 1:
             for keyword in metadata_process_info['prelaunch_spec_process']:
@@ -139,6 +132,13 @@ class FeatureEngineering(DataPreprocessing):
                 self.base_copy = self.base_copy.loc[self.base_copy[keyword+'_selected']!=-1,:]
         
             print('only {} titles considered after prelaunch filter'.format(self.base_copy.shape[0]))
+
+    def clean_past_growth_trend_records(self):
+        if self.X_flag:
+            # drop existing growth trend columns if any
+            cleaned_columns = [col for col in self.num_columns if 'growth_trend' in col]
+            self.num_columns = [col for col in self.num_columns if col not in cleaned_columns]
+            self.selected_columns = [col for col in self.selected_columns if col not in cleaned_columns]
             
     def percent_columns_and_target_process(self, percent_data_process_info):
         # create/empty the selected_column

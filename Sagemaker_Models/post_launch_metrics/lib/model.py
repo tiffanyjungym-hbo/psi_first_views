@@ -251,7 +251,6 @@ class ModelMain(FeatureEngineering):
                                y_predict_benchmark, y_predict_enet, 
                                x_test, percent_data_process_info):
     # result processing
-
         if percent_data_process_info['target_log_transformation']:
             y_predict = np.exp(y_predict)
             y_test = np.exp(y_test)

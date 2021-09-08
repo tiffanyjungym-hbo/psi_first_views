@@ -37,7 +37,7 @@ prelaunch_process_info = {
          , 'season_number_adj'
          , 'trailer_metric_before_selected'
          , 'trailer_metric_before_cumday_selected'
-         , 'production_budget_imdb'
+         #, 'total_production_budget_imdb'
                  ],
     'prelaunch_spec_process':['trailer_metric_before'],
     'label_columns':['content_category', 'program_type'],
@@ -47,7 +47,7 @@ prelaunch_process_info = {
                    , 'season_number_adj'
                    , 'trailer_metric_before_selected'
                    , 'trailer_metric_before_cumday_selected'
-                   , 'production_budget_imdb'
+                   #, 'total_production_budget_imdb'
                    ]
 }
 
@@ -74,7 +74,7 @@ metadata_process_info = {
          , 'cumulative_day_num'
          , 'total_trailer_num'
          , 'avg_trail_metric_per_day'
-         , 'production_budget_imdb'
+         #, 'total_production_budget_imdb'
                  ],
     'label_columns':['content_category', 'program_type'],
     'num_columns':['prod_release_year'
@@ -87,7 +87,7 @@ metadata_process_info = {
                    , 'cumulative_day_num'
                    , 'total_trailer_num'
                    , 'avg_trail_metric_per_day'
-                   , 'production_budget_imdb'
+                   #, 'total_production_budget_imdb'
                    ]
 }
 

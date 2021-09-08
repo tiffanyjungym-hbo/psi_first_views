@@ -49,8 +49,8 @@ FROM (
     select
         title_name
         , match_id
-        , content_category
-        , earliest_offered_timestamp
+        --, content_category
+        --, earliest_offered_timestamp
         , case when total_production_budget is null then -1
             else total_production_budget end as total_production_budget_imdb
     from final

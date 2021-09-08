@@ -42,6 +42,7 @@ prelaunch_process_info = {
     'prelaunch_spec_process':['trailer_metric_before'],
     'label_columns':['content_category', 'program_type'],
     'num_columns':['prod_release_year'
+                   , 'content_cost'
                    , 'total_hours'
                    , 'title_age_approx'
                    , 'season_number_adj'

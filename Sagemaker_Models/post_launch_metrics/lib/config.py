@@ -36,7 +36,7 @@ prelaunch_process_info = {
          , 'content_cost'
          , 'season_number_adj'
          , 'trailer_metric_before_selected'
-         , 'trailer_metric_before_cumday_selected'
+         , 'trailer_metric_before_cumday_selected' # process in feature engineering but SQL
          #, 'total_production_budget_imdb'
                  ],
     'prelaunch_spec_process':['trailer_metric_before'],
@@ -47,7 +47,7 @@ prelaunch_process_info = {
                    , 'title_age_approx'
                    , 'season_number_adj'
                    , 'trailer_metric_before_selected'
-                   , 'trailer_metric_before_cumday_selected'
+                   , 'trailer_metric_before_cumday_selected' # process in feature engineering but SQL
                    #, 'total_production_budget_imdb'
                    ]
 }

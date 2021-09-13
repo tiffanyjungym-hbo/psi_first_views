@@ -37,7 +37,7 @@ class ModelMain(FeatureEngineering):
     
         
         # step 1: do time split
-        self.timesplit(nfold)
+        self.timesplit(percent_data_process_info, nfold)
         
         # step 2: initialize the params
         self._cross_prediction_init()
@@ -187,11 +187,17 @@ class ModelMain(FeatureEngineering):
         # merge basic info
         self.output = self.output.merge(self.base_copy[['title_name','match_id_platform']], left_index = True, right_index = True)
         
-    def timesplit(self, nfold = 10):
+    def timesplit(self, percent_data_process_info, nfold = 10):
         # The current setting considers all the dates after and excluding the Max launch date
         # the alternative is to include the titles released at the Max launch date
         test_started_time = self.title_offered_ts[self.X_base['platform_name'] == 1].min()
-        test_started_time = test_started_time + pd.Timedelta(days = 1)
+
+        if percent_data_process_info['max_num_day'] > 0:
+            test_started_time = test_started_time + pd.Timedelta(days = 1)
+        else:
+            # give longer period for the trailer to get values, roughly two months
+            test_started_time = test_started_time + pd.Timedelta(days = 63)
+
         test_folds_ind = self.title_offered_ts[self.title_offered_ts>= test_started_time]
         
         # find the date boundaries of the folds

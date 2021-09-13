@@ -124,11 +124,16 @@ class FeatureEngineering(DataPreprocessing):
         fin = 28 - tmp.apply(lambda x: x.first_valid_index(), axis = 1).\
             apply(lambda x: int(x[(x.find('day')+3):(x.find('day')+6)]))
         
+        cumday_before_launch = (self.base_copy['cumulative_day_num'] - 28)
+        cumday_before_launch.loc[cumday_before_launch<=0] = 0
+        fin += cumday_before_launch
+        
         return fin
     
     def filter_prelaunch(self, percent_data_process_info, metadata_process_info):
         if percent_data_process_info['max_num_day'] < 1:
             for keyword in metadata_process_info['prelaunch_spec_process']:
+                # filter out titles with any missing values in the prelaunch keywork list
                 self.base_copy = self.base_copy.loc[self.base_copy[keyword+'_selected']!=-1,:]
         
             print('only {} titles considered after prelaunch filter'.format(self.base_copy.shape[0]))

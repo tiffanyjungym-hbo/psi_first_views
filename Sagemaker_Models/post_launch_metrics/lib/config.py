@@ -23,29 +23,32 @@ prelaunch_process_info = {
         [],
     'keywords':
         # flags are usually included in the tags, so excluded here
-        ['tag','licensor','title_age', 'dayofweek_earliest_date'],
+        [],
     'other_col':
-        ['single_episode_ind'
-         , 'at_release_year'
-         , 'content_category'
+        [#'single_episode_ind'
+         #, 'at_release_year'
+          'content_category'
          , 'platform_name'
          , 'program_type'
          , 'prod_release_year'
          , 'in_sequantial_releasing_period'
          , 'total_hours'
-         , 'content_cost'
-         , 'season_number_adj'
+         #, 'content_cost'
+         #, 'season_number_adj'
+         #, 'title_age_approx'
          , 'trailer_metric_d28_selected'
          , 'trailer_metric_d28_cumday_selected' # process in feature engineering but SQL
          #, 'total_production_budget_imdb'
                  ],
-    'prelaunch_spec_process':['trailer_metric_d28'],
+    'prelaunch_spec_process':[
+        'trailer_metric_d28'
+        ],
     'label_columns':['content_category', 'program_type'],
     'num_columns':['prod_release_year'
-                   , 'content_cost'
+                   #, 'content_cost'
                    , 'total_hours'
-                   , 'title_age_approx'
-                   , 'season_number_adj'
+                   #, 'title_age_approx'
+                   #, 'season_number_adj'
                    , 'trailer_metric_d28_selected'
                    , 'trailer_metric_d28_cumday_selected' # process in feature engineering but SQL
                    #, 'total_production_budget_imdb'

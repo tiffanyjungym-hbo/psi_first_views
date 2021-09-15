@@ -4,10 +4,10 @@ import lightgbm as lgb
 import numpy as np
 import pandas as pd
 pd.options.mode.chained_assignment = None
+
 from sklearn.linear_model import ElasticNet
 from sklearn.linear_model import LinearRegression as lr
 import itertools as it
-from scipy.special import expit
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick

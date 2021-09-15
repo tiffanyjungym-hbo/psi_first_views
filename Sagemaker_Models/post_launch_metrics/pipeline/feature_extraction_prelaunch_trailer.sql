@@ -7,7 +7,7 @@ FROM (
                 match_id_platform
                 , nday_before
                 , retail_trailer_view_metric
-            from max_dev.workspace.trailer_retail_view_percent_d28
+            from {database}.{schema}.trailer_retail_view_percent_d28
     ),
 
     viewed_pivot_base as (
@@ -117,7 +117,7 @@ FROM (
         , case when DAY026_TRAILER_METRIC_D28 is null then -1 else DAY026_TRAILER_METRIC_D28 end as DAY026_TRAILER_METRIC_D28
         , case when DAY027_TRAILER_METRIC_D28 is null then -1 else DAY027_TRAILER_METRIC_D28 end as DAY027_TRAILER_METRIC_D28
     from viewed_pivot_table as v
-    right join max_dev.workspace.title_retail_funnel_metrics as f
+    right join {database}.{schema}.title_retail_funnel_metrics as f
         on v.match_id_platform = concat(case when f.platform_name = 'hboNow' then 0
                                             else 1 end, '-', f.match_id)
     )

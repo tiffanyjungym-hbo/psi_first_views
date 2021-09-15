@@ -137,7 +137,7 @@ class FeatureEngineering(DataPreprocessing):
                 self.base_copy = self.base_copy.loc[self.base_copy[keyword+'_selected']!=-1,:]
 
                 # filter out titles with small values
-                self.base_copy = self.base_copy.loc[self.base_copy[keyword+'_selected']>=self.base_copy[keyword+'_selected'].quantile(q=day001_popularity_threshold),:]
+                self.base_copy = self.base_copy.loc[self.base_copy[keyword+'_selected']>=self.base_copy[keyword+'_selected'].quantile(day001_popularity_threshold),:]
         
             print('only {} titles considered after prelaunch filter'.format(self.base_copy.shape[0]))
 

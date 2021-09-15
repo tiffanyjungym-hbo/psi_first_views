@@ -5,9 +5,9 @@ import numpy as np
 from scipy.spatial.distance import cdist
 from scipy.spatial.distance import squareform
 from lib.data_preprocessing import DataPreprocessing
-from scipy.spatial.distance import cdist
-from lib.config import metadata_process_info
+from scipy.spatial.distance import cdist 
 pd.options.mode.chained_assignment = None
+from lib.config import metadata_process_info
 
 class FeatureEngineering(DataPreprocessing):
     def __init__(self, data_list,
@@ -16,7 +16,6 @@ class FeatureEngineering(DataPreprocessing):
                      target_col = metadata_process_info['target_col']
                 ):
         DataPreprocessing.__init__(self, data_list, label_columns, target_col)
-        self.base_columns = self.base.columns
         self.X_flag = False
         self.y_flag = False
         self.pred_empty_flag = False
@@ -35,8 +34,10 @@ class FeatureEngineering(DataPreprocessing):
         self.target_copy = self.target.copy()
         self.target_copy['match_id'] = self.base_copy['match_id']
         self.day_column_list = []
+        
+        #### changed location ####
         self.num_columns = metadata_process_info['num_columns']
-
+        
         # step 0.1: reset the flags
         self.X_flag = False
         self.y_flag = False
@@ -50,19 +51,19 @@ class FeatureEngineering(DataPreprocessing):
         
         # step 1.3: clean past growth trend records
         self.clean_past_growth_trend_records()
-
+        
         # step 2: process prelaunch features
         self.select_prelaunch_features(percent_data_process_info, metadata_process_info)
-
+        
         # set 2.1: prelaunch feature filter
         self.filter_prelaunch(percent_data_process_info, metadata_process_info, day001_popularity_threshold)
-
+        
         # step 3: process percent data
         self.percent_columns_and_target_process(percent_data_process_info)
         
         # step 4: process metadata
         self.select_metadata_columns(metadata_process_info, select_label_threshold)
-
+        
         # step 5: set y
         self.extract_X_y(percent_data_process_info)
         
@@ -98,8 +99,9 @@ class FeatureEngineering(DataPreprocessing):
             print('keeps the titles above {} percentile day1 viewed over all titles only'.format(np.round(day001_popularity_threshold*100, 0)))
             self.target_copy = self.target_copy.loc[self.base_copy['day001_percent_viewed']>=threshold,:]
             self.base_copy  = self.base_copy.loc[self.base_copy['day001_percent_viewed']>=threshold,:]
-            print('only {} titles considered'.format(self.base_copy.shape[0]))
-    
+            #### Changed
+            print('only {} titles considered after popularity filter'.format(self.base_copy.shape[0]))
+            
     def select_prelaunch_features(self, percent_data_process_info, metadata_process_info):
         if percent_data_process_info['max_num_day'] < 1:
             for keyword in metadata_process_info['prelaunch_spec_process']:
@@ -135,18 +137,19 @@ class FeatureEngineering(DataPreprocessing):
             for keyword in metadata_process_info['prelaunch_spec_process']:
                 # filter out titles with any missing values in the prelaunch keywork list
                 self.base_copy = self.base_copy.loc[self.base_copy[keyword+'_selected']!=-1,:]
-
+                
                 # filter out titles with small values
                 self.base_copy = self.base_copy.loc[self.base_copy[keyword+'_selected']>=self.base_copy[keyword+'_selected'].quantile(day001_popularity_threshold),:]
         
             print('only {} titles considered after prelaunch filter'.format(self.base_copy.shape[0]))
-
+            
     def clean_past_growth_trend_records(self):
         if self.X_flag:
             # drop existing growth trend columns if any
             cleaned_columns = [col for col in self.num_columns if 'growth_trend' in col]
             self.num_columns = [col for col in self.num_columns if col not in cleaned_columns]
             self.selected_columns = [col for col in self.selected_columns if col not in cleaned_columns]
+            
             
     def percent_columns_and_target_process(self, percent_data_process_info):
         # create/empty the selected_column
@@ -185,7 +188,7 @@ class FeatureEngineering(DataPreprocessing):
         else:
             day_column_list.extend(self.base_columns[((self.base_columns.str.contains('log')==False)&
                                                       ((self.base_columns.str.contains('percent')==True)))])   
-
+        
         # include postlaunch mc values
         if percent_data_process_info['cumulative_media_cost']:
             day_column_list.extend(self.base_columns[((self.base_columns.str.contains('mc')==True)&
@@ -207,7 +210,7 @@ class FeatureEngineering(DataPreprocessing):
         
         # filtered the day num then insert into the final list     
         day_column_list = [e for e in day_column_list 
-                               if (int(e[e.find('day')+3:e.find('day')+6])) 
+                               if int(e[e.find('day')+3:e.find('day')+6]) 
                                <= percent_data_process_info['max_num_day']]
         
         self.day_column_list = day_column_list
@@ -258,8 +261,8 @@ class FeatureEngineering(DataPreprocessing):
         # seperate X_base, X_pred, and y_base
         self.X_base = self.X[self.y!=-100]
         self.y_base = self.y[self.y!=-100]
-        self.X_pred = self.X[self.y==-100]
-        self.y_pred = self.y[self.y==-100]
+        self.X_pred = self.X[((self.y==-100) & (self.X['platform_name']==1))]
+        self.y_pred = self.y[((self.y==-100) & (self.X['platform_name']==1))]
         
         # get y_base, y_pred aligned with X_base and X_pred
         self.y_base = self.y_base[self.X_base.index]
@@ -280,7 +283,7 @@ class FeatureEngineering(DataPreprocessing):
                                     axis= 1)
                 
             self.last_percent_day = percent_not_null[self.X_pred.index].\
-                    apply(lambda x: percent_data_process_info['total_num_day_data']\
+                apply(lambda x: percent_data_process_info['total_num_day_data']\
                       if x == [] else max(x))
             
             self.y_pred = self.y_pred[self.last_percent_day\
@@ -297,9 +300,10 @@ class FeatureEngineering(DataPreprocessing):
         
         # get y_pred align with X_pred again
         self.y_pred = self.y_pred[self.X_pred.index]
-
+        
         # flag empty prediction set if X_pred is empty
         if self.X_pred.shape[0]<1:
+            print('yo!')
             self.pred_empty_flag = True
         
     def calculate_growth_trend_projection(self, percent_data_process_info):        

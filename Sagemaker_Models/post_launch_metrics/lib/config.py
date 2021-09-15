@@ -35,8 +35,8 @@ prelaunch_process_info = {
          , 'total_hours'
          , 'content_cost'
          , 'season_number_adj'
-         , 'trailer_metric_before_selected'
-         , 'trailer_metric_before_cumday_selected' # process in feature engineering but SQL
+         , 'trailer_metric_d28_selected'
+         , 'trailer_metric_d28_cumday_selected' # process in feature engineering but SQL
          #, 'total_production_budget_imdb'
                  ],
     'prelaunch_spec_process':['trailer_metric_d28'],

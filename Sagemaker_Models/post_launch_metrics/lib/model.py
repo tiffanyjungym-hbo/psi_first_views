@@ -31,13 +31,14 @@ class ModelMain(FeatureEngineering):
                          model_name_list, 
                          params_dict, 
                          percent_data_process_info, 
-                         nfold = 6):        
+                         nfold = 6, 
+                         back_consideration_date = 180):        
         # reset the flag
         self.performance_bootstrapped_flag = False
     
         
         # step 1: do time split
-        self.timesplit(percent_data_process_info, nfold)
+        self.timesplit(percent_data_process_info, nfold, back_consideration_date)
         
         # step 2: initialize the params
         self._cross_prediction_init()
@@ -187,16 +188,16 @@ class ModelMain(FeatureEngineering):
         # merge basic info
         self.output = self.output.merge(self.base_copy[['title_name','match_id_platform']], left_index = True, right_index = True)
         
-    def timesplit(self, percent_data_process_info, nfold = 10):
+    def timesplit(self, percent_data_process_info, nfold = 10, back_consideration_date = 180):
         # The current setting considers all the dates after and excluding the Max launch date
         # the alternative is to include the titles released at the Max launch date
-        test_started_time = self.title_offered_ts[self.X_base['platform_name'] == 1].min()
+        test_started_time = self.title_offered_ts[self.X_base['platform_name'] == 1].max()
 
         if percent_data_process_info['max_num_day'] > 0:
-            test_started_time = test_started_time + pd.Timedelta(days = 1)
+            test_started_time = test_started_time + pd.Timedelta(days = back_consideration_date)
         else:
             # give longer period for the trailer to get values, roughly two months
-            test_started_time = test_started_time + pd.Timedelta(days = 63)
+            test_started_time = test_started_time + pd.Timedelta(days = back_consideration_date)
 
         test_folds_ind = self.title_offered_ts[self.title_offered_ts>= test_started_time]
         
@@ -395,7 +396,8 @@ class ModelMain(FeatureEngineering):
     def parameter_tuning(self, model_name, 
                           params_tunning_dict, 
                           percent_data_process_info,
-                          nfold = 6):
+                          nfold = 6,
+                          back_consideration_date = 180):
         if model_name!= 'lr':
             self._param_tunning_flag_init(model_name)
             
@@ -409,7 +411,8 @@ class ModelMain(FeatureEngineering):
                 ct+=1
                 self.cross_prediction(model_name_list, params_dict_input, 
                                            percent_data_process_info, 
-                                           nfold)
+                                           nfold,
+                                           back_consideration_date)
                 
                 smape_mean = self.output['smape_lgb'].mean()
                 smape_original_mean = self.output.loc[self.output['program_type']==1, 'smape_lgb'].mean()

@@ -55,7 +55,7 @@ class FeatureEngineering(DataPreprocessing):
         self.select_prelaunch_features(percent_data_process_info, metadata_process_info)
 
         # set 2.1: prelaunch feature filter
-        self.filter_prelaunch(percent_data_process_info, metadata_process_info)
+        self.filter_prelaunch(percent_data_process_info, metadata_process_info, day001_popularity_threshold)
 
         # step 3: process percent data
         self.percent_columns_and_target_process(percent_data_process_info)
@@ -130,11 +130,14 @@ class FeatureEngineering(DataPreprocessing):
         
         return fin
     
-    def filter_prelaunch(self, percent_data_process_info, metadata_process_info):
+    def filter_prelaunch(self, percent_data_process_info, metadata_process_info, day001_popularity_threshold):
         if percent_data_process_info['max_num_day'] < 1:
             for keyword in metadata_process_info['prelaunch_spec_process']:
                 # filter out titles with any missing values in the prelaunch keywork list
                 self.base_copy = self.base_copy.loc[self.base_copy[keyword+'_selected']!=-1,:]
+
+                # filter out titles with small values
+                self.base_copy = self.base_copy.loc[self.base_copy[keyword+'_selected']>=self.base_copy[keyword+'_selected'].quantile(q=day001_popularity_threshold),:]
         
             print('only {} titles considered after prelaunch filter'.format(self.base_copy.shape[0]))
 

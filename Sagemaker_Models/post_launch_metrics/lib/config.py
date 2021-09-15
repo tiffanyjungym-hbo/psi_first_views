@@ -20,7 +20,7 @@ percent_data_process_info ={
 prelaunch_process_info = {
     'target_col':'day028_percent_viewed',
     'day_column_keywords':
-        ['trailer_metric_before'],
+        [],
     'keywords':
         # flags are usually included in the tags, so excluded here
         ['tag','licensor','title_age', 'dayofweek_earliest_date'],
@@ -39,15 +39,15 @@ prelaunch_process_info = {
          , 'trailer_metric_before_cumday_selected' # process in feature engineering but SQL
          #, 'total_production_budget_imdb'
                  ],
-    'prelaunch_spec_process':['trailer_metric_before'],
+    'prelaunch_spec_process':['trailer_metric_d28'],
     'label_columns':['content_category', 'program_type'],
     'num_columns':['prod_release_year'
                    , 'content_cost'
                    , 'total_hours'
                    , 'title_age_approx'
                    , 'season_number_adj'
-                   , 'trailer_metric_before_selected'
-                   , 'trailer_metric_before_cumday_selected' # process in feature engineering but SQL
+                   , 'trailer_metric_d28_selected'
+                   , 'trailer_metric_d28_cumday_selected' # process in feature engineering but SQL
                    #, 'total_production_budget_imdb'
                    ]
 }

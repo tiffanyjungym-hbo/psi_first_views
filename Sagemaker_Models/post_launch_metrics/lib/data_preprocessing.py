@@ -4,7 +4,6 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import numpy as np
 import pandas as pd
-
 from sklearn.preprocessing import LabelEncoder 
 from lib.config import metadata_process_info
 
@@ -218,8 +217,7 @@ class DataPreprocessing():
                     self.base['log_ratio_' + col] = -100
                     self.base.loc[self.base[col]>0,
                            'log_ratio_' + col] = np.log(self.base.loc[self.base[col]>0, col]/
-                                                         self.base.loc[self.base[col]>0, 'day001_' + keyword])
-                
+                                                         self.base.loc[self.base[col]>0, 'day001_' + keyword])               
         
         # process target
         target_greater_than_zero = (self.target['target']>0)
@@ -229,7 +227,7 @@ class DataPreprocessing():
             np.log(self.target.loc[target_greater_than_zero,'target']/self.base.loc[target_greater_than_zero, 'day001_percent_viewed'])
         self.target.loc[target_greater_than_zero, 'log_target']       =\
             np.log(self.target.loc[target_greater_than_zero,'target'])
-        
+
     def categorical_feature_label_encoding(self):
         le = LabelEncoder()
         label_columns = [col for col in self.label_columns if col in self.base.columns]

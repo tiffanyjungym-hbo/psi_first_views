@@ -5,7 +5,8 @@ model_name_list = ['lgb']
 
 percent_data_process_info ={
     'target_log_transformation':True,
-    'log_ratio_transformation': True,
+    'log_ratio_transformation': True, # in effect only if target_log_transformation = True
+    'target_sigmoid_transformation':False, # in effect only if log_ratio_transformation = True
     'raw_log_feature':True,
     'cumulative_media_cost':True,
     'last_season_percents': False,
@@ -22,46 +23,31 @@ prelaunch_process_info = {
         [],
     'keywords':
         # flags are usually included in the tags, so excluded here
-        [
-            #'tag'
-            #,'licensor'
-            #,'title_age'
-            #,'dayofweek_earliest_date'
-        ],
+        ['tag','licensor','title_age', 'dayofweek_earliest_date'],
     'other_col':
-        [
-         #  'single_episode_ind'
-         #, 'at_release_year'
-          'content_category'
+        ['single_episode_ind'
+         , 'at_release_year'
+         , 'content_category'
          , 'platform_name'
          , 'program_type'
-         #, 'prod_release_year'
-         , 'in_sequantial_releasing_period' 
+         , 'prod_release_year'
+         , 'in_sequantial_releasing_period'
          , 'total_hours'
          , 'content_cost'
-         #, 'season_number_adj'
-#         , 'title_age_approx'
+         , 'season_number_adj'
          , 'trailer_metric_d28_selected'
-         , 'trailer_metric_d28_cumday_selected'
-         #, 'trailer_metric_before_selected'
-         #, 'trailer_metric_before_cumday_selected'
+         , 'trailer_metric_d28_cumday_selected' # process in feature engineering but SQL
          #, 'total_production_budget_imdb'
                  ],
-    'prelaunch_spec_process':[
-        'trailer_metric_d28'
-        #'trailer_metric_before'
-                ],
+    'prelaunch_spec_process':['trailer_metric_d28'],
     'label_columns':['content_category', 'program_type'],
-    'num_columns':[
-                    #'prod_release_year'
-                   'total_hours'
-#                   'title_age_approx'
-                   ,'content_cost'
-                   #, 'season_number_adj'
+    'num_columns':['prod_release_year'
+                   , 'content_cost'
+                   , 'total_hours'
+                   , 'title_age_approx'
+                   , 'season_number_adj'
                    , 'trailer_metric_d28_selected'
-                   , 'trailer_metric_d28_cumday_selected'
-                   #, 'trailer_metric_before_selected'
-                   #, 'trailer_metric_before_cumday_selected'
+                   , 'trailer_metric_d28_cumday_selected' # process in feature engineering but SQL
                    #, 'total_production_budget_imdb'
                    ]
 }
@@ -83,26 +69,26 @@ metadata_process_info = {
          , 'in_sequantial_releasing_period' 
          , 'ln_total_media_cost_pre_launch'
          , 'total_hours'
-#         , 'content_cost'
+         , 'content_cost'
          , 'season_number_adj'
          , 'retail_trailer_view_metric'
          , 'cumulative_day_num'
          , 'total_trailer_num'
-#         , 'avg_trail_metric_per_day'
-#         , 'total_production_budget_imdb'
+         , 'avg_trail_metric_per_day'
+         #, 'total_production_budget_imdb'
                  ],
     'label_columns':['content_category', 'program_type'],
     'num_columns':['prod_release_year'
                    , 'total_hours'
                    , 'title_age_approx'
                    , 'ln_total_media_cost_pre_launch'
-#                   , 'content_cost'
+                   , 'content_cost'
                    , 'season_number_adj'
                    , 'retail_trailer_view_metric'
                    , 'cumulative_day_num'
                    , 'total_trailer_num'
-#                   , 'avg_trail_metric_per_day'
-#                   , 'total_production_budget_imdb'
+                   , 'avg_trail_metric_per_day'
+                   #, 'total_production_budget_imdb'
                    ]
 }
 
@@ -122,7 +108,7 @@ default_params_dict = {
          'l1_ratio': 0.2}
 }
     
-params_tunning_dict = {
+params_tuning_dict = {
     'lgb': {
         'objective': ['mae'],
         'num_boost_round':[120,240],

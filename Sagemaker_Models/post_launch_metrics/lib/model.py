@@ -4,10 +4,10 @@ import lightgbm as lgb
 import numpy as np
 import pandas as pd
 pd.options.mode.chained_assignment = None
-from numpy.random import default_rng
 from sklearn.linear_model import ElasticNet
 from sklearn.linear_model import LinearRegression as lr
 import itertools as it
+from scipy.special import expit
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
@@ -184,19 +184,21 @@ class ModelMain(FeatureEngineering):
             self.output['smape_' + model_name] = abs(self.output['cross_predict_' + model_name] - self.output['target'])/\
                                     ((self.output['cross_predict_' + model_name] + self.output['target'])/2)
             self.output['mae_' + model_name] = abs(self.output['cross_predict_' + model_name] - self.output['target'])
-            
+        
         # merge basic info
         self.output = self.output.merge(self.base_copy[['title_name','match_id_platform']], left_index = True, right_index = True)
         
     def timesplit(self, percent_data_process_info, nfold = 10, back_consideration_date = 180):
-        # Use this line to get the lastest date in the data recorded
+        # The current setting considers all the dates after and excluding the Max launch date
+        # the alternative is to include the titles released at the Max launch date
         test_started_time = self.title_offered_ts[self.X_base['platform_name'] == 1].max()
+
         if percent_data_process_info['max_num_day'] > 0:
-            test_started_time = test_started_time - pd.Timedelta(days = back_consideration_date)
+            test_started_time = test_started_time + pd.Timedelta(days = back_consideration_date)
         else:
             # give longer period for the trailer to get values, roughly two months
-            test_started_time = test_started_time - pd.Timedelta(days = back_consideration_date)
-            
+            test_started_time = test_started_time + pd.Timedelta(days = back_consideration_date)
+
         test_folds_ind = self.title_offered_ts[self.title_offered_ts>= test_started_time]
         
         # find the date boundaries of the folds
@@ -305,7 +307,7 @@ class ModelMain(FeatureEngineering):
         self.new_title_output['program_type'] = self.X_pred['program_type']
         self.new_title_output.columns = ['target', 'program_type']
         self.new_title_output['target'] = np.nan
-        self.new_title_output = self.base_copy[['title_name','match_id_platform','match_id','platform_name']].\
+        self.new_title_output = self.base_copy[['title_name','match_id','match_id_platform','platform_name']].\
             merge(self.new_title_output, 
                   left_index = True, 
                   right_index = True)
@@ -348,45 +350,45 @@ class ModelMain(FeatureEngineering):
         plt.ylabel('Frequency [%]', fontsize=16)
         plot.get_figure().savefig('{}.png'.format(filename))
         
-    def bootstrap_confidence_inv(self, output, model_name_list, total_iter = 5000, original_only = False):  
-        output_copy = output.reset_index(drop = True).copy()
+    # def bootstrap_confidence_inv(self, output, model_name_list, total_iter = 5000, original_only = False):  
+    #     output_copy = output.reset_index(drop = True).copy()
 
-        # create fin_dict
-        fin_dict = {}
-        for model_name in model_name_list:
-            fin_dict['mean_dist_smape_' + model_name] = []
+    #     # create fin_dict
+    #     fin_dict = {}
+    #     for model_name in model_name_list:
+    #         fin_dict['mean_dist_smape_' + model_name] = []
         
-        # consider originals only
-        if original_only:
-            output_copy = output_copy.loc[output_copy['program_type']==1,:].reset_index(drop = True)
+    #     # consider originals only
+    #     if original_only:
+    #         output_copy = output_copy.loc[output_copy['program_type']==1,:].reset_index(drop = True)
         
     
-        for cnt in range(total_iter):
-            rng = default_rng()
-            numbers = rng.choice(output_copy.shape[0], size=output_copy.shape[0], replace=True)
+    #     for cnt in range(total_iter):
+    #         rng = default_rng()
+    #         numbers = rng.choice(output_copy.shape[0], size=output_copy.shape[0], replace=True)
             
-            for model_name in model_name_list: 
-                fin_dict['mean_dist_smape_' + model_name].append(output_copy.loc[numbers, 'smape_' + model_name].mean())
+    #         for model_name in model_name_list: 
+    #             fin_dict['mean_dist_smape_' + model_name].append(output_copy.loc[numbers, 'smape_' + model_name].mean())
 
-        self.performance_bootstrapped_flag = True
+    #     self.performance_bootstrapped_flag = True
         
-        return pd.DataFrame(fin_dict)
+    #     return pd.DataFrame(fin_dict)
         
-    def bootstrap_p_value_lgb_benchmark(self, compare_pair = ['smape_lgb', 'smape_benchmark'], total_iter = 5000):
-        if self.performance_bootstrapped_flag == False:
-            self.bootstrap_confidence_inv()
+    # def bootstrap_p_value_lgb_benchmark(self, compare_pair = ['smape_lgb', 'smape_benchmark'], total_iter = 5000):
+    #     if self.performance_bootstrapped_flag == False:
+    #         self.bootstrap_confidence_inv()
         
-        rng = default_rng()
-        total_bootstrapped_size = self.performance_bootstrapped.shape[0]
-        numbers1 = rng.choice(total_bootstrapped_size, total_bootstrapped_size, replace=True)
-        numbers2 = rng.choice(total_bootstrapped_size, total_bootstrapped_size, replace=True)
-        smape_sample_1 = self.performance_bootstrapped.loc[numbers1, 'mean_dist_' + compare_pair[0]].reset_index(drop = True)
-        smape_sample_2 = self.performance_bootstrapped.loc[numbers2, 'mean_dist_' + compare_pair[1]].reset_index(drop = True)
-        pcount = sum(smape_sample_1>=smape_sample_2)*1.0
-        self.p_value_lgb_benchmark = pcount/total_iter
-        print('probability that {} >= {}: {}'.format('mean_dist_' + compare_pair[0], 
-                                                   'mean_dist_' + compare_pair[1], 
-                                                   self.p_value_lgb_benchmark))
+    #     rng = default_rng()
+    #     total_bootstrapped_size = self.performance_bootstrapped.shape[0]
+    #     numbers1 = rng.choice(total_bootstrapped_size, total_bootstrapped_size, replace=True)
+    #     numbers2 = rng.choice(total_bootstrapped_size, total_bootstrapped_size, replace=True)
+    #     smape_sample_1 = self.performance_bootstrapped.loc[numbers1, 'mean_dist_' + compare_pair[0]].reset_index(drop = True)
+    #     smape_sample_2 = self.performance_bootstrapped.loc[numbers2, 'mean_dist_' + compare_pair[1]].reset_index(drop = True)
+    #     pcount = sum(smape_sample_1>=smape_sample_2)*1.0
+    #     self.p_value_lgb_benchmark = pcount/total_iter
+    #     print('probability that {} >= {}: {}'.format('mean_dist_' + compare_pair[0], 
+    #                                                'mean_dist_' + compare_pair[1], 
+    #                                                self.p_value_lgb_benchmark))
         
     def bootstrap_p_value_two_samples(self, sample1, sample2, total_iter = 5000):
         return 0
@@ -409,7 +411,7 @@ class ModelMain(FeatureEngineering):
                 ct+=1
                 self.cross_prediction(model_name_list, params_dict_input, 
                                            percent_data_process_info, 
-                                           nfold, 
+                                           nfold,
                                            back_consideration_date)
                 
                 smape_mean = self.output['smape_lgb'].mean()

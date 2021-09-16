@@ -16,7 +16,6 @@ class FeatureEngineering(DataPreprocessing):
                      target_col = metadata_process_info['target_col']
                 ):
         DataPreprocessing.__init__(self, data_list, label_columns, target_col)
-        self.base_columns = self.base.columns
         self.X_flag = False
         self.y_flag = False
         self.pred_empty_flag = False
@@ -137,7 +136,7 @@ class FeatureEngineering(DataPreprocessing):
                 self.base_copy = self.base_copy.loc[self.base_copy[keyword+'_selected']!=-1,:]
 
                 # filter out titles with small values
-                self.base_copy = self.base_copy.loc[self.base_copy[keyword+'_selected']>=self.base_copy[keyword+'_selected'].quantile(q=day001_popularity_threshold),:]
+                self.base_copy = self.base_copy.loc[self.base_copy[keyword+'_selected']>=self.base_copy[keyword+'_selected'].quantile(day001_popularity_threshold),:]
         
             print('only {} titles considered after prelaunch filter'.format(self.base_copy.shape[0]))
 
@@ -258,8 +257,8 @@ class FeatureEngineering(DataPreprocessing):
         # seperate X_base, X_pred, and y_base
         self.X_base = self.X[self.y!=-100]
         self.y_base = self.y[self.y!=-100]
-        self.X_pred = self.X[self.y==-100]
-        self.y_pred = self.y[self.y==-100]
+        self.X_pred = self.X[((self.y==-100) & (self.X['platform_name']==1))]
+        self.y_pred = self.y[((self.y==-100) & (self.X['platform_name']==1))]
         
         # get y_base, y_pred aligned with X_base and X_pred
         self.y_base = self.y_base[self.X_base.index]

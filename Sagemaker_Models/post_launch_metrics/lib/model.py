@@ -194,10 +194,10 @@ class ModelMain(FeatureEngineering):
         test_started_time = self.title_offered_ts[self.X_base['platform_name'] == 1].max()
 
         if percent_data_process_info['max_num_day'] > 0:
-            test_started_time = test_started_time + pd.Timedelta(days = back_consideration_date)
+            test_started_time = test_started_time - pd.Timedelta(days = back_consideration_date)
         else:
             # give longer period for the trailer to get values, roughly two months
-            test_started_time = test_started_time + pd.Timedelta(days = back_consideration_date)
+            test_started_time = test_started_time - pd.Timedelta(days = back_consideration_date)
 
         test_folds_ind = self.title_offered_ts[self.title_offered_ts>= test_started_time]
         

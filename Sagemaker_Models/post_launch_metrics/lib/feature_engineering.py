@@ -100,6 +100,8 @@ class FeatureEngineering(DataPreprocessing):
             print('only {} titles considered'.format(self.base_copy.shape[0]))
     
     def select_prelaunch_features(self, percent_data_process_info, metadata_process_info):
+        self.prelaunch_processed_columns = []
+
         if percent_data_process_info['max_num_day'] < 1:
             for keyword in metadata_process_info['prelaunch_spec_process']:
                 key_columns = self.base_columns[self.base_columns.str.contains(keyword)==True]
@@ -111,9 +113,13 @@ class FeatureEngineering(DataPreprocessing):
                     self.base_copy[keyword + '_selected'] = self.base_copy[keyword + '_selected'].fillna(-1)
                 else:
                     self.base_copy[keyword + '_selected'] = self.base[selected_column]
+
+                self.prelaunch_processed_columns.append(keyword + '_selected')
     
                 # calculate cumulative days
-                self.base_copy[keyword + '_cumday_selected'] = self._calculate_cumulative_days(percent_data_process_info, selected_group_columns)
+                if keyword in ['trailer_metric_d28','trailer_metric_before']:
+                    self.base_copy[keyword + '_cumday_selected'] = self._calculate_cumulative_days(percent_data_process_info, selected_group_columns)
+                    self.prelaunch_processed_columns.append(keyword + '_cumday_selected')
                 
     def _calculate_cumulative_days(self, percent_data_process_info, selected_group_columns):
         tmp = self.base_copy[selected_group_columns]

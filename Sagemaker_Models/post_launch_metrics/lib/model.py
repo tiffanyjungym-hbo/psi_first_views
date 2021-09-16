@@ -98,16 +98,16 @@ class ModelMain(FeatureEngineering):
         return model
         
     def model_predict(self, model_name, x_test, percent_data_process_info):
-        if ((percent_data_process_info['max_num_day']<=1) & (model_name in ['lr', 'enet'])):
-            y_predict = [np.nan]*x_test.shape[0]
-            print('no data for model {}'.format(model_name))
-        elif model_name in ['lr','enet','lgb']:
+        if model_name in ['lr','enet','lgb']:
             if model_name in ['lr','enet']:
-                columns_used = list(self.day_column_list_no_last_season)
-                columns_used.extend(x_test.columns[x_test.columns.str.contains\
-                                            ('dayofweek_earliest_date')])
+                if percent_data_process_info['max_num_day']<=1:
+                    columns_used = self.prelaunch_processed_columns
+                else:
+                    columns_used = list(self.day_column_list_no_last_season)
+                    columns_used.extend(x_test.columns[x_test.columns.str.contains\
+                                                ('dayofweek_earliest_date')])
                 x_test  = x_test[columns_used]
-            
+
             y_predict = self.trained_model[model_name].predict(x_test)
         
         else:
@@ -163,15 +163,14 @@ class ModelMain(FeatureEngineering):
         
     def _lr_model_train(self, x_train, y_train, percent_data_process_info):
         # benchmark prediction
-        columns_used = list(self.day_column_list_no_last_season)
-        columns_used.extend(x_train.columns[x_train.columns.str.contains\
-                                            ('dayofweek_earliest_date')])
-        
         if percent_data_process_info['max_num_day']>0:
-            model = lr().fit(x_train[columns_used].values, y_train.values.reshape(-1,1))
-
+            columns_used = list(self.day_column_list_no_last_season)
+            columns_used.extend(x_train.columns[x_train.columns.str.contains\
+                                            ('dayofweek_earliest_date')])
         else:
-            model = None
+            columns_used = self.prelaunch_processed_columns
+        
+        model = lr().fit(x_train[columns_used].values, y_train.values.reshape(-1,1))
                                                
         return model
     

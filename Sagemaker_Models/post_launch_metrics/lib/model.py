@@ -251,25 +251,6 @@ class ModelMain(FeatureEngineering):
         self.parameter_tuning_stats[model_name] = {}
         self.parameter_tuning_stats[model_name]['min_smape_original_flag'] = False
         self.parameter_tuning_stats[model_name]['min_smape_all_flag'] = False     
-
-        
-    def _output_transformation(self, y_predict, y_test, 
-                               y_predict_benchmark, y_predict_enet, 
-                               x_test, percent_data_process_info):
-    # result processing
-        if percent_data_process_info['target_log_transformation']:
-            y_predict = np.exp(y_predict)
-            y_test = np.exp(y_test)
-            y_predict_benchmark = np.exp(y_predict_benchmark)
-            y_predict_enet = np.exp(y_predict_enet)
-
-            if percent_data_process_info['log_ratio_transformation']:
-                y_predict = y_predict*np.exp(x_test['log_day001_percent_viewed'])
-                y_test = y_test*np.exp(x_test['log_day001_percent_viewed'])
-                y_predict_benchmark = y_predict_benchmark*np.exp(x_test['log_day001_percent_viewed'])
-                y_predict_enet = y_predict_enet*np.exp(x_test['log_day001_percent_viewed'])
-                
-        return y_predict, y_test, y_predict_benchmark, y_predict_enet
     
     def predict_new_titles(self, 
                          model_name_list, 
@@ -318,7 +299,10 @@ class ModelMain(FeatureEngineering):
         self.output_flag = False
     
     def output_transformation(self, y, x_test, percent_data_process_info):
-    # result processing
+        # result processing
+        if y.ndim > 1:
+            y = y.flatten()
+            
         if percent_data_process_info['target_log_transformation']:
             y = np.exp(y)
 

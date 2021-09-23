@@ -107,8 +107,8 @@ default_params_dict = {
            'verbose': -1},
     
     'enet':
-        {'alpha': 1e-6,
-         'l1_ratio': 0.2}
+        {'alpha': 1e-5,
+         'l1_ratio': 0.5}
 }
     
 params_tuning_dict = {

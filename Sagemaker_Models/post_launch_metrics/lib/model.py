@@ -4,10 +4,10 @@ import lightgbm as lgb
 import numpy as np
 import pandas as pd
 pd.options.mode.chained_assignment = None
+
 from sklearn.linear_model import ElasticNet
 from sklearn.linear_model import LinearRegression as lr
 import itertools as it
-from scipy.special import expit
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
@@ -31,13 +31,14 @@ class ModelMain(FeatureEngineering):
                          model_name_list, 
                          params_dict, 
                          percent_data_process_info, 
-                         nfold = 6):        
+                         nfold = 6, 
+                         back_consideration_date = 180):        
         # reset the flag
         self.performance_bootstrapped_flag = False
     
         
         # step 1: do time split
-        self.timesplit(nfold)
+        self.timesplit(percent_data_process_info, nfold, back_consideration_date)
         
         # step 2: initialize the params
         self._cross_prediction_init()
@@ -97,16 +98,16 @@ class ModelMain(FeatureEngineering):
         return model
         
     def model_predict(self, model_name, x_test, percent_data_process_info):
-        if ((percent_data_process_info['max_num_day']==0) & (model_name in ['lr', 'enet'])):
-            y_predict = [np.nan]*x_test.shape[0]
-            print('no data for model {}'.format(model_name))
-        elif model_name in ['lr','enet','lgb']:
+        if model_name in ['lr','enet','lgb']:
             if model_name in ['lr','enet']:
-                columns_used = list(self.day_column_list_no_last_season)
-                columns_used.extend(x_test.columns[x_test.columns.str.contains\
-                                            ('dayofweek_earliest_date')])
+                if percent_data_process_info['max_num_day']<=1:
+                    columns_used = self.prelaunch_processed_columns
+                else:
+                    columns_used = list(self.day_column_list_no_last_season)
+                    columns_used.extend(x_test.columns[x_test.columns.str.contains\
+                                                ('dayofweek_earliest_date')])
                 x_test  = x_test[columns_used]
-            
+
             y_predict = self.trained_model[model_name].predict(x_test)
         
         else:
@@ -162,15 +163,14 @@ class ModelMain(FeatureEngineering):
         
     def _lr_model_train(self, x_train, y_train, percent_data_process_info):
         # benchmark prediction
-        columns_used = list(self.day_column_list_no_last_season)
-        columns_used.extend(x_train.columns[x_train.columns.str.contains\
-                                            ('dayofweek_earliest_date')])
-        
         if percent_data_process_info['max_num_day']>0:
-            model = lr().fit(x_train[columns_used].values, y_train.values.reshape(-1,1))
-
+            columns_used = list(self.day_column_list_no_last_season)
+            columns_used.extend(x_train.columns[x_train.columns.str.contains\
+                                            ('dayofweek_earliest_date')])
         else:
-            model = None
+            columns_used = self.prelaunch_processed_columns
+        
+        model = lr().fit(x_train[columns_used].values, y_train.values.reshape(-1,1))
                                                
         return model
     
@@ -187,11 +187,17 @@ class ModelMain(FeatureEngineering):
         # merge basic info
         self.output = self.output.merge(self.base_copy[['title_name','match_id_platform']], left_index = True, right_index = True)
         
-    def timesplit(self, nfold = 10):
+    def timesplit(self, percent_data_process_info, nfold = 10, back_consideration_date = 180):
         # The current setting considers all the dates after and excluding the Max launch date
         # the alternative is to include the titles released at the Max launch date
-        test_started_time = self.title_offered_ts[self.X_base['platform_name'] == 1].min()
-        test_started_time = test_started_time + pd.Timedelta(days = 1)
+        test_started_time = self.title_offered_ts[self.X_base['platform_name'] == 1].max()
+
+        if percent_data_process_info['max_num_day'] > 0:
+            test_started_time = test_started_time - pd.Timedelta(days = back_consideration_date)
+        else:
+            # give longer period for the trailer to get values, roughly two months
+            test_started_time = test_started_time - pd.Timedelta(days = back_consideration_date)
+
         test_folds_ind = self.title_offered_ts[self.title_offered_ts>= test_started_time]
         
         # find the date boundaries of the folds
@@ -246,6 +252,24 @@ class ModelMain(FeatureEngineering):
         self.parameter_tuning_stats[model_name]['min_smape_original_flag'] = False
         self.parameter_tuning_stats[model_name]['min_smape_all_flag'] = False     
 
+        
+    def _output_transformation(self, y_predict, y_test, 
+                               y_predict_benchmark, y_predict_enet, 
+                               x_test, percent_data_process_info):
+    # result processing
+        if percent_data_process_info['target_log_transformation']:
+            y_predict = np.exp(y_predict)
+            y_test = np.exp(y_test)
+            y_predict_benchmark = np.exp(y_predict_benchmark)
+            y_predict_enet = np.exp(y_predict_enet)
+
+            if percent_data_process_info['log_ratio_transformation']:
+                y_predict = y_predict*np.exp(x_test['log_day001_percent_viewed'])
+                y_test = y_test*np.exp(x_test['log_day001_percent_viewed'])
+                y_predict_benchmark = y_predict_benchmark*np.exp(x_test['log_day001_percent_viewed'])
+                y_predict_enet = y_predict_enet*np.exp(x_test['log_day001_percent_viewed'])
+                
+        return y_predict, y_test, y_predict_benchmark, y_predict_enet
     
     def predict_new_titles(self, 
                          model_name_list, 
@@ -295,9 +319,6 @@ class ModelMain(FeatureEngineering):
     
     def output_transformation(self, y, x_test, percent_data_process_info):
     # result processing
-        if y.ndim > 1:
-            y = y.flatten()
-
         if percent_data_process_info['target_log_transformation']:
             y = np.exp(y)
 
@@ -374,7 +395,8 @@ class ModelMain(FeatureEngineering):
     def parameter_tuning(self, model_name, 
                           params_tunning_dict, 
                           percent_data_process_info,
-                          nfold = 6):
+                          nfold = 6,
+                          back_consideration_date = 180):
         if model_name!= 'lr':
             self._param_tunning_flag_init(model_name)
             
@@ -388,7 +410,8 @@ class ModelMain(FeatureEngineering):
                 ct+=1
                 self.cross_prediction(model_name_list, params_dict_input, 
                                            percent_data_process_info, 
-                                           nfold)
+                                           nfold,
+                                           back_consideration_date)
                 
                 smape_mean = self.output['smape_lgb'].mean()
                 smape_original_mean = self.output.loc[self.output['program_type']==1, 'smape_lgb'].mean()

@@ -129,15 +129,15 @@ dags:
         upstream_task_name: "python_script_post_launch_trailer_metrics"
         downstream_task_name: ecr_container_creation
 
-      # - name: "content_cost_to_staging"
-      #   templates_dict:
-      #     stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
-      #     database: "{{ var.value.DS_SF_MAX_DATABASE }}"
-      #     schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
-      #   sql_file_names:
-      #     - "feature_extraction_content_cost.sql"
-      #   upstream_task_name: "python_script_post_launch_trailer_metrics"
-      #   downstream_task_name: ecr_container_creation
+      - name: "prelaunch_trailer_feature_before28_to_staging"
+        templates_dict:
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
+        sql_file_names:
+          - "feature_extraction_trailer_before28.sql"
+        upstream_task_name: "python_script_post_launch_trailer_metrics"
+        downstream_task_name: ecr_container_creation
 
       # - name: "production_budget_imdb_to_staging"
       #   templates_dict:

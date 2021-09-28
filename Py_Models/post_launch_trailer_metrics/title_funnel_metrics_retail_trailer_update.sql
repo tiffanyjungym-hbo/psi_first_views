@@ -133,7 +133,7 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                 and stream_min_timestamp_gmt <= {end_date}
                 and first_trailer_offered_timestamp < first_title_offered_timestamp
                 and cumulative_day_num > 0
-            group by 1,2,3,4,5,6,7
+            group by 1,2,3,4,5,6
             ),
 
     retail_sub_count_table as (

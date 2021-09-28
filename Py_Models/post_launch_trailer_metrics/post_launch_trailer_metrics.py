@@ -99,7 +99,7 @@ def update_trailer_table(
 	snowflake_env: str
 ) -> pd.DataFrame:
 	"""
-	Update the numerator table for content funnel metrics
+	Update the numerator table for trailer metrics
 
 	:param database: name of the database
 	:param schema: name of the schema
@@ -107,68 +107,75 @@ def update_trailer_table(
 	:param role: name of the role
 	:param snowflake_env: environment used in Snowflake
 	"""
+	##### Calculate the trailer percent view from trailer launch date to 28 days before launch #####
 	# Create latest funnel metrics
 	logger.info(f'Loading query {QUERY_TRAILER_METRICS}')
 
 	df_trailer_metrics = pd.DataFrame()
+
+	for platform in PLATFORM_LIST:
+		# if the run date is before than last update date, then stop
+		query_last_date = load_query(
+			f'{CURRENT_PATH}/{QUERY_FUNNEL_METRICS_TRAILER_LAST_DATE}',
+			database=database,
+			schema=schema,
+			nday_before=-28,
+			viewership_table=VIEWERSHIP_TABLE[platform]
+		)
+
+		last_date = execute_query(
+			query=query_last_date,
+			database=database,
+			schema=schema,
+			warehouse=warehouse,
+			role=role,
+			snowflake_env=snowflake_env
+		)
+
+		last_date = last_date.iloc[0, 0]
+
+		logger.info(f'Last date for nth day: {-28} on {platform} is {last_date}, and end date is {END_DATE[platform]}')
+
+		# if the run date is later than the last update date
+		if ((f"'{last_date}'" >= END_DATE[platform])  &  (last_date!=None)):
+			logger.info(f'Last date after/equal to end date, so skipping nth day: {-28} on {platform}')				
+		else:
+			logger.info(f'Getting data on {platform}')
+
+			query_trailer_metrics = load_query(
+					f'{CURRENT_PATH}/{QUERY_TRAILER_METRICS}',
+					database=database,
+					schema=schema,
+					viewership_table=VIEWERSHIP_TABLE[platform],
+					end_date=END_DATE[platform],
+					exist_ind_val=EXIST_IND_VAL,
+					nday_before = -28
+				)
+
+			start_time = time.time()
+
+			_df_trailer_metrics = execute_query(
+					query=query_trailer_metrics,
+					database=database,
+					schema=schema,
+					warehouse=warehouse,
+					role=role,
+					snowflake_env=snowflake_env
+				)
+
+			end_time = time.time()
+			logger.info(f'Time taken {end_time - start_time} seconds')
+
+			df_trailer_metrics = pd.concat([df_trailer_metrics, _df_trailer_metrics], axis=0)
+
+
+	##### Calculate the trailer percent view from 28 days before launch to the title launch date#####
+	logger.info(f'Loading query {QUERY_TRAILER_METRICS_D28}')
+
+	df_trailer_metrics_d28 = pd.DataFrame()
+
 	for nday_before in DAY_LIST:
 		for platform in PLATFORM_LIST:
-
-			# # uf the run date is before than last update date, then stop
-			# query_last_date = load_query(
-			# 	f'{CURRENT_PATH}/{QUERY_FUNNEL_METRICS_TRAILER_LAST_DATE}',
-			# 	database=database,
-			# 	schema=schema,
-			# 	nday_before=nday_before,
-			# 	viewership_table=VIEWERSHIP_TABLE[platform]
-			# )
-
-			# last_date = execute_query(
-			# 	query=query_last_date,
-			# 	database=database,
-			# 	schema=schema,
-			# 	warehouse=warehouse,
-			# 	role=role,
-			# 	snowflake_env=snowflake_env
-			# )
-
-			# last_date = last_date.iloc[0, 0]
-
-			# logger.info(f'Last date for nth day: {nday_before} on {platform} is {last_date}, and end date is {END_DATE[platform]}')
-
-			# # if the run date is later than the last update date
-			# if ((f"'{last_date}'" >= END_DATE[platform])  &  (last_date!=None)):
-			# 	logger.info(f'Last date after/equal to end date, so skipping nth day: {nday_before} on {platform}')				
-			# else:
-			# 	logger.info(f'Getting data on {platform}')
-
-			# 	query_trailer_metrics = load_query(
-			# 			f'{CURRENT_PATH}/{QUERY_TRAILER_METRICS}',
-			# 			database=database,
-			# 			schema=schema,
-			# 			viewership_table=VIEWERSHIP_TABLE[platform],
-			# 			end_date=END_DATE[platform],
-			# 			exist_ind_val=EXIST_IND_VAL,
-			# 			nday_before = nday_before
-			# 		)
-
-			# 	start_time = time.time()
-
-			# 	_df_trailer_metrics = execute_query(
-			# 			query=query_trailer_metrics,
-			# 			database=database,
-			# 			schema=schema,
-			# 			warehouse=warehouse,
-			# 			role=role,
-			# 			snowflake_env=snowflake_env
-			# 		)
-
-			# 	end_time = time.time()
-			# 	logger.info(f'Time taken {end_time - start_time} seconds')
-
-			# 	df_trailer_metrics = pd.concat([df_trailer_metrics, _df_trailer_metrics], axis=0)
-
-			# trailer d28 day session
 			query_last_date = load_query(
 				f'{CURRENT_PATH}/{QUERY_FUNNEL_METRICS_TRAILER_LAST_DATE_D28}',
 				database=database,
@@ -190,7 +197,7 @@ def update_trailer_table(
 			
 			logger.info(f'Last date for nth day: {nday_before} on {platform} is {last_date}, and end date is {END_DATE[platform]}')
 
-			# if the run date is later than the last update date
+			# if the run date is later than the last update date, then stop
 			if ((f"'{last_date}'" >= END_DATE[platform])  &  (last_date!=None)):
 				logger.info(f'Last date after/equal to end date, so skipping nth day: {nday_before} on {platform}')				
 			else:

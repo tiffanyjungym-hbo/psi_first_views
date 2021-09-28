@@ -5,7 +5,6 @@
       title_name varchar (255) not null
     , match_id varchar (255) not null
     , platform_name varchar (255) not null
-    , nday_before integer
     , cumulative_day_num integer
     , total_trailer_num integer
     , match_id_platform varchar (255) not null
@@ -25,7 +24,6 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                     match_id
                 from {database}.{schema}.trailer_retail_view_percent
                 where 1=1
-                    and nday_before = {nday_before}
                     and platform_name =
                         case when {viewership_table} = 'max_prod.viewership.max_user_stream_heartbeat_view' then 'hboMax'
                             when {viewership_table} = 'max_prod.viewership.now_user_stream' then 'hboNow'
@@ -105,7 +103,6 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                       title_name
                     , f.match_id
                     , f.platform_name
-                    , {nday_before}
                     , datediff(day
                         --, greatest(first_trailer_offered_timestamp, dateadd(day, -28, title_offered_timestamp))
                         , first_trailer_offered_timestamp
@@ -161,7 +158,6 @@ insert into {database}.{schema}.trailer_retail_view_percent (
                       title_name
                     , match_id
                     , h.platform_name
-                    , {nday_before} as nday_before
                     , cumulative_day_num
                     , total_trailer_num
                     , concat(case when h.platform_name = 'hboNow' then 0

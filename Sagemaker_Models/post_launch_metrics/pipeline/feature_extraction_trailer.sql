@@ -15,7 +15,7 @@ FROM (
                 , total_trailer_num
                 , retail_trailer_view_metric
                 , row_number() over (partition by match_id_platform order by nday_before desc) as row_num
-            from {database}.{schema}.trailer_retail_view_percent) as p
+            from {database}.{schema}.trailer_retail_view_percent_d28) as p
         where 1=1
             and row_num = 1
         ),

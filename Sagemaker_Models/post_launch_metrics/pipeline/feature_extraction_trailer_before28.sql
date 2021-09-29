@@ -13,12 +13,12 @@ FROM (
                 , cumulative_day_num
                 , retail_trailer_view_metric
                 , row_number() over (partition by match_id_platform order by last_update_timestamp desc) as row_num
-            from {database}.{schema}.trailer_retail_view_percent as before28
+            from {database}.{schema}.trailer_retail_view_percent as before28)
         where 1=1
             and row_num = 1
         ),
 
-    inal as (
+    final as (
         select distinct
             concat(case when f.platform_name = 'hboNow' then 0
                 else 1 end, '-', f.match_id) as match_id_platform

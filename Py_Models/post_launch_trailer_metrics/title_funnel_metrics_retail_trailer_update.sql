@@ -57,10 +57,13 @@ insert into {database}.{schema}.trailer_retail_view_percent (
         ),
 
     trailer_match_id as (select distinct
-        case when trailer_title_name like '%Space Jam: A New Legacy%' then 'Space Jam: A New Legacy'
+        case when trailer_title_name 
+            -- Space jam as the special case, because it is in this format Space Jam: A New Legacy - 
+            -- and there are two different '-'s that cant be distinguished easily
+            like '%Space Jam: A New Legacy%' then 'Space Jam: A New Legacy'
+            -- Change 'Dune | Official Main' into 'Dune'
+            like '%Dune | Official Main%' then 'Dune'
               else regexp_replace(trailer_title_name, 'Trailer', '') end as trailer_title_name 
-              -- Space jam as the special case, because it is in this format Space Jam: A New Legacy - 
-              -- and there are two different '-'s that cant be distinguished easily
         , title_name
         , t.viewable_id
         , f.match_id

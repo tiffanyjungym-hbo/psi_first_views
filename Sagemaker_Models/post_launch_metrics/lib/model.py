@@ -124,7 +124,6 @@ class ModelMain(FeatureEngineering):
         # initilization
         params = params_dict['lgb']
 
-        # set monotone constraint
         if percent_data_process_info['max_num_day'] < 1:
             constraint_list = []
             for col in x_train.columns:
@@ -134,6 +133,7 @@ class ModelMain(FeatureEngineering):
                     constraint_list.append(0)
                 
             params['monotone_constraint'] = constraint_list
+            params['objective'] = 'rmse'
         else:
             params['monotone_constraint'] = None
         

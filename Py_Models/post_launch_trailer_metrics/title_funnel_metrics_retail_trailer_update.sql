@@ -56,14 +56,23 @@ insert into {database}.{schema}.trailer_retail_view_percent (
         and earliest_offered_timestamp is not null
         ),
 
+    title_info_processed as (
+        select
+            viewable_id
+            , case
+                -- Space jam as the special case, because it is in this format Space Jam: A New Legacy -
+                -- and there are two different '-'s that cant be distinguished easily
+                when trailer_title_name like '%Space Jam: A New Legacy%' then 'Space Jam: A New Legacy'
+                -- Change 'Dune | Official Main' into 'Dune'
+                when trailer_title_name like '%Dune | Official Main%' then 'Dune'
+                else regexp_replace(trailer_title_name, 'Trailer', '') end as trailer_title_name
+            , earliest_offered_timestamp
+            , platform_name
+        from title_info
+    )
+
     trailer_match_id as (select distinct
-        case 
-            -- Space jam as the special case, because it is in this format Space Jam: A New Legacy - 
-            -- and there are two different '-'s that cant be distinguished easily
-            when trailer_title_name like '%Space Jam: A New Legacy%' then 'Space Jam: A New Legacy'
-            -- Change 'Dune | Official Main' into 'Dune'
-            when trailer_title_name like '%Dune | Official Main%' then 'Dune'
-              else regexp_replace(trailer_title_name, 'Trailer', '') end as trailer_title_name 
+          trailer_title_name 
         , title_name
         , t.viewable_id
         , f.match_id
@@ -71,7 +80,7 @@ insert into {database}.{schema}.trailer_retail_view_percent (
         , t.earliest_offered_timestamp as trailer_offered_timestamp
         , f.earliest_offered_timestamp as title_offered_timestamp
         , case when e.match_id is null then 0 else 1 end as exist_id
-    from title_info as t
+    from title_info_processed as t
     join {database}.{schema}.title_retail_funnel_metrics as f
         on t.trailer_title_name = (case when title_name regexp '[a-z/-/A-z/.]+ S[0-9]' = True
                 then get(split(f.title_name, ' S'),0) else title_name end)

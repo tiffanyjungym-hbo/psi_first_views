@@ -69,7 +69,7 @@ insert into {database}.{schema}.trailer_retail_view_percent (
             , earliest_offered_timestamp
             , platform_name
         from title_info
-    )
+    ),
 
     trailer_match_id as (select distinct
           trailer_title_name 

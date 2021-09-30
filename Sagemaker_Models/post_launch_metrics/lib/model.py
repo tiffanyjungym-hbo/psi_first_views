@@ -87,7 +87,7 @@ class ModelMain(FeatureEngineering):
                     x_train, y_train, percent_data_process_info):
         
         if model_name == 'lgb':
-            model = self._lgb_model_train(params_dict, x_train, y_train)
+            model = self._lgb_model_train(params_dict, x_train, y_train, percent_data_process_info)
         elif model_name =='lr':
             model = self._lr_model_train(x_train, y_train, percent_data_process_info)
         elif model_name =='enet':
@@ -120,9 +120,22 @@ class ModelMain(FeatureEngineering):
         return y_predict
         
         
-    def _lgb_model_train(self, params_dict, x_train, y_train):
+    def _lgb_model_train(self, params_dict, x_train, y_train, percent_data_process_info):
         # initilization
         params = params_dict['lgb']
+
+        # set monotone constraint
+        if percent_data_process_info['max_num_day'] < 1:
+            constraint_list = []
+            for col in x_train.columns:
+                if col in percent_data_process_info['prelaucn_monotonic_features']:
+                    constraint_list.append(1)
+                else:
+                    constraint_list.append(0)
+                
+            params['monotone_constraint'] = constraint_list
+        else:
+            params['monotone_constraint'] = None
         
         # set training data
         train_data = lgb.Dataset(x_train, label=y_train)

@@ -69,7 +69,7 @@ FROM (
                     , 'DAY028_PERCENT_VIEWED'
                 )) as p ( 
                       MATCH_ID_PLATFORM
-                    , DAYS_SINCE_FIRST_OFFERED
+                    , MAX_DAYS_SINCE_FIRST_OFFERED
                     , DAY001_PERCENT_VIEWED
                     , DAY002_PERCENT_VIEWED
                     , DAY003_PERCENT_VIEWED

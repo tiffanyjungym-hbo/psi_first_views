@@ -14,15 +14,6 @@ FROM (
         from {database}.{schema}.title_retail_funnel_metrics as f
     ),
 
-
-    min_days_since_offered_table as (
-        select
-            match_id_platform
-            , max(days_since_offered) as min_days_since_offered
-        from title_id
-        group by 1
-    ),
-
     mk_title_clean as (
         select distinct
             case when originals_series_calc in ('HBO MAX GROWTH','HBO NOW','-')
@@ -88,20 +79,16 @@ FROM (
             select
                 s.match_id_platform
                 , days_since_first_offered
-                , min_days_since_offered
                 , sum(total_media_cost_from_marketing_spend) over
                     (partition by s.match_id_platform order by days_since_first_offered)
                         as cum_total_media_cost_from_marketing_spend
             from total_mk_spend as s
-            join min_days_since_offered_table as o
-                on s.match_id_platform = o.match_id_platform
             order by match_id_platform, days_since_first_offered
         ),
 
     null_val_proc as (
         select
             match_id_platform
-            , min_days_since_offered
             , days_since_first_offered
             , case when ((cum_total_media_cost_from_marketing_spend is null)
                             or (cum_total_media_cost_from_marketing_spend<0)) then -1
@@ -146,7 +133,6 @@ FROM (
                     , 'DAY028_MC'
                 )) as p (
                       MATCH_ID_PLATFORM
-                    , MIN_DAYS_SINCE_OFFERED
                     , DAY001_MC
                     , DAY002_MC
                     , DAY003_MC

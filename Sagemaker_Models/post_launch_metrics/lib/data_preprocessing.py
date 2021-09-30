@@ -62,7 +62,7 @@ class DataPreprocessing():
         for keyword in self.day_column_keywords:
             day_list, keyword_columns = self._get_day_list(keyword)
             for day_ in day_list:
-                self.df.loc[self.df['min_days_since_offered'] < int(day_), 'day' + day_ + '_' + keyword] = -100
+                self.df.loc[self.df['max_days_since_first_offered'] < int(day_), 'day' + day_ + '_' + keyword] = -100
         
             self.df[keyword_columns] = self.df[keyword_columns].fillna(0)
         
@@ -83,7 +83,7 @@ class DataPreprocessing():
         for col in self.percent_list:
             # set the training set values
             self.df_pop.loc[((self.df_pop[col] <= 1e-10) & 
-                             (self.df_pop['min_days_since_offered']>=\
+                             (self.df_pop['max_days_since_first_offered']>=\
                               int(col[col.find('day')+3:col.find('day')+6]))), col] = 1e-10
             
         self.df_pop = self.df_pop.reset_index(drop = True)

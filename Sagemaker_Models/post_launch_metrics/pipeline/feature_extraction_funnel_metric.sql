@@ -8,15 +8,15 @@ FROM (
             concat(case when platform_name = 'hboNow' then 0
                     else 1 end, '-', match_id) as match_id_platform
             , days_since_first_offered
-            , datediff(day, earliest_offered_timestamp, last_update_timestamp) as days_since_offered
             , retail_viewed_count_percent
         from {database}.{schema}.title_retail_funnel_metrics
+        group by 1,2,3
     ),
 
     min_days_since_offered_table as (
         select
             match_id_platform
-            , max(days_since_offered) as min_days_since_offered
+            , max(days_since_first_offered) as min_days_since_offered
         from base_info_table
         group by 1
 

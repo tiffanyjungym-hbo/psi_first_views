@@ -23,8 +23,6 @@ FROM (
             , concat('DAY', lpad(to_char(b.days_since_first_offered),3, 0), '_VTP') as days_since_first_offered
             , viewed_through_portion
         from base_info_table as b
-        join min_days_since_offered_table as m 
-            on b.match_id_platform = m.match_id_platform
     ),
 
     vpt_pivot_table as (

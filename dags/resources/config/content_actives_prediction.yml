@@ -1,0 +1,77 @@
+#================================================================================================
+# Importing common configuration
+#================================================================================================
+
+CommonConf: !include common/snowflake_common_config.yml
+
+#================================================================================================
+# Configuration Job pipeline
+#================================================================================================
+
+dags:
+  sagemaker:
+    domain: "max"
+    sub_domain: "job_process"
+    action: "Actives_PostLaunchMetrics"
+    default_args:
+      owner: "jeni.lu@warnermedia.com"
+      depends_on_past: True
+      start_date: "2021-03-29"
+      email_prod: "jeni.lu@warnermedia.com"
+      email_nonprod: "jeni.lu@warnermedia.com"
+      email_on_failure: True
+      email_on_retry: True
+      retries: 1
+      domain: "content"
+      retry_delay: 15
+    schedule_interval: "@daily"
+    max_active_runs: 1
+    catchup: False
+    schema: "WORKSPACE"
+    model_name: "actives_post_launch"
+    glue_model_name: "actives_post_launch"
+    slack_channel:
+      NON-PROD: "hbomax-cds-alerts"
+      PROD: "hbomax-cds-alerts"
+    tasks:
+
+      - name: "python_script_post_launch_actives_base"
+        type: "BashOperator"
+        script_loc: "common"
+        script_name: "actives_post_launch"
+        param_file_name: "actives_post_launch"
+
+      - name: "ecr_container_creation"
+        type: "BashOperator"
+        kernel: "python3"
+
+      - name: "sagemaker_notebook_job_processing_script"
+        type: "BashOperator"
+        notebook_name: "pct_actives_prediction.ipynb"
+        Details:
+          instance_type: "ml.m5.2xlarge"
+          instance_count: 1
+        BucketIOConfig:
+          DEV:
+            model_bucket: "hbo-ingest-datascience-content-dev"
+          BETA:
+            model_bucket: "hbo-ingest-datascience-content-beta"
+          PROD:
+            model_bucket: "hbo-ingest-datascience-content"
+        upstream_task_name: "ecr_container_creation"
+
+      - name: "write_prediction_output_to_snowflake"
+        upstream_task_name: "sagemaker_notebook_job_processing_script"
+        templates_dict:
+          stage: "{{ var.value.DS_CONTENT_HBO_OUTBOUND_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
+        sql_file_names:
+            - "output_to_S3.sql"
+
+      - name: "send_notification_cds"
+        type: "EmailOperator"
+        to: "jeni.lu@warnermedia.com"
+        subject: "sagemaker-airflow: EMAIL TASK test"
+        html: "Hi Team,<br><h3>Test email from sagemaker-airflow DAG task.</h3><br>Regards,<br> DAP"
+        upstream_task_name : "write_prediction_output_to_snowflake"

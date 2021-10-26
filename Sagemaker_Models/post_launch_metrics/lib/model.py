@@ -161,29 +161,34 @@ class ModelMain(FeatureEngineering):
     def _enet_model_train(self, params_dict, x_train, y_train, percent_data_process_info):
         # initialization
         params = params_dict['enet']
-        # benchmark prediction
-        if percent_data_process_info['max_num_day']>0:
-            model = ElasticNet(
+
+        if percent_data_process_info['max_num_day']<=1:
+            self.columns_used = self.prelaunch_processed_columns
+            self.columns_used.extend(['platform_name', 'program_type'])
+        else:
+            self.columns_used = list(self.day_column_list_no_last_season)
+            self.columns_used.extend(x_train.columns[x_train.columns.str.contains\
+                                            ('dayofweek_earliest_date')])
+        
+        model = ElasticNet(
                         alpha = params_dict['enet']['alpha'],
                         l1_ratio = params_dict['enet']['l1_ratio'],
                         max_iter = 10000, 
-                        normalize = False).fit(x_train[self.day_column_list_no_last_season].values, 
-                                             y_train.values.reshape(-1,1))
-        else:
-            model = None
-            print('no data for elastic net model')                                   
+                        normalize = False).fit(x_train[self.columns_used].values, 
+                                             y_train.values.reshape(-1,1))                               
         return model
         
     def _lr_model_train(self, x_train, y_train, percent_data_process_info):
         # benchmark prediction
-        if percent_data_process_info['max_num_day']>0:
-            columns_used = list(self.day_column_list_no_last_season)
-            columns_used.extend(x_train.columns[x_train.columns.str.contains\
-                                            ('dayofweek_earliest_date')])
+        if percent_data_process_info['max_num_day']<=1:
+            self.columns_used = self.prelaunch_processed_columns
+            self.columns_used.extend(['platform_name', 'program_type'])
         else:
-            columns_used = self.prelaunch_processed_columns
+            self.columns_used = list(self.day_column_list_no_last_season)
+            self.columns_used.extend(x_train.columns[x_train.columns.str.contains\
+                                            ('dayofweek_earliest_date')])
         
-        model = lr().fit(x_train[columns_used].values, y_train.values.reshape(-1,1))
+        model = lr().fit(x_train[self.columns_used].values, y_train.values.reshape(-1,1))
                                                
         return model
     
@@ -398,10 +403,11 @@ class ModelMain(FeatureEngineering):
             self._param_tunning_flag_init(model_name)
             
             model_name_list = [model_name]
-            combinations, allNames = self._parameter_tuning_init(params_tunning_dict, model_name)
+
+            self.param_combinations, allNames = self._parameter_tuning_init(params_tunning_dict, model_name)
             
             ct= 1
-            for com in combinations:
+            for com in self.param_combinations:
                 params_dict_input = self._set_params_dict(model_name, allNames, com)
                 print('parameter combination {}'.format(ct)) 
                 ct+=1

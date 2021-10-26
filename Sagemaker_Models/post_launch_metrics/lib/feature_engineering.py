@@ -91,35 +91,40 @@ class FeatureEngineering(DataPreprocessing):
             print('only {} titles considered'.format(self.base_copy.shape[0]))
             
     def filter_popularity(self, percent_data_process_info, day001_popularity_threshold):
-        if ((day001_popularity_threshold > 0) & (percent_data_process_info['max_num_day']>=1)):
-            threshold = self.base_copy['day001_percent_viewed'].quantile(q=day001_popularity_threshold)
-            
-            print('keeps the titles above {} percentile day1 viewed over all titles only'.format(np.round(day001_popularity_threshold*100, 0)))
-            self.target_copy = self.target_copy.loc[self.base_copy['day001_percent_viewed']>=threshold,:]
-            self.base_copy  = self.base_copy.loc[self.base_copy['day001_percent_viewed']>=threshold,:]
-            print('only {} titles considered'.format(self.base_copy.shape[0]))
-    
+        threshold = self.base_copy['day001_percent_viewed'].quantile(q=day001_popularity_threshold)
+
+        print('keeps the titles above {} percentile day1 viewed over all titles only'.format(np.round(day001_popularity_threshold*100, 0)))
+        self.target_copy = self.target_copy.loc[((self.base_copy['day001_percent_viewed']>=threshold)|(self.base_copy['day001_percent_viewed']==-100)),:]
+        self.base_copy  = self.base_copy.loc[((self.base_copy['day001_percent_viewed']>=threshold)|(self.base_copy['day001_percent_viewed']==-100)),:]
+        #### Changed
+        print('only {} titles considered after popularity filter'.format(self.base_copy.shape[0]))
+
     def select_prelaunch_features(self, percent_data_process_info, metadata_process_info):
         self.prelaunch_processed_columns = []
 
         if percent_data_process_info['max_num_day'] < 1:
             for keyword in metadata_process_info['prelaunch_spec_process']:
+                # find all columns associated with a keyword
                 key_columns = self.base_columns[self.base_columns.str.contains(keyword)==True]
                 selected_group_columns = key_columns[[-percent_data_process_info['max_num_day'] <= int(col[col.find('day')+3:col.find('day')+6]) for col in key_columns]]
                 selected_column = selected_group_columns[0]
                 
                 if percent_data_process_info['target_log_transformation']:
-                    self.base_copy[keyword + '_selected'] = np.log(self.base[selected_column])
+                    self.base_copy[keyword + '_selected'] = np.log(self.base[selected_column] + 1e-10)
                     self.base_copy[keyword + '_selected'] = self.base_copy[keyword + '_selected'].fillna(-1)
                 else:
                     self.base_copy[keyword + '_selected'] = self.base[selected_column]
-
+                    
                 self.prelaunch_processed_columns.append(keyword + '_selected')
     
                 # calculate cumulative days
                 if keyword in ['trailer_metric_d28','trailer_metric_before']:
                     self.base_copy[keyword + '_cumday_selected'] = self._calculate_cumulative_days(percent_data_process_info, selected_group_columns)
                     self.prelaunch_processed_columns.append(keyword + '_cumday_selected')
+
+            # calculate the total wikipedia page view if both -63 to -28 and -28 to n days view feature exist
+            if ((sum(self.base_copy.columns.isin(['wiki_d28_selected']))==1) & (sum(self.base_copy.columns.isin(['day_wiki_view_before28']))==1)): 
+                self.base_copy['wiki_view_total'] = self.base_copy['wiki_d28_selected'] + self.base_copy['day_wiki_view_before28']
                 
     def _calculate_cumulative_days(self, percent_data_process_info, selected_group_columns):
         tmp = self.base_copy[selected_group_columns]
@@ -137,13 +142,23 @@ class FeatureEngineering(DataPreprocessing):
     
     def filter_prelaunch(self, percent_data_process_info, metadata_process_info, day001_popularity_threshold):
         if percent_data_process_info['max_num_day'] < 1:
-            for keyword in metadata_process_info['prelaunch_spec_process']:
-                # filter out titles with any missing values in the prelaunch keywork list
-                self.base_copy = self.base_copy.loc[self.base_copy[keyword+'_selected']!=-1,:]
+            if percent_data_process_info['all_none_zero'] == False:
+                keep_index = []
+                for feature in metadata_process_info['main_signal_feature']:    
+                    # filter out titles with small and null (filled with -1 already) values
+                    keep_index.extend(self.base_copy.loc[(self.base_copy[feature]>-1),:].index)
+                    
+                keep_index = list(set(keep_index))
+                self.base_copy = self.base_copy.loc[keep_index,:]
 
-                # filter out titles with small values
-                self.base_copy = self.base_copy.loc[self.base_copy[keyword+'_selected']>=self.base_copy[keyword+'_selected'].quantile(day001_popularity_threshold),:]
-        
+            else:
+                keep_out_index = []
+                for feature in metadata_process_info['main_signal_feature']: 
+                    keep_out_index.extend( self.base_copy.loc[(self.base_copy[feature]==-1),:].index)
+            
+                keep_out_index = list(set(keep_out_index))  
+            
+                self.base_copy = self.base_copy.loc[self.base_copy.index.isin(keep_out_index)==False,:]
             print('only {} titles considered after prelaunch filter'.format(self.base_copy.shape[0]))
 
     def clean_past_growth_trend_records(self):

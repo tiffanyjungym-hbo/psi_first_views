@@ -19,7 +19,7 @@ percent_data_process_info ={
     'percentile_used':0.8,
     'nfold':6,
     'prelaucn_monotonic_features':[
-          'wiki_view_total'
+          'wiki_d28_selected'
         , 'trailer_metric_d28_selected'
     ]
 }
@@ -73,10 +73,10 @@ prelaunch_process_info = {
                    # ,'season_number_adj'
                    ],
     'main_signal_feature':[
-                      'trailer_metric_d28_cumday_selected'
-                    , 'trailer_metric_d28_selected' 
-                    , 'day_wiki_view_before28'
-                    , 'wiki_d28_selected'
+                    #  'trailer_metric_d28_cumday_selected'
+                    #, 'trailer_metric_d28_selected' 
+                    #, 'day_wiki_view_before28'
+                     'wiki_d28_selected'
                           ]
 }
 
@@ -136,7 +136,7 @@ params_tuning_dict = {
     'lgb': {
         'objective': ['mae'],
         'num_boost_round':[120,240],
-        'feature_fraction': [1.0],
+        'feature_fraction': [0.8, 1.0],
         'metric': ['mae'],
         'max_depth':[7, 14],
         'min_data_in_leaf': [5],

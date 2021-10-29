@@ -29,5 +29,8 @@ WITH series_agg as (
 )
 SELECT *
 FROM series_agg
+LEFT OUTER JOIN {database}.{schema}.CDS_HISTORICAL_HOURSPCT hist_table
+    on hist_table.match_id = series_agg.catalog_match_id and window = {window_days}
 WHERE window_end <= '{run_date}'
-AND hbo_offer_date > (select max(hbo_offer_date) from {database}.{schema}.CDS_HISTORICAL_HOURSPCT a join series_agg b on a.match_id=b.catalog_match_id where window = {window_days});
+and window is null;
+

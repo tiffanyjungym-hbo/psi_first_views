@@ -58,4 +58,5 @@ join
     on vote_table.match_id = catalog_table.catalog_match_id
 where
     hbo_offer_date = '{window_start}'
+    and match_id not in (select match_id from {database}.{schema}.CDS_HISTORICAL_HOURSPCT where window = {window_days})
 );

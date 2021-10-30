@@ -151,7 +151,7 @@ if __name__ == '__main__':
     logger.info('Updating trailer table')
 
     
-    for window in [7,14,21,28,364]:
+    for window in [7,14,21,28,56,91,182,364]:
         update_hours_pct_table(
             database=args.DATABASE,
             schema=args.SCHEMA,

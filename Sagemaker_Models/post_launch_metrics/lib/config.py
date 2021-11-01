@@ -41,41 +41,31 @@ prelaunch_process_info = {
           , 'platform_name'
           , 'program_type'
           , 'popcorn_ind'
+          , 'title_age_approx'
           , 'trailer_metric_d28_selected'
           , 'trailer_metric_d28_cumday_selected'
           , 'trailer_metric_before28_cumday'
           , 'trailer_metric_before28'
-          , 'day_wiki_view_before28'
+          , 'wiki_befored28_total'
           , 'wiki_d28_selected'
           , 'wiki_view_total'
-          # ,'single_episode_ind'
-          # ,'at_release_year'
-          # ,'prod_release_year'
-          # ,'in_sequantial_releasing_period' 
-          # ,'total_hours'
-          # ,'season_number_adj'
                  ],
     'prelaunch_spec_process':[
          'trailer_metric_d28'
          ,'wiki_d28'
                 ],
     'label_columns':['content_category', 'program_type'],
-    'num_columns':[
-                     'trailer_metric_d28_selected'
+    'num_columns':[  
+                     'title_age_approx'
+                   , 'trailer_metric_d28_selected'
                    , 'trailer_metric_d28_cumday_selected'
                    , 'trailer_metric_before28_cumday'
                    , 'trailer_metric_before28'
-                   , 'day_wiki_view_before28'
+                   , 'wiki_befored28_total'
                    , 'wiki_d28_selected'
                    , 'wiki_view_total'
-                   # ,'total_hours'
-                   # ,'title_age_approx'
-                   # ,'season_number_adj'
                    ],
     'main_signal_feature':[
-                    #  'trailer_metric_d28_cumday_selected'
-                    #, 'trailer_metric_d28_selected' 
-                    #, 'day_wiki_view_before28'
                      'wiki_d28_selected'
                           ]
 }

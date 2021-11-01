@@ -107,7 +107,7 @@ class FeatureEngineering(DataPreprocessing):
                 # find all columns associated with a keyword
                 key_columns = self.base_columns[self.base_columns.str.contains(keyword)==True]
                 selected_group_columns = key_columns[[-percent_data_process_info['max_num_day'] <= int(col[col.find('day')+3:col.find('day')+6]) for col in key_columns]]
-                selected_column = selected_group_columns[0]
+                selected_column = selected_group_columns[-1]
                 
                 if percent_data_process_info['target_log_transformation']:
                     self.base_copy[keyword + '_selected'] = np.log(self.base[selected_column] + 1e-10)

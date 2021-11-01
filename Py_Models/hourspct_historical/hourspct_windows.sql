@@ -27,7 +27,7 @@ WITH series_agg as (
         and first_offered_date_hbo is not null
     group by catalog_match_id
 )
-SELECT *
+SELECT series_agg.catalog_match_id, series_agg.match_title, series_agg.hbo_offer_date, series_agg.window_end
 FROM series_agg
 LEFT OUTER JOIN {database}.{schema}.CDS_HISTORICAL_HOURSPCT hist_table
     on hist_table.match_id = series_agg.catalog_match_id and window = {window_days}

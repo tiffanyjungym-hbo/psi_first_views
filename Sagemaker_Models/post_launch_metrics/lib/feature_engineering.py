@@ -123,8 +123,8 @@ class FeatureEngineering(DataPreprocessing):
                     self.prelaunch_processed_columns.append(keyword + '_cumday_selected')
 
             # calculate the total wikipedia page view if both -63 to -28 and -28 to n days view feature exist
-            if ((sum(self.base_copy.columns.isin(['wiki_d28_selected']))==1) & (sum(self.base_copy.columns.isin(['day_wiki_view_before28']))==1)): 
-                self.base_copy['wiki_view_total'] = self.base_copy['wiki_d28_selected'] + self.base_copy['day_wiki_view_before28']
+            if ((sum(self.base_copy.columns.isin(['wiki_d28_selected']))==1) & (sum(self.base_copy.columns.isin(['wiki_befored28_total']))==1)): 
+                self.base_copy['wiki_view_total'] = self.base_copy['wiki_d28_selected'] + self.base_copy['wiki_befored28_total']
                 
     def _calculate_cumulative_days(self, percent_data_process_info, selected_group_columns):
         tmp = self.base_copy[selected_group_columns]

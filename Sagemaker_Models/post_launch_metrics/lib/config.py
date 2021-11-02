@@ -40,7 +40,6 @@ prelaunch_process_info = {
             'content_category'
           , 'platform_name'
           , 'program_type'
-          , 'popcorn_ind'
           , 'title_age_approx'
           , 'trailer_metric_d28_selected'
           , 'trailer_metric_d28_cumday_selected'

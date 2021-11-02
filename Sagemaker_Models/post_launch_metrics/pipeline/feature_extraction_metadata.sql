@@ -99,13 +99,10 @@ FROM (
                         else 1 end as platform_name
             , datediff(day, m.earliest_public_timestamp, earliest_offered_timestamp)/365.0 as title_age_approx_meta
             , datediff(year, to_date(to_char(prod_release_year), 'YYYY'), earliest_offered_timestamp) as title_age_approx_imdb
-            , case when p.viewable_id is null then 0 else 1 end as popcorn_ind
         from meta_agg as m
         -- only to get the platform_name and earliest_offered_timestamp from max
         join {database}.{schema}.title_retail_funnel_metrics as f
             on m.match_id = f.match_id
-        left join max_prod.catalog.popcorn_titles as p
-            on p.viewable_id = m.match_id
     ),
 
     fin_meta_data_table as (
@@ -118,7 +115,6 @@ FROM (
             , platform_name
             , program_type
             , content_category
-            , popcorn_ind
             , single_episode_ind
             , in_sequantial_releasing_period
             , at_release_year

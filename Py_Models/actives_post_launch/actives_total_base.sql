@@ -17,7 +17,7 @@ insert into {database}.{schema}.actives_base_first_view (
                 hbo_uuid,
                 dr.date as start_date,
                 min(LOCAL_REQUEST_DATE) as request_date
-                from viewership.max_user_stream_distinct_user_dates_heartbeat udh
+                from max_prod.viewership.max_user_stream_distinct_user_dates_heartbeat udh
                 join date dr ON udh.LOCAL_REQUEST_DATE between dr.date and dateadd(day, 28, dr.date)
                 group by 1,2
               ),

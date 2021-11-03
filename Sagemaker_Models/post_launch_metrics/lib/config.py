@@ -66,7 +66,12 @@ prelaunch_process_info = {
                    ],
     'main_signal_feature':[
                      'wiki_d28_selected'
-                          ]
+                          ],
+    'logged_features':[ # control by logged target or not
+             'wiki_befored28_total'
+            ,'wiki_d28_selected'
+            ,'wiki_view_total'
+        ]
 }
 
 metadata_process_info = {
@@ -102,7 +107,10 @@ metadata_process_info = {
                    , 'cumulative_day_num'
                    , 'total_trailer_num'
                    , 'avg_trail_metric_per_day'
-                   ]
+                   ],
+    'logged_features':[ # control by logged target or not
+            'wiki_prelaunch_total'
+        ]
 }
 
 default_params_dict = {

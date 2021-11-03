@@ -53,7 +53,10 @@ class FeatureEngineering(DataPreprocessing):
         # step 2: process prelaunch features
         self.select_prelaunch_features(percent_data_process_info, metadata_process_info)
 
-        # set 2.1: prelaunch feature filter
+        # step 2.1: process logged feature
+        self.log_selected_features(percent_data_process_info, metadata_process_info)
+
+        # set 2.2: prelaunch feature filter
         self.filter_prelaunch(percent_data_process_info, metadata_process_info, day001_popularity_threshold)
 
         # step 3: process percent data
@@ -125,6 +128,11 @@ class FeatureEngineering(DataPreprocessing):
             # calculate the total wikipedia page view if both -63 to -28 and -28 to n days view feature exist
             if ((sum(self.base_copy.columns.isin(['wiki_d28_selected']))==1) & (sum(self.base_copy.columns.isin(['wiki_befored28_total']))==1)): 
                 self.base_copy['wiki_view_total'] = self.base_copy['wiki_d28_selected'] + self.base_copy['wiki_befored28_total']
+    
+    def log_selected_features(self, percent_data_process_info, metadata_process_info):
+        if percent_data_process_info['target_log_transformation']:                                                               
+            for col in metadata_process_info['logged_features']:
+                self.base_copy.loc[self.base_copy[col]!=-1, col] = np.log(self.base_copy.loc[self.base_copy[col]!=-1, col]+1)
                 
     def _calculate_cumulative_days(self, percent_data_process_info, selected_group_columns):
         tmp = self.base_copy[selected_group_columns]

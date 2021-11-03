@@ -140,7 +140,7 @@ def update_actives_base_table(
                               ,snowflake_env=snowflake_env
                               )
 
-        if ct.ct[0] == 0:
+        if ct.CT[0] == 0:
             query_update = load_query(f'{CURRENT_PATH}/{QUERY_ACTIVES_BASE_UPDATE}'
                                        ,date=t.strftime('%Y-%m-%d')
                                        ,database=database

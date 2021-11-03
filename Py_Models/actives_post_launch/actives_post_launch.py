@@ -112,7 +112,7 @@ def update_actives_base_table(
                            ,schema=schema
                            ,max_date=max_date
                               )
-    logger.info('delete unfinished date: {}'.fomat(query_delete_dates))
+    logger.info('delete unfinished date: {}'.format(query_delete_dates))
 #     execute_query(query=query_delete_dates
 #                               ,database=database
 #                               ,schema=schema

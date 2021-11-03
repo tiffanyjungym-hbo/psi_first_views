@@ -44,6 +44,8 @@ dags:
       - name: "ecr_container_creation"
         type: "BashOperator"
         kernel: "python3"
+        upstream_task_name: "python_script_post_launch_actives_base"
+
 
       - name: "sagemaker_notebook_job_processing_script"
         type: "BashOperator"
@@ -60,18 +62,18 @@ dags:
             model_bucket: "hbo-ingest-datascience-content"
         upstream_task_name: "ecr_container_creation"
 
-      - name: "write_prediction_output_to_snowflake"
-        upstream_task_name: "sagemaker_notebook_job_processing_script"
-        templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_OUTBOUND_DATASCIENCE_CONTENT }}"
-          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
-          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
-        sql_file_names:
-            - "output_to_S3.sql"
+#       - name: "write_prediction_output_to_snowflake"
+#         upstream_task_name: "sagemaker_notebook_job_processing_script"
+#         templates_dict:
+#           stage: "{{ var.value.DS_CONTENT_HBO_OUTBOUND_DATASCIENCE_CONTENT }}"
+#           database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+#           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
+#         sql_file_names:
+#             - "output_to_S3.sql"
 
       - name: "send_notification_cds"
         type: "EmailOperator"
         to: "jeni.lu@warnermedia.com"
         subject: "sagemaker-airflow: EMAIL TASK test"
         html: "Hi Team,<br><h3>Test email from sagemaker-airflow DAG task.</h3><br>Regards,<br> DAP"
-        upstream_task_name : "write_prediction_output_to_snowflake"
+        upstream_task_name : "sagemaker_notebook_job_processing_script"

@@ -26,32 +26,32 @@ QUERY_ACTIVES_BASE_UPDATE: str = 'actives_total_base.sql'
 logger = logging.getLogger()
 
 def execute_query(
-	query: str,
-	database :str,
-	schema: str,
-	warehouse: str,
-	role: str,
-	snowflake_env: str
+    query: str,
+    database :str,
+    schema: str,
+    warehouse: str,
+    role: str,
+    snowflake_env: str
     ) -> pd.DataFrame:
-	"""
-	Execute a query on snowflake
+    """
+    Execute a query on snowflake
 
-	:param query: query to be executed
-	:param database: name of the database
-	:param schema: name of the schema
-	:param warehouse: name of the warehouse
-	:param role: name of the role
-	:param snowflake_env: environment used in Snowflake
-	"""
-	connection = snowflake_utils.connect(
-		  SNOWFLAKE_ACCOUNT_NAME,
-		  database,
-		  schema,
-		  warehouse,
-		  role,
-		  snowflake_env,
-		  None
-	)
+    :param query: query to be executed
+    :param database: name of the database
+    :param schema: name of the schema
+    :param warehouse: name of the warehouse
+    :param role: name of the role
+    :param snowflake_env: environment used in Snowflake
+    """
+    connection = snowflake_utils.connect(
+        SNOWFLAKE_ACCOUNT_NAME,
+        database,
+        schema,
+        warehouse,
+        role,
+        snowflake_env,
+        None
+    )
 
     cursor = connection.cursor()
     cursor.execute(query)
@@ -91,7 +91,7 @@ def update_actives_base_table(
     start_time = time.time()
     query_windows = '''SELECT max(start_date) as max_date
                        FROM {database}.{schema}.actives_base_first_view'''\
-                    .format(,database=database
+                    .format(database=database
                                ,schema=schema)
 
     start_date = execute_query(query=query_windows
@@ -129,7 +129,7 @@ def update_actives_base_table(
         query_count = '''SELECT count(*) as ct FROM {}.{}.actives_base_first_view
                                     WHERE start_date = '{date}'
                       '''.format(date=t.strftime('%Y-%m-%d'),
-                                 ,database=database,schema=schema)
+                                 database=database,schema=schema)
 
         ct = execute_query(query=query_count
                               ,database=database
@@ -141,11 +141,11 @@ def update_actives_base_table(
 
         if ct.ct[0] == 0:
             query_update = load_query(f'{CURRENT_PATH}/{QUERY_ACTIVES_BASE_UPDATE}'
-                                       ,date=t.strftime('%Y-%m-%d'),
+                                       ,date=t.strftime('%Y-%m-%d')
                                        ,database=database
                                        ,schema=schema
                                       )
-            logger.info(f'update actives base: {}'.format(query_update)
+            logger.info('update actives base: {}'.format(query_update))
             execute_query(query=query_update
                               ,database=database
                               ,schema=schema

@@ -101,7 +101,7 @@ def update_actives_base_table(
                               ,role=role
                               ,snowflake_env=snowflake_env
                               )
-    logger(start_date)
+    print (start_date.head())
 
     max_date = pd.to_datetime(start_date.max_date.values[0]) - timedelta(days=28)
     logger ('curret_date: ' + str(start_date.max_date[0]))

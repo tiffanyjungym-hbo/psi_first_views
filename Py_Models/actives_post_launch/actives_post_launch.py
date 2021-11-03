@@ -106,7 +106,7 @@ def update_actives_base_table(
     logger.info('curret_date: ' + str(start_date.MAX_DATE[0]))
     logger.info('start_date: ' + str(max_date))
 
-    query_delete_dates = '''DELETE FROM {database}.{database}.actives_base_first_view
+    query_delete_dates = '''DELETE FROM {database}.{schema}.actives_base_first_view
                             WHERE start_date >= '{max_date}' '''\
                             .format(database=database
                            ,schema=schema
@@ -127,9 +127,10 @@ def update_actives_base_table(
     while (t.strftime('%Y-%m-%d')>=max_date.strftime('%Y-%m-%d') \
        and t.strftime('%Y-%m-%d')<end_date.strftime('%Y-%m-%d')):
         logger.info('update actives base for date: {}'.format(t.strftime('%Y-%m-%d')))
-        query_count = '''SELECT count(*) as ct FROM {}.{}.actives_base_first_view
+        query_count = '''SELECT count(*) as ct FROM {database}.{schema}.actives_base_first_view
                                     WHERE start_date = '{date}'
-                      '''.format(date=t.strftime('%Y-%m-%d'))
+                      '''.format(date=t.strftime('%Y-%m-%d'),
+                                 database=database,schema=schema)
 
         ct = execute_query(query=query_count
                               ,database=database

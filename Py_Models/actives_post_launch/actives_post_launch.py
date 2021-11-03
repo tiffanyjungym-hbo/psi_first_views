@@ -129,8 +129,7 @@ def update_actives_base_table(
         logger.info('update actives base for date: {}'.format(t.strftime('%Y-%m-%d')))
         query_count = '''SELECT count(*) as ct FROM {}.{}.actives_base_first_view
                                     WHERE start_date = '{date}'
-                      '''.format(date=t.strftime('%Y-%m-%d'),
-                                 database=database,schema=schema)
+                      '''.format(date=t.strftime('%Y-%m-%d'))
 
         ct = execute_query(query=query_count
                               ,database=database

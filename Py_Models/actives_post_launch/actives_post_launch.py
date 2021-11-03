@@ -104,7 +104,7 @@ def update_actives_base_table(
     print (start_date.head())
 
     max_date = pd.to_datetime(start_date.max_date.values[0]) - timedelta(days=28)
-    logger ('curret_date: ' + str(start_date.max_date[0]))
+    logger ('curret_date: ' + str(start_date.MAX_DATE[0]))
     logger ('start_date: ' + str(max_date))
 
     query_delete_dates = '''DELETE FROM {database}.{database}.actives_base_first_view

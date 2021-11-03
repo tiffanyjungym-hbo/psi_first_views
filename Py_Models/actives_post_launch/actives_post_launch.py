@@ -101,11 +101,10 @@ def update_actives_base_table(
                               ,role=role
                               ,snowflake_env=snowflake_env
                               )
-    print (start_date.columns)
 
     max_date = pd.to_datetime(start_date.MAX_DATE.values[0]) - timedelta(days=28)
-    logger ('curret_date: ' + str(start_date.MAX_DATE[0]))
-    logger ('start_date: ' + str(max_date))
+    logger.info('curret_date: ' + str(start_date.MAX_DATE[0]))
+    logger.info('start_date: ' + str(max_date))
 
     query_delete_dates = '''DELETE FROM {database}.{database}.actives_base_first_view
                             WHERE start_date >= '{max_date}' '''\
@@ -113,7 +112,7 @@ def update_actives_base_table(
                            ,schema=schema
                            ,max_date=max_date
                               )
-    logger('delete unfinished date: {}'.fomat(query_delete_dates))
+    logger.info('delete unfinished date: {}'.fomat(query_delete_dates))
 #     execute_query(query=query_delete_dates
 #                               ,database=database
 #                               ,schema=schema

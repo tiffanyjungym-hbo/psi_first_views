@@ -35,4 +35,4 @@ insert into {database}.{schema}.actives_base_first_view (
               subs_count as daily_viewing_subs_denom,
               sum(subs_count) over(partition by start_date order by end_date rows between unbounded preceding and current row) as cumulative_viewing_subs_denom
             from denom_subs_count
-            group by 1, 2, 3
+            group by 1, 2, 3;

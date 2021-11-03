@@ -49,7 +49,7 @@ dags:
 
       - name: "sagemaker_notebook_job_processing_script"
         type: "BashOperator"
-        notebook_name: "pct_actives_prediction.ipynb"
+        notebook_name: "actives_post_launch"
         Details:
           instance_type: "ml.m5.2xlarge"
           instance_count: 1

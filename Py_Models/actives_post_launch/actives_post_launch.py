@@ -71,6 +71,48 @@ def load_query(filename: str, **kwargs) -> str:
     query = query.format(**kwargs)
     return query
 
+def pctactives_to_snowflake(self, df, table_name):
+        stage = '@HBO_OUTBOUND_DATASCIENCE_CONTENT_DEV'
+        output_bucket = "hbo-outbound-datascience-content-dev"
+        input_bucket = 'hbo-ingest-datascience-content-dev'
+        filename ='pct_actives_prediction/' + table_name + '.csv'
+        dbname, schema = 'MAX_DEV', 'WORKSPACE'
+
+
+        csv_buffer = io.StringIO()
+        df.to_csv(csv_buffer, index = False)
+        content = csv_buffer.getvalue()
+        client = boto3.client('s3')
+        client.put_object(Bucket=output_bucket, Key=filename, Body=content)
+        client.put_object(Bucket=input_bucket, Key=filename, Body=content)
+
+
+        print ('Create Table: '+ table_name)
+        self.run_query('''
+        create or replace table max_dev.workspace.{table_name}(
+        match_id varchar,
+        title varchar,
+        days_on_hbo_max int,
+        pct_actives float
+        )
+        '''.format(table_name = table_name), dbname, schema)
+
+        print ('Begin Uploading: '+ table_name)
+        self.run_query('''
+        insert into MAX_DEV.workspace.{table_name}
+
+        select
+              $1, $2, $3, $4
+        from {stage}/pct_actives_prediction/{file_name}
+
+         (FILE_FORMAT => csv_v2)
+
+        '''.format(stage = stage, table_name = table_name,
+                  file_name = table_name+'.csv')
+                , dbname, schema)
+
+        print ('Finish Uploading')
+
 def update_actives_base_table(
     database: str,
     schema: str,
@@ -162,6 +204,66 @@ def update_actives_base_table(
     logger.info(f'Time taken {end_time - start_time} seconds')
 
 
+def update_pct_active_table(
+    database: str,
+    schema: str,
+    warehouse: str,
+    role: str,
+    snowflake_env: str,
+    ):
+    # Get unrecorded windows
+
+    start_time = time.time()
+    daily_total_views = self.run_query(daily_total_views_query, "MAX_PROD", "DATASCIENCE_STAGE")
+    title_actives = self.run_query(title_actives_query, "MAX_PROD", "DATASCIENCE_STAGE")
+
+    title_actives.drop_duplicates(inplace = True)
+    title_actives['available_date'] = title_actives['first_release_date'].astype(str).str[0:10:1]
+
+    pct_actives = pd.merge(title_actives[['match_id', 'title', 'title_id', 'days_on_hbo_max', 'available_date', 'cumulative_viewing_subs']],
+                  daily_total_views[['start_date', 'end_date', 'cumulative_viewing_subs_denom', 'days_after_launch']],
+                  left_on = ['available_date', 'days_on_hbo_max'], right_on = ['start_date', 'days_after_launch'],
+                  how = 'inner')
+    pct_actives['pct_actives'] = pct_actives['cumulative_viewing_subs']/pct_actives['cumulative_viewing_subs_denom']*100
+
+    metadata_feature = self.metadata_feature.groupby(['match_id']).first().reset_index()
+    pct_actives['match_id'] = pct_actives['match_id'].astype(str)
+    metadata_feature['match_id'] = metadata_feature['match_id'].astype(str)
+    pct_actives=pd.merge(pct_actives,
+                  metadata_feature.rename(columns = {'title_name':'id'}),
+                  on = ['match_id'],how = 'left')
+
+    recent_originals = pct_actives[(pct_actives['program_type'] == 'original')
+                     &(pct_actives['prod_release_year'] >= 2020)
+                     &(pct_actives['platform_name'] == 1)
+                     ].copy()
+
+    popcorn_titles = pd.merge(pct_actives,  self.popcorn_titles[['viewable_id']],
+                     left_on = ['match_id'], right_on = ['viewable_id']).copy()
+
+    recent_originals['originals_after_launch'] = 1
+    popcorn_titles['popcorn_titles'] = 1
+    recent_originals.drop_duplicates(inplace = True)
+    popcorn_titles.drop_duplicates(inplace = True)
+    pct_actives = pd.merge(pct_actives, recent_originals[['match_id', 'originals_after_launch', 'days_on_hbo_max', 'available_date']],
+                    on = ['match_id', 'days_on_hbo_max', 'available_date'], how = 'left')
+    pct_actives = pd.merge(pct_actives, popcorn_titles[['match_id', 'popcorn_titles', 'days_on_hbo_max', 'available_date']],
+                            on = ['match_id', 'available_date', 'days_on_hbo_max'], how = 'left')
+
+    pct_actives.loc[pct_actives['originals_after_launch'] == 1, 'originals_type'] = 'originals_after_launch'
+    pct_actives.loc[pct_actives['popcorn_titles'] == 1, 'originals_type'] = 'popcorn_titles'
+    pct_actives['originals_type'] = pct_actives['originals_type'].fillna(pct_actives['program_type'])
+    pct_actives = pct_actives.drop(['originals_after_launch', 'popcorn_titles'], axis = 1)
+    pct_actives['real_date'] = (pd.to_datetime(pct_actives['available_date']) +
+                                pd.to_timedelta(pct_actives['days_on_hbo_max'], unit='D'))
+
+    self.pct_actives = pct_actives
+    pct_actives = pct_actives[['match_id', 'title', 'days_on_hbo_max', 'pct_actives']]
+    self.pctactives_to_snowflake(pct_actives, 'pct_actives_metric_values')
+
+    )
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--SNOWFLAKE_ENV', required=True)
@@ -192,3 +294,11 @@ if __name__ == '__main__':
 
 
     logger.info('Finished Actives Base table updates')
+
+    update_pct_active_table(
+        database=args.DATABASE,
+        schema=args.SCHEMA,
+        warehouse=args.WAREHOUSE,
+        role=args.ROLE,
+        snowflake_env=args.SNOWFLAKE_ENV,
+    )

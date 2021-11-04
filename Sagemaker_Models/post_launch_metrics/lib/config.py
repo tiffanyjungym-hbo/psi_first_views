@@ -95,7 +95,7 @@ metadata_process_info = {
          , 'retail_trailer_view_metric'
          , 'cumulative_day_num'
          , 'total_trailer_num'
-         , 'avg_trail_metric_per_day'
+         , 'wiki_prelaunch_total'
                  ],
     'label_columns':['content_category', 'program_type'],
     'num_columns':['prod_release_year'
@@ -106,7 +106,7 @@ metadata_process_info = {
                    , 'retail_trailer_view_metric'
                    , 'cumulative_day_num'
                    , 'total_trailer_num'
-                   , 'avg_trail_metric_per_day'
+                   , 'wiki_prelaunch_total'
                    ],
     'logged_features':[ # control by logged target or not
             'wiki_prelaunch_total'

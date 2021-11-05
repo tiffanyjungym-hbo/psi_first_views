@@ -1,6 +1,5 @@
-xgboost
-sklearn
-scipy
+lightgbm
 scikit-learn
 pandas
 boto3
+matplotlib

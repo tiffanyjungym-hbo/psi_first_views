@@ -253,7 +253,6 @@ def update_pct_active_table(
     client = boto3.client('s3')
     client.put_object(Bucket=output_bucket, Key=filename, Body=content)
     client.put_object(Bucket=input_bucket, Key=filename, Body=content)
-    )
 
 
 if __name__ == '__main__':

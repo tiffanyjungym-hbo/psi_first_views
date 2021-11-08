@@ -9,6 +9,7 @@ import pandas as pd
 import time
 import os
 import sys
+import boto3
 from datetime import timedelta
 
 from airflow.models import Variable
@@ -18,10 +19,8 @@ from typing import Dict, List
 # Set env variables
 SNOWFLAKE_ACCOUNT_NAME: str = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.us-east-1'
 CURRENT_PATH: str = pathlib.Path(__file__).parent.absolute()
-# QUERY_HOURS_PCT_WINDOW: str = 'hourspct_windows.sql'
-# QUERY_HOURS_PCT_UPDATE: str = 'hourspct_historical_update.sql'
-# TARGET_DATE: str = (datetime.datetime.today()).strftime('%Y-%m-%d')
 QUERY_ACTIVES_BASE_UPDATE: str = 'actives_total_base.sql'
+QUERY_ACTIVES_TITLE_QUERY = 'title_actives.sql'
 
 logger = logging.getLogger()
 
@@ -56,7 +55,7 @@ def execute_query(
     cursor = connection.cursor()
     cursor.execute(query)
     df = pd.DataFrame(cursor.fetchall(), columns = [desc[0] for desc in cursor.description])
-
+    df.columns= df.columns.str.lower()
     return df
 
 def load_query(filename: str, **kwargs) -> str:
@@ -70,48 +69,6 @@ def load_query(filename: str, **kwargs) -> str:
 
     query = query.format(**kwargs)
     return query
-
-def pctactives_to_snowflake(self, df, table_name):
-        stage = '@HBO_OUTBOUND_DATASCIENCE_CONTENT_DEV'
-        output_bucket = "hbo-outbound-datascience-content-dev"
-        input_bucket = 'hbo-ingest-datascience-content-dev'
-        filename ='pct_actives_prediction/' + table_name + '.csv'
-        dbname, schema = 'MAX_DEV', 'WORKSPACE'
-
-
-        csv_buffer = io.StringIO()
-        df.to_csv(csv_buffer, index = False)
-        content = csv_buffer.getvalue()
-        client = boto3.client('s3')
-        client.put_object(Bucket=output_bucket, Key=filename, Body=content)
-        client.put_object(Bucket=input_bucket, Key=filename, Body=content)
-
-
-        print ('Create Table: '+ table_name)
-        self.run_query('''
-        create or replace table max_dev.workspace.{table_name}(
-        match_id varchar,
-        title varchar,
-        days_on_hbo_max int,
-        pct_actives float
-        )
-        '''.format(table_name = table_name), dbname, schema)
-
-        print ('Begin Uploading: '+ table_name)
-        self.run_query('''
-        insert into MAX_DEV.workspace.{table_name}
-
-        select
-              $1, $2, $3, $4
-        from {stage}/pct_actives_prediction/{file_name}
-
-         (FILE_FORMAT => csv_v2)
-
-        '''.format(stage = stage, table_name = table_name,
-                  file_name = table_name+'.csv')
-                , dbname, schema)
-
-        print ('Finish Uploading')
 
 def update_actives_base_table(
     database: str,
@@ -144,8 +101,8 @@ def update_actives_base_table(
                               ,snowflake_env=snowflake_env
                               )
 
-    max_date = pd.to_datetime(start_date.MAX_DATE.values[0]) - timedelta(days=28)
-    logger.info('curret_date: ' + str(start_date.MAX_DATE[0]))
+    max_date = pd.to_datetime(start_date.max_date.values[0]) - timedelta(days=28)
+    logger.info('curret_date: ' + str(start_date.max_date[0]))
     logger.info('start_date: ' + str(max_date))
 
     query_delete_dates = '''DELETE FROM {database}.{schema}.actives_base_first_view
@@ -182,7 +139,7 @@ def update_actives_base_table(
                               ,snowflake_env=snowflake_env
                               )
 
-        if ct.CT[0] == 0:
+        if ct.ct[0] == 0:
             query_update = load_query(f'{CURRENT_PATH}/{QUERY_ACTIVES_BASE_UPDATE}'
                                        ,date=t.strftime('%Y-%m-%d')
                                        ,database=database
@@ -214,8 +171,31 @@ def update_pct_active_table(
     # Get unrecorded windows
 
     start_time = time.time()
-    daily_total_views = self.run_query(daily_total_views_query, "MAX_PROD", "DATASCIENCE_STAGE")
-    title_actives = self.run_query(title_actives_query, "MAX_PROD", "DATASCIENCE_STAGE")
+    daily_total_views_query = '''
+                            select *, datediff(day, start_date, end_date)+1 as days_after_launch
+                            from {database}.{schema}.actives_base_first_view
+                            where days_after_launch<= 28
+                            order by start_date
+                            '''.format(database=database
+                               ,schema=schema)
+
+    daily_total_views = execute_query(query=daily_total_views_query
+                              ,database=database
+                              ,schema=schema
+                              ,warehouse=warehouse
+                              ,role=role
+                              ,snowflake_env=snowflake_env
+                              )
+
+
+    title_actives_query = load_query(f'{CURRENT_PATH}/{QUERY_ACTIVES_TITLE_QUERY}')
+    title_actives = execute_query(query=title_actives_query
+                          ,database='max_prod'
+                          ,schema=schema
+                          ,warehouse=warehouse
+                          ,role=role
+                          ,snowflake_env=snowflake_env
+                          )
 
     title_actives.drop_duplicates(inplace = True)
     title_actives['available_date'] = title_actives['first_release_date'].astype(str).str[0:10:1]
@@ -259,8 +239,20 @@ def update_pct_active_table(
 
     self.pct_actives = pct_actives
     pct_actives = pct_actives[['match_id', 'title', 'days_on_hbo_max', 'pct_actives']]
-    self.pctactives_to_snowflake(pct_actives, 'pct_actives_metric_values')
 
+    # Write to S3
+    stage = '@HBO_OUTBOUND_DATASCIENCE_CONTENT_DEV'
+    output_bucket = "hbo-outbound-datascience-content-dev"
+    input_bucket = 'hbo-ingest-datascience-content-dev'
+    filename ='pct_actives_prediction/' + table_name + '.csv'
+    dbname, schema = 'MAX_DEV', 'WORKSPACE'
+
+    csv_buffer = io.StringIO()
+    df.to_csv(csv_buffer, index = False)
+    content = csv_buffer.getvalue()
+    client = boto3.client('s3')
+    client.put_object(Bucket=output_bucket, Key=filename, Body=content)
+    client.put_object(Bucket=input_bucket, Key=filename, Body=content)
     )
 
 

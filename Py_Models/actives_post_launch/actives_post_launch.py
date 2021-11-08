@@ -205,39 +205,8 @@ def update_pct_active_table(
                   left_on = ['available_date', 'days_on_hbo_max'], right_on = ['start_date', 'days_after_launch'],
                   how = 'inner')
     pct_actives['pct_actives'] = pct_actives['cumulative_viewing_subs']/pct_actives['cumulative_viewing_subs_denom']*100
-
-    metadata_feature = self.metadata_feature.groupby(['match_id']).first().reset_index()
-    pct_actives['match_id'] = pct_actives['match_id'].astype(str)
-    metadata_feature['match_id'] = metadata_feature['match_id'].astype(str)
-    pct_actives=pd.merge(pct_actives,
-                  metadata_feature.rename(columns = {'title_name':'id'}),
-                  on = ['match_id'],how = 'left')
-
-    recent_originals = pct_actives[(pct_actives['program_type'] == 'original')
-                     &(pct_actives['prod_release_year'] >= 2020)
-                     &(pct_actives['platform_name'] == 1)
-                     ].copy()
-
-    popcorn_titles = pd.merge(pct_actives,  self.popcorn_titles[['viewable_id']],
-                     left_on = ['match_id'], right_on = ['viewable_id']).copy()
-
-    recent_originals['originals_after_launch'] = 1
-    popcorn_titles['popcorn_titles'] = 1
-    recent_originals.drop_duplicates(inplace = True)
-    popcorn_titles.drop_duplicates(inplace = True)
-    pct_actives = pd.merge(pct_actives, recent_originals[['match_id', 'originals_after_launch', 'days_on_hbo_max', 'available_date']],
-                    on = ['match_id', 'days_on_hbo_max', 'available_date'], how = 'left')
-    pct_actives = pd.merge(pct_actives, popcorn_titles[['match_id', 'popcorn_titles', 'days_on_hbo_max', 'available_date']],
-                            on = ['match_id', 'available_date', 'days_on_hbo_max'], how = 'left')
-
-    pct_actives.loc[pct_actives['originals_after_launch'] == 1, 'originals_type'] = 'originals_after_launch'
-    pct_actives.loc[pct_actives['popcorn_titles'] == 1, 'originals_type'] = 'popcorn_titles'
-    pct_actives['originals_type'] = pct_actives['originals_type'].fillna(pct_actives['program_type'])
-    pct_actives = pct_actives.drop(['originals_after_launch', 'popcorn_titles'], axis = 1)
     pct_actives['real_date'] = (pd.to_datetime(pct_actives['available_date']) +
                                 pd.to_timedelta(pct_actives['days_on_hbo_max'], unit='D'))
-
-    self.pct_actives = pct_actives
     pct_actives = pct_actives[['match_id', 'title', 'days_on_hbo_max', 'pct_actives']]
 
     # Write to S3
@@ -288,7 +257,6 @@ if __name__ == '__main__':
         role=args.ROLE,
         snowflake_env=args.SNOWFLAKE_ENV,
     )
-    
     logger.info('Finished Actives Base table updates')
 
 

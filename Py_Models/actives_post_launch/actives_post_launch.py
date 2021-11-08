@@ -102,7 +102,7 @@ def update_actives_base_table(
                               ,snowflake_env=snowflake_env
                               )
 
-    max_date = pd.to_datetime(start_date.max_date.values[0]) - timedelta(days=28)
+    max_date = pd.to_datetime(start_date.max_date.values[0]) - timedelta(days=38)
     logger.info('curret_date: ' + str(start_date.max_date[0]))
     logger.info('start_date: ' + str(max_date))
 
@@ -113,13 +113,13 @@ def update_actives_base_table(
                            ,max_date=max_date
                               )
     logger.info('delete unfinished date: {}'.format(query_delete_dates))
-#     execute_query(query=query_delete_dates
-#                               ,database=database
-#                               ,schema=schema
-#                               ,warehouse=warehouse
-#                               ,role=role
-#                               ,snowflake_env=snowflake_env
-#                               )
+    execute_query(query=query_delete_dates
+                              ,database=database
+                              ,schema=schema
+                              ,warehouse=warehouse
+                              ,role=role
+                              ,snowflake_env=snowflake_env
+                              )
     end_date = pd.to_datetime("now")
 
     t=max_date
@@ -222,6 +222,7 @@ def update_pct_active_table(
     client = boto3.client('s3')
     client.put_object(Bucket=output_bucket, Key=filename, Body=content)
     client.put_object(Bucket=input_bucket, Key=filename, Body=content)
+    print ('Write to S3 finished')
 
 
 if __name__ == '__main__':
@@ -243,14 +244,6 @@ if __name__ == '__main__':
     logger.info('Updating trailer table')
 
 
-    update_pct_active_table(
-    database=args.DATABASE,
-    schema=args.SCHEMA,
-    warehouse=args.WAREHOUSE,
-    role=args.ROLE,
-    snowflake_env=args.SNOWFLAKE_ENV,
-    )
-
     update_actives_base_table(
         database=args.DATABASE,
         schema=args.SCHEMA,
@@ -259,5 +252,15 @@ if __name__ == '__main__':
         snowflake_env=args.SNOWFLAKE_ENV,
     )
     logger.info('Finished Actives Base table updates')
+
+    update_pct_active_table(
+    database=args.DATABASE,
+    schema=args.SCHEMA,
+    warehouse=args.WAREHOUSE,
+    role=args.ROLE,
+    snowflake_env=args.SNOWFLAKE_ENV,
+    )
+
+
 
 

@@ -8,6 +8,7 @@ import pathlib
 import pandas as pd
 import time
 import os
+import io
 import sys
 import boto3
 from datetime import timedelta

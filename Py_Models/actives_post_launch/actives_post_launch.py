@@ -241,14 +241,13 @@ def update_pct_active_table(
     pct_actives = pct_actives[['match_id', 'title', 'days_on_hbo_max', 'pct_actives']]
 
     # Write to S3
-    stage = '@HBO_OUTBOUND_DATASCIENCE_CONTENT_DEV'
+    table_name = 'pct_actives_metric_values'
     output_bucket = "hbo-outbound-datascience-content-dev"
     input_bucket = 'hbo-ingest-datascience-content-dev'
     filename ='pct_actives_prediction/' + table_name + '.csv'
-    dbname, schema = 'MAX_DEV', 'WORKSPACE'
 
     csv_buffer = io.StringIO()
-    df.to_csv(csv_buffer, index = False)
+    pct_actives.to_csv(csv_buffer, index = False)
     content = csv_buffer.getvalue()
     client = boto3.client('s3')
     client.put_object(Bucket=output_bucket, Key=filename, Body=content)
@@ -274,6 +273,14 @@ if __name__ == '__main__':
     logger.info('Updating trailer table')
 
 
+    update_pct_active_table(
+    database=args.DATABASE,
+    schema=args.SCHEMA,
+    warehouse=args.WAREHOUSE,
+    role=args.ROLE,
+    snowflake_env=args.SNOWFLAKE_ENV,
+    )
+
     update_actives_base_table(
         database=args.DATABASE,
         schema=args.SCHEMA,
@@ -281,15 +288,7 @@ if __name__ == '__main__':
         role=args.ROLE,
         snowflake_env=args.SNOWFLAKE_ENV,
     )
-
-
-
+    
     logger.info('Finished Actives Base table updates')
 
-    update_pct_active_table(
-        database=args.DATABASE,
-        schema=args.SCHEMA,
-        warehouse=args.WAREHOUSE,
-        role=args.ROLE,
-        snowflake_env=args.SNOWFLAKE_ENV,
-    )
+

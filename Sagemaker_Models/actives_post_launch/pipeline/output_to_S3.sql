@@ -52,7 +52,7 @@ copy into output_actives_temp_existing
     file_format = (type = csv null_if=(''))
     on_error = 'CONTINUE';
 
-insert into {database}.{schema}.title_retail_percent_view_d28_prediction_existing (
+insert into {database}.{schema}.pct_actives_cross_validation_pipeline (
     select
         *
         , current_timestamp(0) as last_update_timestamp
@@ -99,7 +99,7 @@ copy into output_actives_prediction_temp
     file_format = (type = csv null_if=(''))
     on_error = 'CONTINUE';
 
-insert into {database}.{schema}.title_retail_percent_view_d28_prediction_new (
+insert into {database}.{schema}.pct_actives_scoring_pipeline (
     select
         *
         , current_timestamp(0) as last_update_timestamp

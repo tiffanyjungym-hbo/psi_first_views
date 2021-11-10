@@ -88,7 +88,7 @@ group by 1,2,3)
 SELECT c.match_id, a.title, a.first_release_date, a.DAILY_VIEWING_SUBS, a.CUMULATIVE_VIEWING_SUBS,
      a.days_on_hbo_max, a.title_id
 FROM max_prod.content_intelligence.new_title_release_days_on_platform a
-left join fifth b on initcap(a.title)=initcap(b.title) and a.title_id=b.title_id and a.title_level=b.title_level
-left join fourth c on initcap(a.title)=initcap(c.title) and a.title_id=c.title_id and a.title_level=c.title_level
+inner join fifth b on initcap(a.title)=initcap(b.title) and a.title_id=b.title_id and a.title_level=b.title_level
+inner join fourth c on initcap(a.title)=initcap(c.title) and a.title_id=c.title_id and a.title_level=c.title_level
 where (days_on_hbo_max between 1 and 28)
 ;

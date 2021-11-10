@@ -105,3 +105,22 @@ insert into {database}.{schema}.pct_actives_scoring_pipeline (
         , current_timestamp(0) as last_update_timestamp
     from output_actives_prediction_temp);
 
+-- Create table for the metric
+create or replace table {database}.{schema}.pct_actives_metric_values (
+      match_id varchar
+    , title string not null
+    , days_on_hbo_max int
+    , pct_actives float
+);
+
+copy into {database}.{schema}.pct_actives_metric_values
+    from(
+        select
+              $1
+            , $2
+            , $3
+            , $4
+        from {stage}/pct_actives_prediction/pct_actives_metric_values.csv
+        )
+    file_format = (type = csv null_if=(''))
+    on_error = 'CONTINUE';

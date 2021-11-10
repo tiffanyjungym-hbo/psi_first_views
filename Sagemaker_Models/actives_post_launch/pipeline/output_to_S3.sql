@@ -106,14 +106,14 @@ use schema {schema};
 --     from output_actives_prediction_temp);
 
 -- Create table for the metric
-create or replace table {database}.{schema}.pct_actives_metric_values_pipeline (
-      match_id varchar
+create or replace table {database}.{schema}.pct_actives_metric_values (
+      match_id string
     , title string not null
     , days_on_hbo_max int
     , pct_actives float
 );
 
-copy into {database}.{schema}.pct_actives_metric_values_pipeline
+copy into {database}.{schema}.pct_actives_metric_values
     from(
         select
               $1

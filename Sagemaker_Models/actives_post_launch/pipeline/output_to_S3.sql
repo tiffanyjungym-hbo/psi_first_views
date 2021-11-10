@@ -1,14 +1,14 @@
 use schema {schema};
 
 -- Create table for the metric
-create or replace table {database}.{schema}.pct_actives_metric_values (
+create or replace table {database}.{schema}.pct_actives_metric_values_pipeline (
       match_id string
     , title string not null
     , days_on_hbo_max int
     , pct_actives float
 );
 
-copy into {database}.{schema}.pct_actives_metric_values
+copy into {database}.{schema}.pct_actives_metric_values_pipeline
     from(
         select
               $1

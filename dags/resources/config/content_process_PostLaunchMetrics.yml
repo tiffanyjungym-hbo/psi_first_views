@@ -88,7 +88,7 @@ dags:
         downstream_task_name: ecr_container_creation
 
       # prelaunch wikipedia page view -27 to 0
-        - name: "wikipedia_page_view_pre_launch_feature_to_staging"
+        - name: "prelaunch_wikipedia_page_view_feature_to_staging"
         templates_dict:
           stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
           database: "{{ var.value.DS_SF_MAX_DATABASE }}"

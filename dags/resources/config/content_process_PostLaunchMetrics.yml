@@ -47,6 +47,7 @@ dags:
         script_loc: "common"
         script_name: "wikipedia_page_view"
         param_file_name: "wikipedia_page_view"
+        upstream_task_name: "python_script_post_launch_subscriber"
       
       # update the matrics second
       - name: "python_script_post_launch_metrics"

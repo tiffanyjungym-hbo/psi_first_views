@@ -1,5 +1,5 @@
 """
-Post-launch ETL that generates subscriber normalized interim table and final viewership KPI table
+Post-launch ETL that generates wikipedia page view base table for later feature extraction process
 """
 import argparse
 import datetime
@@ -127,4 +127,4 @@ if __name__ == '__main__':
 		snowflake_env=args.SNOWFLAKE_ENV
 	)
 
-	logger.info('Finished subscriber table updates')
+	logger.info('Finished wikipedia page view base table updates')

@@ -34,12 +34,19 @@ dags:
       NON-PROD: "hbomax-cds-alerts"
       PROD: "hbomax-cds-alerts"
     tasks:
-
+      # update the svod subscriber table
       - name: "python_script_post_launch_subscriber"
         type: "BashOperator"
         script_loc: "common"
         script_name: "post_launch_subscriber"
         param_file_name: "post_launch_subscriber"
+
+      # update the wikipedia page view base table
+      - name: "python_script_wikipedia_page_view"
+        type: "BashOperator"
+        script_loc: "common"
+        script_name: "wikipedia_page_view"
+        param_file_name: "wikipedia_page_view"
       
       # update the matrics second
       - name: "python_script_post_launch_metrics"
@@ -57,7 +64,7 @@ dags:
         param_file_name: "post_launch_trailer_metrics"
         upstream_task_name: "python_script_post_launch_metrics"
       
-      # prelaunch features
+      # prelaunch trailer features
       - name: "prelaunch_trailer_feature_to_staging"
         templates_dict:
           stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
@@ -66,6 +73,28 @@ dags:
         sql_file_names:
           - "feature_extraction_prelaunch_trailer.sql"
         upstream_task_name: "python_script_post_launch_trailer_metrics"
+        downstream_task_name: ecr_container_creation
+
+      # prelaunch wikipedia page view, before d28
+        - name: "prelaunch_wikipedia_page_view_before_d28_feature_to_staging"
+        templates_dict:
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
+        sql_file_names:
+          - "feature_extraction_wikipedia_page_view_befored28_pre_launch.sql"
+        upstream_task_name: "python_script_wikipedia_page_view"
+        downstream_task_name: ecr_container_creation
+
+      # prelaunch wikipedia page view, before d28
+        - name: "wikipedia_page_view_pre_launch_feature_to_staging"
+        templates_dict:
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
+        sql_file_names:
+          - "feature_extraction_wikipedia_page_view_pre_launch.sql"
+        upstream_task_name: "python_script_wikipedia_page_view"
         downstream_task_name: ecr_container_creation
       
       # postlaunch features (some used in prelaunch)

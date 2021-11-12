@@ -3,7 +3,6 @@
 -- viewership table: source of viewership, either heartbeat or now_uer_stream
 -- sub_table: subscriber table, should be updated everytime before updating the heartbeat
 -- end_date: the end date of the viewership data
-
 -- exist_ind_val: indicating if a title_name - platform_name - days_since_first_offered combination exists in the target table
 
 insert into {database}.{schema}.title_retail_funnel_metrics (
@@ -123,24 +122,6 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
                     group by 1)
         ),
 
-
--- Employee test accounts, will be used to exclude the employee test accounts, does not put in work for now
----- since the logic behind are not fully understand
-        /*employee_user_id as (
-            select distinct
-                  regexp_replace(json_payload:userId, '"', '') as user_id
-                , json_payload:subscriptionProvider as affiliate_code
-            from enterprise_ccpa_data.intake.dpshare_subscription_history
-            where json_payload:productCode::string = 'hboMax' and event_subtype = 'create' and
-                json_payload:paymentMethod = 'MVPD'
-        ),
-        employee_hbo_uuid as (
-            select distinct uuid as hbo_uuid
-            from employee_user_id as a
-            left join enterprise_data.identity.idgraph_vertex as b
-                on a.user_id = b.name
-        ),*/
-
 -- Played Hour Tables
          max_viewership_match_id as (
             select
@@ -180,7 +161,7 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
                     when {viewership_table} = 'max_prod.viewership.now_user_stream' then '2015-04-07'
                         end
             and stream_min_timestamp_gmt <= {end_date}
-            -- consider en-US viewerships only for this version
+            -- the US filter is in the subscription table query, so this only the US users are considered in this version 
          ),
 
          max_retail_viewership_base_info as (
@@ -195,11 +176,11 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
                   , last_offered_timestamp
                   , a.hbo_uuid
                   , viewable_id
+                  , max(stream_elapsed_play_seconds) / 3600                      as max_played_hours
+                  , max(runtime) / 3600                                          as run_time_hours
                   -- constrain the daily total viewing hours less than or equal to
                   -- the total available hours in episodic level
                   -- worth to mention, while explaining to people
-                  , max(stream_elapsed_play_seconds) / 3600                               as max_played_hours
-                  , max(runtime) / 3600                                          as run_time_hours
                   , least(sum(stream_elapsed_play_seconds), max(runtime)) / 3600 as streamed_hours
                   , case when sum(stream_elapsed_play_seconds) > 0.9 * max(runtime) then 1
                         else 0
@@ -208,16 +189,12 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
              join offered_date_pairs as o
                 on v.earliest_offered_timestamp = o.earliest_offered_timestamp
              join {database}.{schema}.sub_period_in_uuid_test as a
-                 -- give one day butter to both dates, since some titles may release in the late night
-                 ------ logic: sessions without the following conditions
                             on (((a.subscription_expire_timestamp < o.earliest_offered_timestamp)
                                 or (a.subscription_start_timestamp >= o.end_consideration_timestamp)
                                 ) = FALSE)
                                 and a.hbo_uuid = v.hbo_uuid
                                 and stream_min_timestamp_gmt>=subscription_start_timestamp
              where 1 = 1
-               -- use to filter employee id in the future
-               --and hbo_uuid not in (select hbo_uuid from employee_hbo_uuid)
              group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
          ),
 
@@ -248,13 +225,7 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
                     o.earliest_offered_timestamp
                   , count(distinct hbo_uuid) as total_retail_sub_count
              from offered_date_pairs as o
-                      -- the below table is modified from the max_prod.workspace.content_eval_first_sub_start table
-                      -- created by Eileen Dise, the following are the modifications:
-                      ------ 1). ignore the subscription gaps <= 24 hours, in order to create continous sub sessions
-                      ------ 2). ignore the subcription sessions less than 24 hours
              left join {database}.{schema}.sub_period_in_uuid_test as a
-                 -- give one day butter to both dates, since some titles may release in the late night
-                 ------ logic: sessions without the following conditions
                 on (((a.subscription_expire_timestamp <= o.earliest_offered_timestamp)
                     or (a.subscription_start_timestamp >= o.end_consideration_timestamp)
                         ) = FALSE)
@@ -307,15 +278,12 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
                   , h.earliest_offered_timestamp
                   , last_offered_timestamp
                   , earliest_public_timestamp
-                  -- include playform name in the future
                   , {nday}                                     as days_since_first_offered
                   , total_retail_sub_count
                   , {end_date}                       as last_update_timestamp
                   , count(*)                                  as retail_played_count
                   , sum(retail_view_ind_total)                       as retail_viewed_count
                   , sum(retail_completion_ind_total)                 as retail_completion_count
-                  -- the denominator should be based on impression counts, but use view counts instead for now
-                  ---- (impression counts not available)
                   , retail_played_count / total_retail_sub_count     as retail_played_count_percent
                   , retail_viewed_count / total_retail_sub_count     as retail_viewed_count_percent
              from retail_sum_hours as h
@@ -324,7 +292,6 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
              group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
          )
 
-    -- how many of them are able to see the last episode before it is on?
     select
         *
     from last_table

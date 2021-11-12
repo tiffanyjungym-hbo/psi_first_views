@@ -77,26 +77,26 @@ dags:
         downstream_task_name: ecr_container_creation
 
       # prelaunch wikipedia page view, before d28
-        - name: "prelaunch_wikipedia_page_view_before_d28_feature_to_staging"
-        templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
-          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
-          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
-        sql_file_names:
-          - "feature_extraction_wikipedia_page_view_befored28_pre_launch.sql"
-        upstream_task_name: "python_script_wikipedia_page_view"
-        downstream_task_name: ecr_container_creation
+      - name: "prelaunch_wikipedia_page_view_before_d28_feature_to_staging"
+      templates_dict:
+        stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+        database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+        schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
+      sql_file_names:
+        - "feature_extraction_wikipedia_page_view_befored28_pre_launch.sql"
+      upstream_task_name: "python_script_wikipedia_page_view"
+      downstream_task_name: ecr_container_creation
 
-      # prelaunch wikipedia page view -27 to 0
-        - name: "prelaunch_wikipedia_page_view_feature_to_staging"
-        templates_dict:
-          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
-          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
-          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
-        sql_file_names:
-          - "feature_extraction_wikipedia_page_view_pre_launch.sql"
-        upstream_task_name: "python_script_wikipedia_page_view"
-        downstream_task_name: ecr_container_creation
+    # prelaunch wikipedia page view -27 to 0
+      - name: "prelaunch_wikipedia_page_view_feature_to_staging"
+      templates_dict:
+        stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+        database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+        schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
+      sql_file_names:
+        - "feature_extraction_wikipedia_page_view_pre_launch.sql"
+      upstream_task_name: "python_script_wikipedia_page_view"
+      downstream_task_name: ecr_container_creation
       
       # postlaunch features (some used in prelaunch)
       - name: "trailer_feature_to_staging"

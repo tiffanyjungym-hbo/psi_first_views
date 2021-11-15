@@ -1,6 +1,6 @@
 USE SCHEMA workspace;
 
-COPY INTO {stage}/input_percent_view/wiki_view_pre_feature.csv
+COPY INTO {stage}/input_percent_view/wiki_view_post_feature.csv
 FROM (
 
     with tmp as (

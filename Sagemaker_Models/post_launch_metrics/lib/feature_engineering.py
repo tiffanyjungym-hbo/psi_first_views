@@ -53,14 +53,17 @@ class FeatureEngineering(DataPreprocessing):
         # step 2: process prelaunch features
         self.select_prelaunch_features(percent_data_process_info, metadata_process_info)
 
-        # step 2.1: process logged feature
-        self.log_selected_features(percent_data_process_info, metadata_process_info)
-
-        # set 2.2: prelaunch feature filter
+        # set 2.1: prelaunch feature filter
         self.filter_prelaunch(percent_data_process_info, metadata_process_info, day001_popularity_threshold)
 
         # step 3: process percent data
         self.percent_columns_and_target_process(percent_data_process_info)
+
+        # step 3.1: get total wiki views prelaunch
+        self.calculate_wiki_prelaunch_total()
+
+        # step 3.2: process logged feature
+        self.log_selected_features(percent_data_process_info, metadata_process_info)
         
         # step 4: process metadata
         self.select_metadata_columns(metadata_process_info, select_label_threshold)
@@ -128,19 +131,6 @@ class FeatureEngineering(DataPreprocessing):
             # calculate the total wikipedia page view if both -63 to -28 and -28 to n days view feature exist
             if ((sum(self.base_copy.columns.isin(['wiki_d28_selected']))==1) & (sum(self.base_copy.columns.isin(['wiki_befored28_total']))==1)): 
                 self.base_copy['wiki_view_total'] = self.base_copy['wiki_d28_selected'] + self.base_copy['wiki_befored28_total']
-    
-    def log_selected_features(self, percent_data_process_info, metadata_process_info):
-        if percent_data_process_info['target_log_transformation']:      
-            # log specified features                                                         
-            for col in metadata_process_info['logged_features']:
-                self.base_copy.loc[self.base_copy[col]!=-1, col] = np.log(self.base_copy.loc[self.base_copy[col]!=-1, col]+1)
-
-            # log group features
-            for keyword in metadata_process_info['logged_features_keyword']:
-                selected_cols = self.base_copy.columns[self.base_copy.columns.str.contains(keyword)]
-            
-                for col in selected_cols:
-                    self.base_copy.loc[self.base_copy[col]> 0, col] = np.log(self.base_copy.loc[self.base_copy[col]> 0, col]+1)
                 
     def _calculate_cumulative_days(self, percent_data_process_info, selected_group_columns):
         tmp = self.base_copy[selected_group_columns]
@@ -249,7 +239,24 @@ class FeatureEngineering(DataPreprocessing):
         self.day_column_list = day_column_list
         self.selected_columns.extend(self.day_column_list)
         self.day_column_list_no_last_season = [col for col in self.day_column_list if 'last_season' not in col]       
-        
+
+    def calculate_wiki_prelaunch_total(self):
+        if (('day000_wiki_d28' in self.base_copy.columns) & ('wiki_befored28_total' in self.base_copy.columns)):
+            self.base_copy['wiki_prelaunch_total'] = self.base_copy['day000_wiki_d28'] + self.base_copy['wiki_befored28_total'] 
+
+    def log_selected_features(self, percent_data_process_info, metadata_process_info):
+        if percent_data_process_info['target_log_transformation']:      
+            # log specified features                                                         
+            for col in metadata_process_info['logged_features']:
+                self.base_copy.loc[self.base_copy[col]!=-1, col] = np.log(self.base_copy.loc[self.base_copy[col]!=-1, col]+1)
+
+            # log group features
+            for keyword in metadata_process_info['logged_features_keyword']:
+                selected_cols = self.base_copy.columns[self.base_copy.columns.str.contains(keyword)]
+            
+                for col in selected_cols:
+                    self.base_copy.loc[self.base_copy[col]> 0, col] = np.log(self.base_copy.loc[self.base_copy[col]> 0, col]+1)
+
     def select_metadata_columns(self, metadata_process_info, select_label_threshold):
         # attach all columns in the other_col 
         if 'other_col' in metadata_process_info:

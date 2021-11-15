@@ -71,7 +71,11 @@ prelaunch_process_info = {
              'wiki_befored28_total'
             ,'wiki_d28_selected'
             ,'wiki_view_total'
-        ]
+        ],
+    
+    'logged_features_keyword':[
+
+    ]
 }
 
 metadata_process_info = {
@@ -110,7 +114,11 @@ metadata_process_info = {
                    ],
     'logged_features':[ # control by logged target or not
             'wiki_prelaunch_total'
-        ]
+        ],
+    
+    'logged_features_keyword':[
+
+    ]
 }
 
 default_params_dict = {

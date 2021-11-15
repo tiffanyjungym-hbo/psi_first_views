@@ -130,9 +130,17 @@ class FeatureEngineering(DataPreprocessing):
                 self.base_copy['wiki_view_total'] = self.base_copy['wiki_d28_selected'] + self.base_copy['wiki_befored28_total']
     
     def log_selected_features(self, percent_data_process_info, metadata_process_info):
-        if percent_data_process_info['target_log_transformation']:                                                               
+        if percent_data_process_info['target_log_transformation']:      
+            # log specified features                                                         
             for col in metadata_process_info['logged_features']:
                 self.base_copy.loc[self.base_copy[col]!=-1, col] = np.log(self.base_copy.loc[self.base_copy[col]!=-1, col]+1)
+
+            # log group features
+            for keyword in metadata_process_info['logged_features_keyword']:
+                selected_cols = self.base_copy.columns[self.base_copy.columns.str.contains(keyword)]
+            
+                for col in selected_cols:
+                    self.base_copy.loc[self.base_copy[col]> 0, col] = np.log(self.base_copy.loc[self.base_copy[col]> 0, col]+1)
                 
     def _calculate_cumulative_days(self, percent_data_process_info, selected_group_columns):
         tmp = self.base_copy[selected_group_columns]

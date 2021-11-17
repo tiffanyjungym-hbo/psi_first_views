@@ -70,5 +70,29 @@ create or replace table {database}.{schema}.title_percent_metric_pred(
     join pred_view as v
         on a.match_id = v.match_id
     order by percent_actives desc
+);
+
+create or replace table {database}.{schema}.title_percent_metric_actual(
+    title_name varchar (255) not null
+    , match_id varchar (255) not null
+    , days_since_first_offered integer not null
+    , percent_actives float
+    , percent_view float
+    , data_type varchar (255) not null
+    ) as  (
+        select
+            title_name
+            , a.match_id
+            , days_since_first_offered
+            , pct_actives as percent_active
+            , retail_viewed_count_percent*100 as percent_view
+            , 'actual' as data_type
+        from {database}.{schema}.pct_actives_metric_values_pipeline as a
+        join {database}.{schema}.title_retail_funnel_metrics as v
+            on a.match_id = v.match_id
+                and a.days_on_hbo_max = v.days_since_first_offered
+        where 1=1
+            and platform_name = 'hboMax'
+        order by title_name, days_since_first_offered
 )
 

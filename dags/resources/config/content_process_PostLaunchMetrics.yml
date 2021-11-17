@@ -87,7 +87,7 @@ dags:
         upstream_task_name: "python_script_wikipedia_page_view"
         downstream_task_name: ecr_container_creation
 
-    # prelaunch wikipedia page view -27 to 0
+      # prelaunch wikipedia page view -27 to 0
       - name: "prelaunch_wikipedia_page_view_feature_to_staging"
         templates_dict:
           stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
@@ -180,16 +180,6 @@ dags:
         upstream_task_name: "python_script_post_launch_trailer_metrics"
         downstream_task_name: ecr_container_creation
 
-      # - name: "production_budget_imdb_to_staging"
-      #   templates_dict:
-      #     stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
-      #     database: "{{ var.value.DS_SF_MAX_DATABASE }}"
-      #     schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
-      #   sql_file_names:
-      #     - "feature_extraction_production_budget_imdb.sql"
-      #   upstream_task_name: "python_script_post_launch_trailer_metrics"
-      #   downstream_task_name: ecr_container_creation
-
       - name: "vtp_feature_to_staging"
         templates_dict:
           stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
@@ -227,6 +217,15 @@ dags:
           schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
         sql_file_names:
             - "output_to_S3.sql" 
+
+      - name: "update_to_dashboard_table"
+        templates_dict:
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
+        sql_file_names:
+          - "update_to_dashboard_table.sql"
+        upstream_task_name: "write_prediction_output_to_snowflake"
 
       - name: "send_notification_cds"
         type: "EmailOperator"

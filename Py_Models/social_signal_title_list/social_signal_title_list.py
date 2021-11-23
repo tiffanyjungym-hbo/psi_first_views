@@ -150,7 +150,7 @@ if __name__ == '__main__':
 
 	# content
 	csv_buffer = StringIO()
-	df_social_signal_titles.to_csv(csv_buffer)
+	df_social_signal_titles.to_csv(csv_buffer, index = False)
 	content = csv_buffer.getvalue()
 
 	# file path

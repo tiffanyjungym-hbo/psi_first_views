@@ -64,6 +64,14 @@ dags:
         script_name: "post_launch_trailer_metrics"
         param_file_name: "post_launch_trailer_metrics"
         upstream_task_name: "python_script_post_launch_metrics"
+
+      # update the matrics second
+      - name: "python_script_social_signal_title_list"
+        type: "BashOperator"
+        script_loc: "common"
+        script_name: "social_signal_title_list"
+        param_file_name: "social_signal_title_list"
+        upstream_task_name: "python_script_post_launch_metrics"
       
       # prelaunch trailer features
       - name: "prelaunch_trailer_feature_to_staging"

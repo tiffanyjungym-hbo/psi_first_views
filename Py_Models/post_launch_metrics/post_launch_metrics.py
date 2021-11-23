@@ -7,8 +7,6 @@ import logging
 import pathlib
 import pandas as pd
 import time
-from io import StringIO # python3; python2: BytesIO 
-import boto3
 
 from airflow.models import Variable
 from common import snowflake_utils
@@ -20,7 +18,6 @@ CURRENT_PATH: str = pathlib.Path(__file__).parent.absolute()
 QUERY_FUNNEL_METRICS: str = 'title_retail_funnel_metrics_update.sql'
 QUERY_FUNNEL_METRICS_PPRELAUNCH: str = 'title_retail_funnel_metrics_update_prelaunch.sql'
 QUERY_FUNNEL_METRICS_LAST_DATE: str = 'title_retail_funnel_metrics_last_date.sql'
-QUERY_SOCIAL_SIGNAL_TITLES: str = 'social_signal_title_list.sql'
 
 ## [ndays] since first offered
 DAY_LIST: List[int] = [
@@ -191,35 +188,6 @@ def update_funnel_metrics_table(
 
 	return df_funnel_metrics
 
-def extract_social_signal_titles(
-	database: str,
-	schema: str,
-	warehouse: str,
-	role: str,
-	snowflake_env: str
-    ) -> pd.DataFrame:
-	"""
-	Update the numerator table for content funnel metrics
-
-	:param database: name of the database
-	:param schema: name of the schema
-	:param warehouse: name of the warehouse
-	:param role: name of the role
-	:param snowflake_env: environment used in Snowflake
-	"""
-	# Create latest funnel metrics
-	logger.info(f'Loading query {QUERY_SOCIAL_SIGNAL_TITLES}')
-
-	df_social_signal_titles = pd.DataFrame()
-
-	df_social_signal_titles = load_query(
-		f'{CURRENT_PATH}/{QUERY_SOCIAL_SIGNAL_TITLES}',
-		database=database,
-		schema=schema
-	)
-
-	return df_social_signal_titles
-
 if __name__ == '__main__':
 
 	parser = argparse.ArgumentParser()
@@ -245,27 +213,3 @@ if __name__ == '__main__':
 		role=args.ROLE,
 		snowflake_env=args.SNOWFLAKE_ENV
 	)
-
-	df_social_signal_titles = extract_social_signal_titles(
-		database=args.DATABASE,
-		schema=args.SCHEMA,
-		warehouse=args.WAREHOUSE,
-		role=args.ROLE,
-		snowflake_env=args.SNOWFLAKE_ENV
-	)
-
-	# save the list of titles to wikipedia page view & google index input table
-	logger.info('Writing titles list for wikipedia page view & google index')
-	
-	# bucket name
-	output_bucket = 'hbo-data-ckg-dev' 
-
-	# content
-	csv_buffer = StringIO()
-	df_social_signal_titles.to_csv(csv_buffer)
-	content = csv_buffer.getvalue()
-
-	# file path
-	filename = 'google-search-tracker/titles/mei_cheng.csv'
-
-	to_s3(filename, output_bucket, content)

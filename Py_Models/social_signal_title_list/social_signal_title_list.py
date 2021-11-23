@@ -74,13 +74,14 @@ def load_query(filename: str, **kwargs) -> str:
 	query = query.format(**kwargs)
 	return query
 
-def extract_social_signal_titles(
+def update_social_signal_title_list_table(
 	database: str,
 	schema: str,
 	warehouse: str,
 	role: str,
 	snowflake_env: str
-    ) -> pd.DataFrame:
+	) -> pd.DataFrame:
+
 	"""
 	Update the numerator table for content funnel metrics
 
@@ -91,15 +92,28 @@ def extract_social_signal_titles(
 	:param snowflake_env: environment used in Snowflake
 	"""
 	# Create latest funnel metrics
-	logger.info(f'Loading query {QUERY_SOCIAL_SIGNAL_TITLES}')
+	logger.info(f'Loading query social signal titles')
 
-	df_social_signal_titles = pd.DataFrame()
+	start_time = time.time()
 
-	df_social_signal_titles = load_query(
+	df_social_signal_titles_query = load_query(
 		f'{CURRENT_PATH}/{QUERY_SOCIAL_SIGNAL_TITLES}',
 		database=database,
 		schema=schema
 	)
+
+	df_social_signal_titles = pd.DataFrame()
+
+	df_social_signal_titles = execute_query(
+				query=df_social_signal_titles_query,
+				database=database,
+				schema=schema,
+				warehouse=warehouse,
+				role=role,
+				snowflake_env=snowflake_env
+			)
+	end_time = time.time()
+	logger.info(f'Time taken {end_time - start_time} seconds')
 
 	return df_social_signal_titles
 
@@ -120,7 +134,7 @@ if __name__ == '__main__':
 	logger.info(f'database: {args.DATABASE}')
 	logger.info(f'schema: {args.SCHEMA}')
 
-	df_social_signal_titles = extract_social_signal_titles(
+	df_social_signal_titles = update_social_signal_title_list_table(
 		database=args.DATABASE,
 		schema=args.SCHEMA,
 		warehouse=args.WAREHOUSE,
@@ -128,7 +142,7 @@ if __name__ == '__main__':
 		snowflake_env=args.SNOWFLAKE_ENV
 	)
 
-	# save the list of titles to wikipedia page view & google index input table
+	## save the list of titles to wikipedia page view & google index input table
 	logger.info('Writing titles list for wikipedia page view & google index')
 	
 	# bucket name

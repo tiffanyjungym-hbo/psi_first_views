@@ -148,6 +148,8 @@ def update_funnel_metrics_table(
 			else:
 				logger.info(f'Getting data for nth day: {nday} on {platform}')
 
+				start_time = time.time()
+
 				if nday == 0:
 					query_funnel_metrics = load_query(
 						f'{CURRENT_PATH}/{QUERY_FUNNEL_METRICS_PPRELAUNCH}',
@@ -169,8 +171,6 @@ def update_funnel_metrics_table(
 						end_date=END_DATE[platform],
 						exist_ind_val=EXIST_IND_VAL
 					)
-
-				start_time = time.time()
 
 				_df_funnel_metrics = execute_query(
 					query=query_funnel_metrics,

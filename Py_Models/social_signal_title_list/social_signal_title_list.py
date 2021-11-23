@@ -154,6 +154,6 @@ if __name__ == '__main__':
 	content = csv_buffer.getvalue()
 
 	# file path
-	filename = 'google-search-tracker/titles/mei_cheng.csv'
+	filename = 'google-search-tracker/input/titles/mei_cheng.csv'
 
 	to_s3(filename, output_bucket, content)

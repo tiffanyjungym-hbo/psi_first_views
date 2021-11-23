@@ -56,7 +56,7 @@ dags:
         script_name: "wikipedia_page_view"
         param_file_name: "wikipedia_page_view"
         upstream_task_name: "python_script_post_launch_metrics"
-      
+
       # update the trailer first
       - name: "python_script_post_launch_trailer_metrics"
         type: "BashOperator"
@@ -116,7 +116,7 @@ dags:
           - "feature_extraction_wikipedia_page_view_post_launch.sql"
         upstream_task_name: "python_script_wikipedia_page_view"
         downstream_task_name: ecr_container_creation
-      
+
       # postlaunch features
       - name: "trailer_feature_to_staging"
         templates_dict:

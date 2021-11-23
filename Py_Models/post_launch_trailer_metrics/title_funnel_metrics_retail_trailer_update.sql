@@ -72,7 +72,7 @@ insert into {database}.{schema}.trailer_retail_view_percent (
     ),
 
     trailer_match_id as (select distinct
-          trailer_title_name 
+          trailer_title_name
         , title_name
         , t.viewable_id
         , f.match_id

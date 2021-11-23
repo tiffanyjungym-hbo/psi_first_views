@@ -138,7 +138,7 @@ def update_trailer_table(
 
 		# if the run date is later than the last update date
 		if ((f"'{last_date}'" >= END_DATE[platform])  &  (last_date!=None)):
-			logger.info(f'Last date after/equal to end date, so skipping nth day: {-28} on {platform}')				
+			logger.info(f'Last date after/equal to end date, so skipping nth day: {-28} on {platform}')
 		else:
 			logger.info(f'Getting data on {platform}')
 
@@ -194,12 +194,12 @@ def update_trailer_table(
 			)
 
 			last_date = last_date.iloc[0, 0]
-			
+
 			logger.info(f'Last date for nth day: {nday_before} on {platform} is {last_date}, and end date is {END_DATE[platform]}')
 
 			# if the run date is later than the last update date, then stop
 			if ((f"'{last_date}'" >= END_DATE[platform])  &  (last_date!=None)):
-				logger.info(f'Last date after/equal to end date, so skipping nth day: {nday_before} on {platform}')				
+				logger.info(f'Last date after/equal to end date, so skipping nth day: {nday_before} on {platform}')
 			else:
 				logger.info(f'Getting data on {platform}')
 

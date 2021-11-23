@@ -54,7 +54,7 @@ prelaunch_process_info = {
          ,'wiki_d28'
                 ],
     'label_columns':['content_category', 'program_type'],
-    'num_columns':[  
+    'num_columns':[
                      'title_age_approx'
                    , 'trailer_metric_d28_selected'
                    , 'trailer_metric_d28_cumday_selected'
@@ -72,7 +72,7 @@ prelaunch_process_info = {
             ,'wiki_d28_selected'
             ,'wiki_view_total'
         ],
-    
+
     'logged_features_keyword':[
 
     ]
@@ -92,7 +92,7 @@ metadata_process_info = {
          , 'platform_name'
          , 'program_type'
          , 'prod_release_year'
-         , 'in_sequantial_releasing_period' 
+         , 'in_sequantial_releasing_period'
          , 'ln_total_media_cost_pre_launch'
          , 'total_hours'
          , 'season_number_adj'
@@ -115,7 +115,7 @@ metadata_process_info = {
     'logged_features':[ # control by logged target or not
             'wiki_prelaunch_total'
         ],
-    
+
     'logged_features_keyword':[
 
     ]
@@ -131,12 +131,12 @@ default_params_dict = {
            'min_data_in_leaf': 5,
            'learning_rate': 0.05,
            'verbose': -1},
-    
+
     'enet':
         {'alpha': 1e-5,
          'l1_ratio': 0.5}
 }
-    
+
 params_tuning_dict = {
     'lgb': {
         'objective': ['mae'],

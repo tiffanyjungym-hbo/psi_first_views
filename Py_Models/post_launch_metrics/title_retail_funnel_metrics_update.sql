@@ -161,7 +161,7 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
                     when {viewership_table} = 'max_prod.viewership.now_user_stream' then '2015-04-07'
                         end
             and stream_min_timestamp_gmt <= {end_date}
-            -- the US filter is in the subscription table query, so this only the US users are considered in this version 
+            -- the US filter is in the subscription table query, so this only the US users are considered in this version
          ),
 
          max_retail_viewership_base_info as (

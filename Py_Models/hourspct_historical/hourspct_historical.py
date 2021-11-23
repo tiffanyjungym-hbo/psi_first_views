@@ -86,14 +86,14 @@ def update_hours_pct_table(
     """
     # Get unrecorded windows
     logger.info(f'Getting unscored windows {QUERY_HOURS_PCT_WINDOW}')
-    
+
     query_windows = load_query(f'{CURRENT_PATH}/{QUERY_HOURS_PCT_WINDOW}'
                                ,run_date=TARGET_DATE
                                ,window_days=window_days
                                ,database=database
                                ,schema=schema
                               )
-    
+
     start_time = time.time()
     df_windows = execute_query(query=query_windows
                               ,database=database
@@ -103,14 +103,14 @@ def update_hours_pct_table(
                               ,snowflake_env=snowflake_env
                               )
     df_windows.columns = ['catalog_match_id','match_title','hbo_offer_date','window_end']
-    
+
     df_dates = df_windows.loc[:,['hbo_offer_date', 'window_end']].copy()
     df_dates = df_dates.drop_duplicates()
     df_dates = df_dates.set_index('hbo_offer_date')
     df_dates = df_dates.reindex(df_windows.hbo_offer_date.value_counts().index[::-1])
     df_dates = df_dates.reset_index()
     df_dates.columns = ['hbo_offer_date', 'window_end']
-    
+
     for row in df_dates.iterrows():
         logger.info('Getting scores for {}'.format(row[1].hbo_offer_date.strftime('%Y-%m-%d')))
         update_query = load_query(f'{CURRENT_PATH}/{QUERY_HOURS_PCT_UPDATE}'
@@ -130,8 +130,8 @@ def update_hours_pct_table(
 
     end_time = time.time()
     logger.info(f'Time taken {end_time - start_time} seconds')
-    
-    
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--SNOWFLAKE_ENV', required=True)
@@ -150,7 +150,7 @@ if __name__ == '__main__':
 
     logger.info('Updating trailer table')
 
-    
+
     for window in [7,14,21,28,56,91,182,364]:
         update_hours_pct_table(
             database=args.DATABASE,

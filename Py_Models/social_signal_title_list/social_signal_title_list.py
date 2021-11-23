@@ -125,6 +125,7 @@ if __name__ == '__main__':
 	parser.add_argument('--ROLE', required=True)
 	parser.add_argument('--DATABASE', required=True)
 	parser.add_argument('--SCHEMA', required=True)
+	parser.add_argument('--input_bucket', required=True)
 	args = parser.parse_args()
 
 	logger.info('Environment defined:')
@@ -133,6 +134,7 @@ if __name__ == '__main__':
 	logger.info(f'role: {args.ROLE}')
 	logger.info(f'database: {args.DATABASE}')
 	logger.info(f'schema: {args.SCHEMA}')
+	logger.info(f'input_bucket: {args.input_bucket}')
 
 	df_social_signal_titles = update_social_signal_title_list_table(
 		database=args.DATABASE,
@@ -146,7 +148,7 @@ if __name__ == '__main__':
 	logger.info('Writing titles list for wikipedia page view & google index')
 	
 	# bucket name
-	output_bucket = 'hbo-data-ckg-dev' 
+	output_bucket = args.input_bucket
 
 	# content
 	csv_buffer = StringIO()

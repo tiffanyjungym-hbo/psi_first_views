@@ -61,13 +61,13 @@ create or replace table {database}.{schema}.title_percent_metric_pred(
 
     select distinct
         title_name
-        , a.match_id
+        , coalesce(a.match_id, v.match_id) as match_id
         , 28 AS days_since_first_offered
         , percent_actives
         , percent_view
         , 'prediction' as data_type
     from pred_active as a
-    outer join pred_view as v
+    full outer join pred_view as v
         on a.match_id = v.match_id
     order by percent_actives desc
 );
@@ -82,13 +82,13 @@ create or replace table {database}.{schema}.title_percent_metric_actual(
     ) as  (
         select
             title_name
-            , a.match_id
+            , coalesce(a.match_id, v.match_id) as match_id
             , days_since_first_offered
             , pct_actives as percent_active
             , retail_viewed_count_percent*100 as percent_view
             , 'actual' as data_type
         from {database}.{schema}.pct_actives_metric_values_pipeline as a
-        outer join {database}.{schema}.title_retail_funnel_metrics as v
+        full outer join {database}.{schema}.title_retail_funnel_metrics as v
             on a.match_id = v.match_id
                 and a.days_on_hbo_max = v.days_since_first_offered
         where 1=1

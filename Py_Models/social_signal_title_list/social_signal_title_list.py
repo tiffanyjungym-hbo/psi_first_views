@@ -25,8 +25,8 @@ EXIST_IND_VAL: int = 0
 logger = logging.getLogger()
 
 def to_s3(filename, output_bucket, content):
-		client = boto3.client('s3')
-		client.put_object(Bucket=output_bucket, Key=filename, Body=content)
+	client = boto3.client('s3')
+	client.put_object(Bucket=output_bucket, Key=filename, Body=content)
 
 def execute_query(
 	query: str,

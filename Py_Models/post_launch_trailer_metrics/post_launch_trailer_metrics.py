@@ -17,6 +17,8 @@ SNOWFLAKE_ACCOUNT_NAME: str = Variable.get('SNOWFLAKE_ACCOUNT_NAME')  # 'hbomax.
 CURRENT_PATH: str = pathlib.Path(__file__).parent.absolute()
 QUERY_TRAILER_METRICS: str = 'title_funnel_metrics_retail_trailer_update.sql'
 QUERY_TRAILER_METRICS_D28: str = 'title_funnel_metrics_retail_trailer_update_d28.sql'
+QUERY_TRAILER_METRICS_TIMESTAMP: str =  'title_funnel_metrics_retail_trailer_timestamp.sql'
+QUERY_TRAILER_METRICS_TIMESTAMP_D28: str = 'title_funnel_metrics_retail_trailer_timestamp_d28.sql'
 QUERY_FUNNEL_METRICS_TRAILER_LAST_DATE: str = 'title_funnel_metrics_retail_trailer_last_date.sql'
 QUERY_FUNNEL_METRICS_TRAILER_LAST_DATE_D28: str = 'title_funnel_metrics_retail_trailer_last_date_d28.sql'
 TARGET_DATE: str = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
@@ -112,6 +114,7 @@ def update_trailer_table(
 	logger.info(f'Loading query {QUERY_TRAILER_METRICS}')
 
 	df_trailer_metrics = pd.DataFrame()
+	df_trailer_metrics_d28 = pd.DataFrame()
 
 	for platform in PLATFORM_LIST:
 		# if the run date is before than last update date, then stop
@@ -141,6 +144,8 @@ def update_trailer_table(
 			logger.info(f'Last date after/equal to end date, so skipping nth day: {-28} on {platform}')
 		else:
 			logger.info(f'Getting data on {platform}')
+			
+			start_time = time.time()
 
 			query_trailer_metrics = load_query(
 					f'{CURRENT_PATH}/{QUERY_TRAILER_METRICS}',
@@ -151,8 +156,6 @@ def update_trailer_table(
 					exist_ind_val=EXIST_IND_VAL,
 					nday_before = -28
 				)
-
-			start_time = time.time()
 
 			_df_trailer_metrics = execute_query(
 					query=query_trailer_metrics,
@@ -166,6 +169,25 @@ def update_trailer_table(
 			end_time = time.time()
 			logger.info(f'Time taken {end_time - start_time} seconds')
 
+			# insert an empty row as a record of last updated timestamp
+			if _df_trailer_metrics.shape[0]==0:
+				query_timestamp_row = load_query(
+					f'{CURRENT_PATH}/{QUERY_TRAILER_METRICS_TIMESTAMP}',
+					database=database,
+					schema=schema,
+					end_date=END_DATE[platform]
+				)
+
+				execute_query(
+					query=query_timestamp_row,
+					database=database,
+					schema=schema,
+					warehouse=warehouse,
+					role=role,
+					snowflake_env=snowflake_env
+				)
+				
+
 			df_trailer_metrics = pd.concat([df_trailer_metrics, _df_trailer_metrics], axis=0)
 
 
@@ -174,8 +196,8 @@ def update_trailer_table(
 
 	df_trailer_metrics_d28 = pd.DataFrame()
 
-	for nday_before in DAY_LIST:
-		for platform in PLATFORM_LIST:
+	for platform in PLATFORM_LIST:
+		for nday_before in DAY_LIST: 
 			query_last_date = load_query(
 				f'{CURRENT_PATH}/{QUERY_FUNNEL_METRICS_TRAILER_LAST_DATE_D28}',
 				database=database,
@@ -203,7 +225,7 @@ def update_trailer_table(
 			else:
 				logger.info(f'Getting data on {platform}')
 
-				query_trailer_metrics = load_query(
+				query_trailer_metrics_d28 = load_query(
 						f'{CURRENT_PATH}/{QUERY_TRAILER_METRICS_D28}',
 						database=database,
 						schema=schema,
@@ -215,8 +237,8 @@ def update_trailer_table(
 
 				start_time = time.time()
 
-				_df_trailer_metrics = execute_query(
-						query=query_trailer_metrics,
+				_df_trailer_metrics_d28 = execute_query(
+						query=query_trailer_metrics_d28,
 						database=database,
 						schema=schema,
 						warehouse=warehouse,
@@ -227,7 +249,26 @@ def update_trailer_table(
 				end_time = time.time()
 				logger.info(f'Time taken {end_time - start_time} seconds')
 
-	return df_trailer_metrics
+				# insert an empty row as a record of last updated timestamp
+				if _df_trailer_metrics_d28.shape[0]==0:
+					query_timestamp_row_d28= load_query(
+						f'{CURRENT_PATH}/{QUERY_TRAILER_METRICS_TIMESTAMP_D28}',
+						database=database,
+						schema=schema,
+						end_date=END_DATE[platform]
+					)
+
+					execute_query(
+						query=query_timestamp_row_d28,
+						database=database,
+						schema=schema,
+						warehouse=warehouse,
+						role=role,
+						snowflake_env=snowflake_env
+					)
+				df_trailer_metrics_d28 = pd.concat([df_trailer_metrics_d28, _df_trailer_metrics_d28], axis=0)
+
+	return df_trailer_metrics, df_trailer_metrics_d28
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
@@ -249,7 +290,7 @@ if __name__ == '__main__':
 
 	# Run the code to get trailer metric
 
-	df_funnel_metrics = update_trailer_table(
+	df_trailer_metrics, df_trailer_metrics_d28 = update_trailer_table(
 		database=args.DATABASE,
 		schema=args.SCHEMA,
 		warehouse=args.WAREHOUSE,

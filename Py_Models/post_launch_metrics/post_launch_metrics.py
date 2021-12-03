@@ -120,7 +120,6 @@ def update_funnel_metrics_table(
 				f'{CURRENT_PATH}/{QUERY_FUNNEL_METRICS_PLATFORM_LAST_DATE}',
 				database=database,
 				schema=schema,
-				nday=nday,
 				viewership_table=VIEWERSHIP_TABLE[platform]
 			)
 		

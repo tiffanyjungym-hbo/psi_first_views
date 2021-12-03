@@ -28,7 +28,7 @@ DAY_LIST: List[int] = [
 # Calculating for different platforms
 PLATFORM_LIST: List[str] = ['hboMax', 'hboNow']
 DAY_LATENCY: int = 0  # started counting after [day_latency] days
-TARGET_DATE: str = (datetime.datetime.today() - datetime.timedelta(days=DAY_LATENCY)).strftime('%Y-%m-%d')
+TARGET_DATE: str = (datetime.datetime.utcnow().today() - datetime.timedelta(days=DAY_LATENCY)).strftime('%Y-%m-%d')
 
 # Source of viewership, either heartbeat or now_user_stream
 VIEWERSHIP_TABLE: Dict[str, str] = {

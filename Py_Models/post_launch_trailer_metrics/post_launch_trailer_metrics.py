@@ -21,7 +21,7 @@ QUERY_TRAILER_METRICS_TIMESTAMP: str =  'title_funnel_metrics_retail_trailer_tim
 QUERY_TRAILER_METRICS_TIMESTAMP_D28: str = 'title_funnel_metrics_retail_trailer_timestamp_d28.sql'
 QUERY_FUNNEL_METRICS_TRAILER_LAST_DATE: str = 'title_funnel_metrics_retail_trailer_last_date.sql'
 QUERY_FUNNEL_METRICS_TRAILER_LAST_DATE_D28: str = 'title_funnel_metrics_retail_trailer_last_date_d28.sql'
-TARGET_DATE: str = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+TARGET_DATE: str = (datetime.datetime.utcnow().today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
 
 ## [nday_before] since first offered
 DAY_LIST: List[int] = [

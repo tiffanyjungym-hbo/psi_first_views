@@ -24,7 +24,7 @@ dags:
       retries: 1
       domain: "content"
       retry_delay: 15
-    schedule_interval: "@daily"
+    schedule_interval: "0 02 * * WED"
     max_active_runs: 1
     catchup: False
     schema: "WORKSPACE"

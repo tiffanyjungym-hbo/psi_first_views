@@ -134,7 +134,7 @@ def update_funnel_metrics_table(
 		
 		platform_last_date = platform_last_date.iloc[0, 0]
 
-		logger.info('Data last updated at {}'.format(platform_last_date))
+		logger.info('Data of {} last updated at {}'.format(platform, platform_last_date))
 
 		# check if any of the days of a platform has to be updated:
 		if ((f"'{platform_last_date}'" < END_DATE[platform]) | (platform_last_date==None)):

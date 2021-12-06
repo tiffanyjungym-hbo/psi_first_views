@@ -11,10 +11,10 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
             , earliest_offered_timestamp
         from {database}.{schema}.title_retail_funnel_metrics
         where 1=1
-            and days_since_first_offered = $nday
+            and days_since_first_offered = {nday}
             and platform_name =
-                case when $viewership_table = 'max_prod.viewership.max_user_stream_heartbeat_view' then 'hboMax'
-                    when $viewership_table = 'max_prod.viewership.now_user_stream' then 'hboNow'
+                case when {viewership_table} = 'max_prod.viewership.max_user_stream_heartbeat_view' then 'hboMax'
+                    when {viewership_table} = 'max_prod.viewership.now_user_stream' then 'hboNow'
                         end
         ),
 
@@ -24,9 +24,9 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
             from {database}.{schema}.title_funnel_metrics_base_table
             where 1=1
                 and stream_min_timestamp_gmt between earliest_offered_timestamp
-                    and dateadd(day, $nday, earliest_offered_timestamp)
-                and dateadd(day, $nday, earliest_offered_timestamp) <=
-                    least(($end_date), dateadd(day, -$day_latency, convert_timezone('GMT',current_timestamp())))
+                    and dateadd(day, {nday}, earliest_offered_timestamp)
+                and dateadd(day, {nday}, earliest_offered_timestamp) <=
+                    least(({end_date}), dateadd(day, -{day_latency}, convert_timezone('GMT',current_timestamp())))
             ),
 
         match_id_for_update as (
@@ -48,7 +48,7 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
                     , content_category
                     , single_episode_ind
                     , v.earliest_offered_timestamp
-                    , dateadd(day, $nday, v.earliest_offered_timestamp) as end_consideration_date
+                    , dateadd(day, {nday}, v.earliest_offered_timestamp) as end_consideration_date
                     , earliest_public_timestamp
                     , last_offered_timestamp
                     , a.hbo_uuid
@@ -65,13 +65,13 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
                 from {database}.{schema}.title_funnel_metrics_base_table as v
                 join {database}.{schema}.sub_period_in_uuid_test as a
                     on a.subscription_expire_timestamp >= v.earliest_offered_timestamp
-                        and a.subscription_start_timestamp <= dateadd(day, $nday, v.earliest_offered_timestamp)
+                        and a.subscription_start_timestamp <= dateadd(day, {nday}, v.earliest_offered_timestamp)
                         and a.hbo_uuid = v.hbo_uuid
                 join match_id_for_update as u
                     on v.match_id = u.match_id
                 where 1 = 1
                     and stream_min_timestamp_gmt between earliest_offered_timestamp
-                        and dateadd(day, $nday, earliest_offered_timestamp)
+                        and dateadd(day, {nday}, earliest_offered_timestamp)
                 group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
         ),
 
@@ -79,8 +79,8 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
              select
                     title_name
                   , match_id
-                  , case when $viewership_table in ('max_prod.viewership.max_user_stream','max_prod.viewership.max_user_stream_heartbeat_view') then 'hboMax'
-                        when $viewership_table = 'max_prod.viewership.now_user_stream' then 'hboNow'
+                  , case when {viewership_table} in ('max_prod.viewership.max_user_stream','max_prod.viewership.max_user_stream_heartbeat_view') then 'hboMax'
+                        when {viewership_table} = 'max_prod.viewership.now_user_stream' then 'hboNow'
                             end as platform_name
                   , hbo_uuid
                   , mode(season_number_adj) as season_number_adj
@@ -111,11 +111,11 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
              left join {database}.{schema}.sub_period_in_uuid_test as a
                  -- consider the active SVOD hbo_uuids within the consideration period only
                 on a.subscription_expire_timestamp >= o.earliest_offered_timestamp
-                    and a.subscription_start_timestamp <= dateadd(day, $nday, o.earliest_offered_timestamp)
+                    and a.subscription_start_timestamp <= dateadd(day, {nday}, o.earliest_offered_timestamp)
              where 1 = 1
-                and platform_name = (case when $viewership_table in ('max_prod.viewership.max_user_stream','max_prod.viewership.max_user_stream_heartbeat_view')
+                and platform_name = (case when {viewership_table} in ('max_prod.viewership.max_user_stream','max_prod.viewership.max_user_stream_heartbeat_view')
                                             then 'hboMax'
-                                        when $viewership_table = 'max_prod.viewership.now_user_stream'
+                                        when {viewership_table} = 'max_prod.viewership.now_user_stream'
                                             then 'hboNow'
                                         end)
              group by 1
@@ -158,9 +158,9 @@ insert into {database}.{schema}.title_retail_funnel_metrics (
                   , h.earliest_offered_timestamp
                   , last_offered_timestamp
                   , earliest_public_timestamp
-                  , $nday                                     as days_since_first_offered
+                  , {nday}                                     as days_since_first_offered
                   , total_retail_sub_count
-                  , $end_date                       as last_update_timestamp
+                  , {end_date}                       as last_update_timestamp
                   , count(*)                                  as retail_played_count
                   , sum(retail_view_ind_total)                       as retail_viewed_count
                   , sum(retail_completion_ind_total)                 as retail_completion_count

@@ -1,0 +1,17 @@
+{
+    "DEV":
+    {
+        "input_bucket": "hbo-ingest-datascience-content-dev",
+        "output_bucket": "hbo-outbound-datascience-content-dev"
+    },
+    "BETA":
+    {
+        "input_bucket": "hbo-ingest-datascience-content-beta",
+        "output_bucket": "hbo-outbound-datascience-content-beta"
+    },
+    "PROD":
+    {
+        "input_bucket": "hbo-ingest-datascience-content",
+        "output_bucket": "hbo-outbound-datascience-content"
+    }
+}

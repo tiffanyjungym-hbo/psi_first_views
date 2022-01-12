@@ -1,0 +1,146 @@
+#================================================================================================
+# Importing common configuration
+#================================================================================================
+
+CommonConf: !include common/snowflake_common_config.yml
+
+#================================================================================================
+# Configuration Job pipeline
+#================================================================================================
+
+dags:
+  sagemaker:
+    domain: "max"
+    sub_domain: "job_process"
+    action: "HoursPctPrediction"
+    default_args:
+      owner: "tiffany.jung@warnermedia.com"
+      depends_on_past: False
+      start_date: "2021-02-01"
+      email_prod: "tiffany.jung@warnermedia.com"
+      email_nonprod: "tiffany.jung@warnermedia.com"
+      email_on_failure: True
+      email_on_retry: True
+      retries: 1
+      domain: "content"
+      retry_delay: 15
+    schedule_interval: "0 02 * * WED"
+    max_active_runs: 1
+    catchup: False
+    schema: "WORKSPACE"
+    model_name: "psi_first_views"
+    glue_model_name: "psi_first_views"    
+    slack_channel:
+      NON-PROD: "hbomax-cds-alerts"
+      PROD: "hbomax-cds-alerts"
+    tasks:
+      
+      - name: "python_script_hourspct_historical"
+        type: "BashOperator"
+        script_loc: "common"
+        script_name: "hourspct_historical"
+        param_file_name: "hourspct_historical"
+      
+      # update the metrics
+      - name: "python_script_post_launch_metrics"
+        type: "BashOperator"
+        script_loc: "common"
+        script_name: "post_launch_metrics"
+        param_file_name: "post_launch_metrics"
+        upstream_task_name: "python_script_hourspct_historical"
+
+        # cols not used
+      - name: "funnel_metric_feature_to_staging"
+        templates_dict:
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
+        sql_file_names:
+          - "feature_extraction_funnel_metric.sql"
+        upstream_task_name: "python_script_post_launch_metrics"
+        downstream_task_name: ecr_container_creation
+
+      - name: "metadata_feature_to_staging"
+        templates_dict:
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
+        sql_file_names:
+          - "feature_extraction_metadata.sql"
+        upstream_task_name: "python_script_post_launch_metrics"
+        downstream_task_name: ecr_container_creation
+
+      - name: "media_cost_pre_launch_feature_to_staging"
+        templates_dict:
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
+        sql_file_names:
+          - "feature_extraction_media_cost_pre_launch.sql"
+        upstream_task_name: "python_script_post_launch_metrics"
+        downstream_task_name: ecr_container_creation
+
+      - name: "media_cost_post_launch_feature_to_staging"
+        templates_dict:
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
+        sql_file_names:
+          - "feature_extraction_media_cost_post_launch.sql"
+        upstream_task_name: "python_script_post_launch_metrics"
+        downstream_task_name: ecr_container_creation
+
+      - name: "content_cost_to_staging"
+        templates_dict:
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
+        sql_file_names:
+          - "feature_extraction_content_cost.sql"
+        upstream_task_name: "python_script_post_launch_metrics"
+        downstream_task_name: ecr_container_creation
+        
+      - name: "hours_pct_to_staging"
+        templates_dict:
+          stage: "{{ var.value.DS_CONTENT_HBO_INGEST_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
+        sql_file_names:
+          - "feature_extraction_hours_pct.sql"
+        upstream_task_name: "python_script_post_launch_metrics"
+        downstream_task_name: ecr_container_creation
+
+      - name: "ecr_container_creation"
+        type: "BashOperator"
+        kernel: "python3"
+
+      - name: "sagemaker_notebook_job_processing_script"
+        type: "BashOperator"
+        notebook_name: "pct_hours_prediction"
+        Details:
+          instance_type: "ml.m5.2xlarge"
+          instance_count: 1
+        BucketIOConfig:
+          DEV:
+            model_bucket: "hbo-ingest-datascience-content-dev"
+          BETA:
+            model_bucket: "hbo-ingest-datascience-content-beta"
+          PROD:
+            model_bucket: "hbo-ingest-datascience-content"
+        upstream_task_name: "ecr_container_creation"
+
+      - name: "write_prediction_output_to_snowflake"
+        upstream_task_name: "sagemaker_notebook_job_processing_script"
+        templates_dict:
+          stage: "{{ var.value.DS_CONTENT_HBO_OUTBOUND_DATASCIENCE_CONTENT }}"
+          database: "{{ var.value.DS_SF_MAX_DATABASE }}"
+          schema: "{{ var.value.DS_SF_MAX_SCHEMA }}"
+        sql_file_names:
+            - "output_to_S3.sql"
+
+      - name: "send_notification_cds"
+        type: "EmailOperator"
+        to: "colin.zhou@warnermedia.com"
+        subject: "sagemaker-airflow: EMAIL TASK test"
+        html: "Hi Team,<br><h3>Test email from sagemaker-airflow DAG task.</h3><br>Regards,<br> DAP"
+        upstream_task_name : "write_prediction_output_to_snowflake"

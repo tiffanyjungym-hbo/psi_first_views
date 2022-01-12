@@ -1,0 +1,6 @@
+xgboost
+sklearn
+scipy
+scikit-learn
+pandas
+boto3
